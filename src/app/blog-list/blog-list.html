@@ -1,0 +1,51 @@
+<p>blog-list works!</p>
+<div class="container">
+    <div class="first-row">
+        <h3 class="title fw-bold">CẨM NANG DU LỊCH</h3>
+        <select *ngIf="isTravelGuidePage" name="time-order" id="time-order" class="form-select ms-3">
+            <option value="ascending">Mới nhất</option>
+            <option value="descending">Cũ nhất</option>
+        </select>
+    </div>
+    <div class="content">
+        <article class="box">
+            <a [routerLink]="['/detail-travel-guide']">
+                <img src="/assets/PuLuong.jpg" alt="Pù Luông Landscape" class="rounded" id="puLuongImage" />
+                <div class="box-text">
+                    <h2>PÙ LUÔNG - THANH HÓA</h2>
+                    <p>
+                        Nằm giữa lòng thiên nhiên hoang sơ, Pù Luông (Thanh Hóa) là một
+                        thiên đường ẩn mình với những thửa ruộng bậc thang kỳ vĩ, rừng núi
+                        trập trùng và không khí trong lành. Đây là điểm đến lý tưởng cho
+                        những ai yêu thích khám phá, hòa mình vào cảnh sắc nguyên sơ và tận
+                        hưởng nhịp sống chậm rãi của vùng cao.
+                        <br />
+                        Hãy cùng tôi khám phá vẻ đẹp bình yên và những trải nghiệm đáng nhớ
+                        tại Pù Luông trong hành trình lần này!
+                        <br />
+                        Xem thêm...
+                    </p>
+                </div>
+            </a>
+        </article>
+        <article class="box">
+            <a [routerLink]="['/detail-travel-guide']">
+                <img src="/assets/uc.jpg" alt="Australia Landscape" class="rounded" id="australiaImage" />
+                <div class="box-text">
+                    <h2>AUSTRALIA - ÚC</h2>
+                    <p>
+                        Úc - xứ sở chuột túi, là một quốc gia rộng lớn với thiên nhiên đa
+                        dạng, từ những bãi biển tuyệt đẹp, rạn san hô Great Barrier nổi
+                        tiếng đến sa mạc bao la và các thành phố hiện đại như Sydney,
+                        Melbourne hay Brisbane. Nơi đây không chỉ thu hút du khách bởi cảnh
+                        quan hùng vĩ mà còn bởi nền văn hóa độc đáo, ẩm thực phong phú và
+                        con người thân thiện. Hãy cùng khám phá nước Úc - vùng đất của những
+                        kỳ quan thiên nhiên và cuộc sống sôi động!
+                        <br />
+                        Xem thêm...
+                    </p>
+                </div>
+            </a>
+        </article>
+    </div>
+</div>
