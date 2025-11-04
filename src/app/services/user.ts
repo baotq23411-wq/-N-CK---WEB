@@ -40,7 +40,6 @@ export class UserService {
       id: newId,
       point: 0,
       star: 0,
-      membership_type: 'Standard',
       role: 'user'
     };
 

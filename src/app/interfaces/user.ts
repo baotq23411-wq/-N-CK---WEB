@@ -6,6 +6,5 @@ export interface User {
   password: string;             // dấu ?: Optional
   point?: number;              // Điểm tích lũy
   star?: number;               // Số sao (để xếp hạng thành viên)
-  membership_type?: string;   // Loại thành viên
   role?: string; 
 }

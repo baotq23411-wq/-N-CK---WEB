@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { AuthService } from '../services/auth';
@@ -19,7 +19,7 @@ export function emailOrPhoneValidator(control: AbstractControl): ValidationError
   templateUrl: './login-page.html',
   styleUrls: ['./login-page.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule, FormsModule]
 })
 export class LoginPageComponent implements OnInit {
   loginForm!: FormGroup;
@@ -88,7 +88,7 @@ export class LoginPageComponent implements OnInit {
       })
     ).subscribe(() => {
       Swal.fire('Thành công', 'Đăng nhập thành công!', 'success').then(() => {
-        this.router.navigate(['/']); // hoặc về trang dashboard
+        this.router.navigate(['/user-toolbar']); // hoặc về trang dashboard
       });
     });
   }
