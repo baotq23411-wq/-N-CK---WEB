@@ -1,0 +1,107 @@
+<footer class="footer">
+  <div class="container">
+    <!-- HÀNG 1 -->
+    <div class="row footer-row">
+      <!-- Cột logo + chứng nhận -->
+      <div class="col-md-4 footer-col d-flex flex-column text-center text-md-start">
+        <!-- CHỪA Ô HÌNH: thay ảnh sau -->
+        <img src="assets/Logo_White.png" alt="Panacea" class="mb-3 logo-footer small-logo">
+        <img src="assets/certifications.jpeg" alt="Certifications" class="mb-3 logo-footer small-logo">
+      </div>
+
+      <!-- Cột Về Panacea -->
+      <div class="col-md-4 footer-col d-flex flex-column text-center text-md-start note1">
+        <h5>Về Panacea</h5>
+        <ul class="list-unstyled mt-3">
+          <li><a href="/about">Giới thiệu</a></li>
+          <li><a href="/blog">Blog</a></li>
+          <li><a href="/reviews">Đánh giá</a></li>
+          <li><a href="/support">Trung tâm hỗ trợ</a></li>
+          <li><a href="/my-bookings">Đặt chỗ của tôi</a></li>
+        </ul>
+      </div>
+
+      <!-- Cột Chính sách -->
+      <div class="col-md-4 footer-col d-flex flex-column text-center text-md-start">
+        <h5>Chính sách</h5>
+        <ul class="list-unstyled mt-3">
+          <li><a href="/policies">Chính sách hoạt động</a></li>
+          <li><a href="/terms">Điều kiện &amp; Điều khoản</a></li>
+          <li><a href="/privacy">Chính sách bảo mật</a></li>
+          <li><a href="/refund">Chính sách hoàn hủy</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- HÀNG 2 -->
+    <div class="row footer-row mt-4">
+      <!-- Đối tác thanh toán -->
+      <div class="col-lg-5 footer-col d-flex flex-column text-center text-md-start">
+        <h5>Đối tác thanh toán</h5>
+        <div class="payment-methods">
+          <!-- CHỪA Ô HÌNH: thay ảnh sau -->
+          <div><img src="assets/Card_Logo.png" alt="Visa/Master"></div>
+          <div><img src="assets/VietQR_Logo.png" alt="VietQR"></div>
+          <div><img src="assets/MoMo_Logo.png" alt="MoMo"></div>
+          <div><img src="assets/ZaloPay_Logo.png" alt="ZaloPay"></div>
+          <div><img src="assets/5ACB.jpg" alt="ACB"></div>
+          <div><img src="assets/6HSBC.jpg" alt="HSBC"></div>
+          <div><img src="assets/7Vietcombank.jpg" alt="VCB"></div>
+          <div><img src="assets/8MBbank.jpg" alt="MB"></div>
+          <div><img src="assets/9Citibank.jpg" alt="Citi"></div>
+          <div><img src="assets/10VietinBank.png" alt="Vietin"></div>
+          <div><img src="assets/11TPbank.jpg" alt="TPBank"></div>
+          <div><img src="assets/12BIDV.png" alt="BIDV"></div>
+        </div>
+      </div>
+
+      <!-- Social -->
+      <div class="col-lg-3 footer-col d-flex flex-column text-center text-md-start note2">
+        <h5>Theo dõi chúng tôi trên</h5>
+        <div class="social-icons mt-3 d-flex flex-column">
+          <a href="#"><i class="bi bi-facebook"></i> Facebook</a>
+          <a href="#"><i class="bi bi-instagram"></i> Instagram</a>
+          <a href="#"><i class="bi bi-tiktok"></i> TikTok</a>
+          <a href="#"><i class="bi bi-youtube"></i> YouTube</a>
+          <a href="#"><i class="bi bi-telegram"></i> Telegram</a>
+        </div>
+      </div>
+
+      <!-- Liên hệ + Bản đồ -->
+      <div class="col-lg-4 footer-col d-flex flex-column text-center text-md-start">
+        <h5>Liên hệ</h5>
+        <ul class="list-unstyled mt-3 contact-list">
+          <li><i class="bi bi-telephone"></i> Hotline: 1900 123 456</li>
+          <li><i class="bi bi-envelope"></i> Email: hello@panacea.vn</li>
+          <li>
+            <i class="bi bi-geo-alt"></i>
+            Địa chỉ: 60 Hai Bà Trưng, Bến Nghé, Quận 1, TP.HCM
+          </li>
+        </ul>
+        <div class="map-embed">
+          <!-- Có thể đổi q=... theo địa chỉ của team -->
+          <iframe
+            src="https://www.google.com/maps?q=60%20Hai%20B%C3%A0%20Tr%C6%B0ng%2C%20B%E1%BA%BFn%20Ngh%C3%A9%2C%20Qu%E1%BA%ADn%201%2C%20TP.HCM&output=embed"
+            loading="lazy" referrerpolicy="no-referrer-when-downgrade" aria-label="Bản đồ Panacea">
+          </iframe>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Dòng bản quyền -->
+    <div class="bottom text-center text-md-start">
+      <p class="company">
+        Công ty TNHH Panacea Việt Nam — Tòa nhà An Phú, 117-119 Lý Chính Thắng, P.7, Q.3, TP.HCM
+      </p>
+      <p class="copyright">Copyright &copy; {{year}} Panacea. All rights reserved.</p>
+    </div>
+  </div>
+
+  <!-- Nút back to top -->
+<button class="back-to-top" *ngIf="showBackTop" (click)="backToTop()" title="Lên đầu trang">
+  <i class="bi bi-arrow-up"></i>
+</button>
+
+</footer>
