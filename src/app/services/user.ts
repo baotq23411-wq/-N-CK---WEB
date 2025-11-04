@@ -6,7 +6,7 @@ import { Observable, of, throwError } from 'rxjs';
   providedIn: 'root',
 })
 export class UserService {
-  constructor() {}
+  constructor() { }
 
   register(user: User): Observable<any> {
     // Lấy danh sách user từ localStorage
@@ -18,9 +18,7 @@ export class UserService {
     const phoneExists = users.some(u => u.phone_number === user.phone_number);
 
     if (emailExists && phoneExists) {
-      return throwError(() => ({
-        errors: { email: true, phone_number: true },
-      }));
+      return throwError(() => ({ error: { errors: { email: true, phone_number: true } } }));
     }
 
     if (emailExists) {
@@ -37,7 +35,14 @@ export class UserService {
 
     // Tạo id tự động
     const newId = users.length > 0 ? users[users.length - 1].id + 1 : 1;
-    const newUser = { ...user, id: newId };
+    const newUser: User = {
+      ...user,
+      id: newId,
+      point: 0,
+      star: 0,
+      membership_type: 'Standard',
+      role: 'user'
+    };
 
     users.push(newUser);
     localStorage.setItem('USERS', JSON.stringify(users));

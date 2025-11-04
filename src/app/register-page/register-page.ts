@@ -11,14 +11,19 @@ import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { catchError, EMPTY } from 'rxjs';
-import { UserService } from '../services/user'; 
+import { UserService } from '../services/user';
 
+// Custom validator để so sánh mật khẩu
 export function MustMatch(controlName: string, matchingControlName: string) {
   return (formGroup: AbstractControl) => {
     const control = formGroup.get(controlName);
     const matchingControl = formGroup.get(matchingControlName);
-    if (!control || !matchingControl) return null;
-    if (matchingControl.errors && !matchingControl.errors['mustMatch']) return null;
+    if (!control || !matchingControl) {
+      return null;
+    }
+    if (matchingControl.errors && !matchingControl.errors['mustMatch']) {
+      return null;
+    }
     if (control.value !== matchingControl.value) {
       matchingControl.setErrors({ mustMatch: true });
     } else {
@@ -43,14 +48,31 @@ export class RegisterPageComponent implements OnInit {
     private http: HttpClient,
     private router: Router,
     private userService: UserService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.registerForm = this.fb.group(
       {
-        full_name: ['', [Validators.required, Validators.pattern('^[a-zA-ZÀ-ỹ ]+$')]],
-        email: ['', [Validators.required, Validators.email]],
-        phone_number: ['', [Validators.required, Validators.pattern('^(\\+\\d{1,3})?\\d{10,16}$')]],
+        full_name: [
+          '',
+          [Validators.required, Validators.pattern('^[a-zA-ZÀ-ỹ ]+$')],
+        ],
+        email: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(
+              '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
+            ),
+          ],
+        ],
+        phone_number: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern('^(\\+\\d{1,2})?\\d{10,16}$'),
+          ],
+        ],
         password: ['', [Validators.required, Validators.minLength(6)]],
         confirm_password: ['', Validators.required],
       },
@@ -61,11 +83,26 @@ export class RegisterPageComponent implements OnInit {
   formatPhoneNumber() {
     let phoneControl = this.registerForm.get('phone_number');
     if (!phoneControl) return;
-    let value = phoneControl.value.replace(/[^0-9+]/g, '');
-    if (value.startsWith('0') && value.length === 10) {
-      value = '+84' + value.slice(1);
+    let phoneValue = phoneControl.value;
+    phoneValue = phoneValue.replace(/[^0-9+]/g, '');
+    if (phoneValue.startsWith('0') && phoneValue.length === 10) {
+      phoneValue = '+84' + phoneValue.substring(1);
+    } else if (
+      !phoneValue.startsWith('0') &&
+      !phoneValue.startsWith('+') &&
+      phoneValue.length >= 9 &&
+      phoneValue.length <= 15
+    ) {
+      phoneValue = '+84' + phoneValue;
+    } else if (phoneValue.startsWith('+')) {
+      let countryCodeMatch = phoneValue.match(/^(\+\d{1,3})(\d{6,14})$/);
+      if (countryCodeMatch) {
+        let countryCode = countryCodeMatch[1];
+        let mainNumber = countryCodeMatch[2];
+        phoneValue = `${countryCode}${mainNumber}`;
+      }
     }
-    phoneControl.setValue(value, { emitEvent: false });
+    phoneControl.setValue(phoneValue, { emitEvent: false });
   }
 
   onSubmit() {
@@ -73,19 +110,97 @@ export class RegisterPageComponent implements OnInit {
       this.registerForm.markAllAsTouched();
       return;
     }
+    const formData = this.registerForm.value;
+    const payload = {
+      id: 1,
+      full_name: formData.full_name,
+      email: formData.email,
+      phone_number: formData.phone_number,
+      password: formData.password,
+    };
 
-    const payload = this.registerForm.value;
-    delete payload.confirm_password;
-
-    this.userService.register(payload).pipe(
-      catchError((err) => {
-        Swal.fire('Lỗi', 'Đăng ký thất bại! Hãy thử lại.', 'error');
-        return EMPTY;
-      })
-    ).subscribe(() => {
-      Swal.fire('Thành công', 'Đăng ký thành công!', 'success').then(() => {
-        this.router.navigate(['/login']);
+    this.userService
+      .register(payload)
+      .pipe(
+        catchError((error) => {
+          let errorMessage = '';
+          if (error.errors) {
+            // Nếu có object errors từ backend
+            if (error.errors.email && error.errors.phone_number) {
+              errorMessage = 'Email và số điện thoại đã được sử dụng!';
+              Swal.fire({
+                title: errorMessage,
+                text: 'Bạn muốn đăng nhập bằng thông tin này hay sử dụng thông tin khác?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đăng nhập',
+                cancelButtonText: 'Sử dụng thông tin khác',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.router.navigate(['/login']);
+                } else {
+                  this.registerForm.get('email')?.reset();
+                  this.registerForm.get('phone_number')?.reset();
+                }
+              });
+            } else if (error.errors.email) {
+              errorMessage = 'Email đã được sử dụng!';
+              Swal.fire({
+                title: errorMessage,
+                text: 'Bạn muốn đăng nhập bằng email này hay sử dụng email khác?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đăng nhập',
+                cancelButtonText: 'Sử dụng email khác',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.router.navigate(['/login']);
+                } else {
+                  this.registerForm.get('email')?.reset();
+                }
+              });
+            } else if (error.errors.phone_number) {
+              errorMessage = 'Số điện thoại đã được sử dụng!';
+              Swal.fire({
+                title: errorMessage,
+                text: 'Bạn muốn đăng nhập bằng số điện thoại này hay sử dụng số khác?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đăng nhập',
+                cancelButtonText: 'Sử dụng số khác',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.router.navigate(['/login']);
+                } else {
+                  this.registerForm.get('phone_number')?.reset();
+                }
+              });
+            }
+          } else {
+            Swal.fire({
+              title: 'Đăng ký thất bại!',
+              text: 'Có lỗi xảy ra, vui lòng thử lại.',
+              icon: 'error',
+              confirmButtonText: 'Thử lại',
+            });
+          }
+          return EMPTY;
+        })
+      )
+      .subscribe({
+        next: (response: any) => {
+          Swal.fire({
+            title: 'Đăng ký thành công!',
+            text: 'Bạn sẽ được chuyển hướng để đăng nhập.',
+            icon: 'success',
+            confirmButtonText: 'OK',
+          }).then(() => {
+            this.router.navigate(['/login']);
+          });
+        },
+        error: () => {
+          // Không log lỗi ra console
+        },
       });
-    });
   }
 }
