@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "full_name": "Nguyễn Văn A",
+    "email": "vana@example.com",
+    "phone_number": "+84123456789",
+    "password": "123456",
+    "point": 120,
+    "star": 5,
+    "membership_type": "Gold",
+    "role": "user"
+  }
+]
