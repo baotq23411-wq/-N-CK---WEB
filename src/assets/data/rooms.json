@@ -1,0 +1,98 @@
+[
+  {
+    "roomName": "Tĩnh Tâm",
+    "tags": ["Oasis", "Không gian thiền/yên tĩnh", "Không gian cá nhân", "Không gian riêng tư"],
+    "image": "../../assets/images/tinh_tam.jpg",
+    "range": "1-2 người",
+    "description": "Ấm trà thảo mộc, máy khuếch tán tinh dầu, playlist chữa lành, sổ tay & bút cao cấp, thẻ Oracle, nước detox...",
+    "price": 220000
+  },
+  {
+    "roomName": "Chia Sẻ",
+    "tags": ["Oasis", "Không gian nhóm nhỏ", "Không gian trò chuyện", "Không gian riêng tư"],
+    "image": "../../assets/images/chia_se.jpg",
+    "range": "3-5 người",
+    "description": "Dành cho nhóm nhỏ: thêm bảng trắng, sofa lười, gối ôm và trà cho cả nhóm...",
+    "price": 380000
+  },
+  {
+    "roomName": "Workshop Tĩnh",
+    "tags": ["Oasis", "Không gian nhóm lớn", "Không gian học tập/chia sẻ", "Không gian thiền/yên tĩnh"],
+    "image": "../../assets/images/workshop.jpg",
+    "range": "6-10 người",
+    "description": "Đầy đủ tiện nghi cho buổi workshop nhóm: máy chiếu mini kết nối laptop, loa lớn cho âm thanh sống động, detox tươi mát tiếp năng lượng cả buổi...",
+    "price": 650000
+  },
+  {
+    "roomName": "Thư Giãn",
+    "tags": ["Catharis", "Không gian thiền/yên tĩnh", "Không gian cá nhân", "Không gian thư giãn"],
+    "image": "../../assets/images/catharsis_room_1.jpg",
+    "range": "1-2 người",
+    "description": "Không gian thiền tĩnh: thảm yoga, gối thiền, con lăn thư giãn, tinh dầu lan tỏa, âm nhạc êm dịu – trọn vẹn cho buổi chăm sóc thân – tâm – trí...",
+    "price": 200000
+  },
+  {
+    "roomName": "Cân Bằng",
+    "tags": ["Catharis", "Không gian nhóm nhỏ", "Không gian luyện tập", "Không gian cân bằng năng lượng"],
+    "image": "../../assets/images/can_bang.jpg",
+    "range": "3-5 người",
+    "description": "Set up cho nhóm 5 người: full thảm & gối, cộng thêm dây kháng lực đa cấp độ và bóng yoga – sẵn sàng cho buổi tập hiệu quả...",
+    "price": 360000
+  },
+  {
+    "roomName": "Đồng Điệu",
+    "tags": ["Catharis", "Không gian nhóm lớn", "Không gian kết nối", "Không gian phục hồi năng lượng"],
+    "image": "../../assets/images/dong_dieu.jpg",
+    "range": "6-10 người",
+    "description": "Không gian chuẩn lớp yoga: đủ 10 thảm – 10 gối, bục nhỏ cho hướng dẫn viên, loa lớn hơn, thêm con lăn massage – tạo trải nghiệm kết nối & phục hồi...",
+    "price": 600000
+  },
+  {
+    "roomName": "Sáng Tác",
+    "tags": ["Genii", "Không gian sáng tạo", "Không gian cá nhân", "Không gian yên tĩnh"],
+    "image": "../../assets/images/sang_tac.jpg",
+    "range": "1-2 người",
+    "description": "1 bảng vẽ kỹ thuật số (Wacom/iPad) kèm bút & Procreate, 1 toan 30x30 + bộ màu acrylic & cọ, 1 đàn Ukulele thư giãn,...",
+    "price": 300000
+  },
+  {
+    "roomName": "Nghệ Thuật",
+    "tags": ["Genii", "Không gian nhóm nhỏ", "Không gian sáng tạo", "Không gian nghệ thuật"],
+    "image": "../../assets/images/nghe_thuat.jpg",
+    "range": "3-5 người",
+    "description": "Nâng cấp 3 Toan vẽ + bộ màu lớn hơn, 1 đàn Kalimba (đàn ngón), 1 đàn guitar acoustic, nâng cấp loa công suất lớn hơn...",
+    "price": 520000
+  },
+  {
+    "roomName": "Workshop Sáng Tạo",
+    "tags": ["Genii", "Không gian nhóm lớn", "Không gian sáng tạo", "Không gian học tập/chia sẻ"],
+    "image": "../../assets/images/workshop_sang_tao.jpg",
+    "range": "6-10 người",
+    "description": "Bao gồm tất cả tiện ích, cộng thêm: 1 Keyboard mini (Synthesizer), 1 máy chiếu mini, Nâng cấp 5 Toan vẽ + bộ màu, 1 bảng flip chart...",
+    "price": 650000
+  },
+  {
+    "roomName": "Rage & Game",
+    "tags": ["Mutiny", "Không gian cá nhân", "Không gian giải trí", "Không gian xả stress"],
+    "image": "../../assets/images/rage.jpg",
+    "range": "1-2 người",
+    "description": "1 Dàn PC Gaming cấu hình cao, 1 bảng phi tiêu điện tử,...",
+    "price": 380000
+  },
+  {
+    "roomName": "Chiến Hữu",
+    "tags": ["Mutiny", "Không gian nhóm nhỏ", "Không gian giải trí", "Không gian đồng đội"],
+    "image": "../../assets/images/chien_huu.jpg",
+    "range": "3-5 người",
+    "description": "Nâng cấp 2 Dàn PC Gaming, 2 rổ đồ chơi, 1 bộ cung tên, thêm 1 bảng phi tiêu...",
+    "price": 680000
+  },
+  {
+    "roomName": "Đại Náo",
+    "tags": ["Mutiny", "Không gian nhóm lớn", "Không gian giải trí", "Không gian năng động"],
+    "image": "../../assets/images/dai_nao.jpg",
+    "range": "6-10 người",
+    "description": "Đầy đủ tiện nghi, nâng cấp 4 Dàn PC Gaming, 4 rổ đồ chơi, 1 trạm Kính VR (thực tế ảo) & game...",
+    "price": 1250000
+  }
+]
