@@ -1,12 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { BlogList } from './blog-list/blog-list';
+import BlogListPanacea from './blog-list/blog-list';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, BlogList],
+  standalone: true,
+  imports: [RouterOutlet, BlogListPanacea],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']
 })
 export class App {
   protected readonly title = signal('panacea');
