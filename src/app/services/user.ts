@@ -54,4 +54,11 @@ export class UserService {
     const usersString = localStorage.getItem('USERS');
     return usersString ? JSON.parse(usersString) : [];
   }
+  addPoints(points: number): Observable<any> {
+  // Giả lập thêm điểm - có thể gọi API hoặc chỉ cập nhật local state
+  return new Observable((observer) => {
+    observer.next({ success: true, pointsAdded: points });
+    observer.complete();
+  });
+  }
 }

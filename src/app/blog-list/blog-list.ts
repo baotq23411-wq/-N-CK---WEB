@@ -16,7 +16,7 @@ interface PanaceaArticle {
   templateUrl: './blog-list.html',
   styleUrls: ['./blog-list.css'],
 })
-export default class BlogListPanacea {
+export class BlogList {
   articles: PanaceaArticle[] = [
     {
       image: '/assets/PuLuong.jpg',
