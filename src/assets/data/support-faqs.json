@@ -1,0 +1,42 @@
+[
+  {
+    "question": "Cách đổi lịch vé máy bay của tôi",
+    "answer": "Bạn có thể vào mục Đặt chỗ của tôi, chọn chuyến bay và bấm Đổi lịch theo hướng dẫn.",
+    "category": "Vé máy bay"
+  },
+  {
+    "question": "Đặt chỗ trực tiếp để đảm bảo an toàn",
+    "answer": "Luôn đặt chỗ trực tiếp trên Panacea để nhận hỗ trợ và chính sách hoàn tiền rõ ràng.",
+    "category": "Thông tin chung"
+  },
+  {
+    "question": "Cách huỷ vé và hoàn tiền cho đặt chỗ máy bay",
+    "answer": "Vào chi tiết đặt chỗ, chọn Huỷ/Hoàn tiền và làm theo các bước. Tuỳ điều kiện vé sẽ hiển thị.",
+    "category": "Vé máy bay"
+  },
+  {
+    "question": "Cách sửa hoặc đổi tên hành khách bay",
+    "answer": "Một số hãng cho phép đổi tên có phí. Liên hệ hỗ trợ để được hướng dẫn.",
+    "category": "Vé máy bay"
+  },
+  {
+    "question": "Thanh toán thất bại hoặc bị trừ tiền 2 lần",
+    "answer": "Kiểm tra hạn mức thẻ, đường truyền. Nếu bị trừ 2 lần, gửi yêu cầu để chúng tôi xử lý hoàn tiền.",
+    "category": "Thanh toán"
+  },
+  {
+    "question": "Làm thế nào để đăng nhập an toàn",
+    "answer": "Kích hoạt xác thực 2 lớp, không chia sẻ mã OTP cho người lạ.",
+    "category": "Tài khoản"
+  },
+  {
+    "question": "Không nhận được email xác nhận đặt phòng",
+    "answer": "Kiểm tra hộp thư rác. Nếu vẫn không có, vào mục Đặt phòng để xem trạng thái và gửi yêu cầu.",
+    "category": "Khách sạn"
+  },
+  {
+    "question": "Thông tin bảo hiểm du lịch",
+    "answer": "Bạn có thể mua bảo hiểm khi thanh toán. Điều khoản bảo hiểm hiển thị trước khi xác nhận.",
+    "category": "Bảo hiểm"
+  }
+]

@@ -1,0 +1,278 @@
+<!-- HERO -->
+<section class="support-hero text-white">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 text-center">
+                <h1 class="fw-bold display-5 mb-2">Trung tâm Hỗ trợ Panacea</h1>
+                <p class="opacity-75 mb-4">Mọi câu trả lời dành cho bạn</p>
+
+                <form class="hero-search d-flex align-items-center mx-auto" role="search" (ngSubmit)="onSearchSubmit()"
+                    [attr.aria-label]="'Tìm kiếm câu hỏi'">
+                    <i class="bi bi-search ms-3 me-2" aria-hidden="true"></i>
+                    <input type="search" class="form-control form-control-lg border-0 bg-transparent"
+                        placeholder="Nhập chủ đề ở đây (ví dụ hoàn tiền)" [formControl]="searchControl"
+                        aria-label="Tìm kiếm câu hỏi" />
+                    <button class="btn btn-light btn-lg px-4 search-btn" type="submit" aria-label="Tìm kiếm">
+                        <i class="bi bi-search me-2"></i>Tìm
+                    </button>
+
+                </form>
+
+                <div class="mt-2">
+                    <button type="button" class="btn btn-outline-light btn-sm rounded-pill" *ngIf="selectedCategory"
+                        (click)="clearFilter()" aria-label="Xóa bộ lọc">
+                        Xóa bộ lọc: {{ selectedCategory }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container my-4 my-lg-5">
+    <!-- SECTION 1: HELP -->
+    <section class="mb-4 mb-lg-5">
+        <div class="row g-4">
+            <!-- Left: Popular topics -->
+            <div class="col-12 col-lg-7">
+                <h2 class="h4 fw-bold mb-3">Chủ đề phổ biến</h2>
+                <div class="list-group list-group-flush bg-white rounded-4 shadow-sm overflow-hidden">
+                    <div class="p-3 text-muted small" *ngIf="!popularTopics.length">Không tìm thấy kết quả.</div>
+                </div>
+
+                <!-- Inline Accordion for details -->
+                <div class="accordion mt-3" id="faqInline">
+                    <div class="accordion-item rounded-3 mb-2" *ngFor="let item of filteredFaqs; index as i">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" [attr.aria-expanded]="isFaqOpen(i)"
+                                [attr.aria-controls]="'faq-body-' + i" (click)="toggleFaq(i)"
+                                (keydown.enter)="toggleFaq(i)" (keydown.space)="toggleFaq(i)">
+                                {{ item.question }}
+                            </button>
+                        </h2>
+                        <div [id]="'faq-body-' + i" class="accordion-collapse" [class.collapse]="true"
+                            [class.show]="isFaqOpen(i)">
+                            <div class="accordion-body">
+                                {{ item.answer }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right: Product categories -->
+            <div class="col-12 col-lg-5">
+                <h2 class="h4 fw-bold mb-3">Phân loại theo sản phẩm</h2>
+                <div class="row g-3">
+                    <div class="col-6 col-sm-4" *ngFor="let c of productCategories">
+                        <button type="button" class="category-tile w-100 text-center p-3 rounded-4"
+                            [class.active]="selectedCategory === c.key" (click)="selectCategory(c.key)"
+                            (keydown.enter)="selectCategory(c.key)" (keydown.space)="selectCategory(c.key)"
+                            [attr.aria-pressed]="selectedCategory === c.key" [attr.aria-label]="c.label">
+                            <div class="circle-icon mb-2">
+                                <i [class]="c.icon" aria-hidden="true"></i>
+                            </div>
+                            <div class="small fw-semibold">{{ c.label }}</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: CONTACT -->
+    <section class="mb-4 mb-lg-5">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-3 p-lg-4">
+                <div class="row g-4 align-items-center">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
+                        <div class="qr-lg rounded-4 p-3">
+                            <img alt="QR" width="160" height="160" src="data:image/svg+xml;utf8,
+                <svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'>
+                  <rect width='160' height='160' rx='12' fill='%23f1f5ff'/>
+                  <text x='50%' y='55%' font-size='24' text-anchor='middle' fill='%23477bff'>QR</text>
+                </svg>" />
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <h3 class="h5 fw-bold mb-2">Liên Hệ Chúng Tôi</h3>
+                        <div class="text-muted mb-2">Giờ hoạt động: 8:00 - 20:00 (Thứ 2 - Chủ nhật)</div>
+                        <div class="mb-3">
+                            <span class="me-3"><i class="bi bi-telephone text-primary"></i> <a
+                                    href="tel:+84123456789">+84 123 456
+                                    789</a></span>
+                            <span class="me-3"><i class="bi bi-envelope text-primary"></i> <a
+                                    href="mailto:support@panacea.vn">support@panacea.vn</a></span>
+                            <span><i class="bi bi-chat-dots text-primary"></i> Hỗ trợ chat trực tuyến</span>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-outline-primary" type="button" (click)="gotoLogin()"
+                                aria-label="Đăng ký">Đăng
+                                ký</button>
+                            <button class="btn btn-primary" type="button" (click)="gotoLogin()"
+                                aria-label="Đăng nhập">Đăng
+                                nhập</button>
+                            <button class="btn btn-light ms-auto" type="button" aria-label="Xem số điện thoại">
+                                Xem số điện thoại
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: SUBMIT FORM -->
+    <section class="mb-4 mb-lg-5">
+        <div class="row g-4">
+            <div class="col-12 col-lg-6 order-2 order-lg-1">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-3 p-lg-4">
+                        <h3 class="h5 fw-bold mb-3">Gửi yêu cầu hỗ trợ</h3>
+
+                        <div *ngIf="submitSuccess" class="alert alert-success" role="alert">
+                            Gửi yêu cầu thành công! Chúng tôi sẽ liên hệ sớm nhất.
+                        </div>
+
+                        <div class="alert alert-info d-flex align-items-center" role="alert" *ngIf="isLoggedIn">
+                            <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+                            <div>Đăng nhập để nhận hỗ trợ nhanh hơn. <button class="btn btn-link p-0 ms-1"
+                                    (click)="gotoLogin()">Đăng
+                                    nhập</button></div>
+                        </div>
+
+                        <form *ngIf="supportForm" [formGroup]="supportForm" (ngSubmit)="submit()" novalidate>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="name" class="form-label">Họ tên</label>
+                                    <input id="name" type="text" class="form-control" formControlName="name"
+                                        aria-label="Họ tên"
+                                        [class.is-invalid]="supportForm.get('name')?.touched && supportForm.get('name')?.invalid" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="supportForm.get('name')?.touched && supportForm.get('name')?.errors?.['required']">
+                                        Vui lòng nhập họ tên.
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input id="email" type="email" class="form-control" formControlName="email"
+                                        aria-label="Email"
+                                        [class.is-invalid]="supportForm.get('email')?.touched && supportForm.get('email')?.invalid" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="supportForm.get('email')?.touched && supportForm.get('email')?.errors?.['required']">
+                                        Vui lòng nhập email.
+                                    </div>
+                                    <div class="invalid-feedback"
+                                        *ngIf="supportForm.get('email')?.touched && supportForm.get('email')?.errors?.['email']">
+                                        Email không hợp lệ.
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="category" class="form-label">Danh mục</label>
+                                    <select id="category" class="form-select" formControlName="category"
+                                        aria-label="Danh mục"
+                                        [class.is-invalid]="supportForm.get('category')?.touched && supportForm.get('category')?.invalid">
+                                        <option value="" disabled>-- Chọn danh mục --</option>
+                                        <option>Đặt phòng</option>
+                                        <option>Thanh toán</option>
+                                        <option>Kỹ thuật</option>
+                                        <option>Khác</option>
+                                    </select>
+                                    <div class="invalid-feedback"
+                                        *ngIf="supportForm.get('category')?.touched && supportForm.get('category')?.errors?.['required']">
+                                        Vui lòng chọn danh mục.
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label for="subject" class="form-label">Tiêu đề</label>
+                                    <input id="subject" type="text" class="form-control" formControlName="subject"
+                                        aria-label="Tiêu đề"
+                                        [class.is-invalid]="supportForm.get('subject')?.touched && supportForm.get('subject')?.invalid" />
+                                    <div class="invalid-feedback"
+                                        *ngIf="supportForm.get('subject')?.touched && supportForm.get('subject')?.errors?.['required']">
+                                        Vui lòng nhập tiêu đề.
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="message" class="form-label">Nội dung</label>
+                                    <textarea id="message" rows="4" class="form-control" formControlName="message"
+                                        aria-label="Nội dung"
+                                        [class.is-invalid]="supportForm.get('message')?.touched && supportForm.get('message')?.invalid"></textarea>
+                                    <div class="invalid-feedback"
+                                        *ngIf="supportForm.get('message')?.touched && supportForm.get('message')?.errors?.['required']">
+                                        Vui lòng nhập nội dung.
+                                    </div>
+                                    <div class="invalid-feedback"
+                                        *ngIf="supportForm.get('message')?.touched && supportForm.get('message')?.errors?.['minlength']">
+                                        Nội dung tối thiểu 10 ký tự.
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="attachment" class="form-label">Tệp đính kèm (tuỳ chọn)</label>
+                                    <input id="attachment" type="file" class="form-control"
+                                        (change)="onFileChange($event)" aria-label="Tệp đính kèm" />
+                                </div>
+
+                                <div class="col-12 d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary" [disabled]="submitting"
+                                        aria-label="Gửi yêu cầu hỗ trợ">
+                                        <span *ngIf="!submitting">Gửi yêu cầu</span>
+                                        <span *ngIf="submitting" class="spinner-border spinner-border-sm"
+                                            aria-hidden="true"></span>
+                                        <span *ngIf="submitting" class="ms-2">Đang gửi...</span>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" (click)="resetForm()"
+                                        aria-label="Xóa nội dung">Reset</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tickets (admin/demo) -->
+            <div class="col-12 col-lg-6 order-1 order-lg-2">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
+                    <div class="card-body p-3 p-lg-4">
+                        <h3 class="h5 fw-bold mb-3">Danh sách yêu cầu</h3>
+                        <div *ngIf="!showTickets" class="text-muted small">Đăng nhập với quyền admin/demo để xem danh
+                            sách.</div>
+                        <div *ngIf="showTickets" class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Tiêu đề</th>
+                                        <th scope="col">Trạng thái</th>
+                                        <th scope="col">Ngày tạo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let t of tickets">
+                                        <td class="text-nowrap">{{ t.id }}</td>
+                                        <td>{{ t.subject }}</td>
+                                        <td>
+                                            <span class="badge" [ngClass]="{
+                        'bg-secondary': t.status === 'Open',
+                        'bg-warning text-dark': t.status === 'In Progress',
+                        'bg-success': t.status === 'Closed'
+                      }">{{ t.status }}</span>
+                                        </td>
+                                        <td class="text-nowrap">{{ t.createdAt | date: 'short' }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div *ngIf="!tickets?.length" class="text-muted small">Chưa có yêu cầu nào.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
