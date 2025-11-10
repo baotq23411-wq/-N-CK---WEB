@@ -1,10 +1,20 @@
 export interface User {
-  id: number;
-  full_name: string;
+  user_id: string;
   email: string;
   phone_number: string;
-  password: string;             // dấu ?: Optional
-  point?: number;              // Điểm tích lũy
-  star?: number;               // Số sao (để xếp hạng thành viên)
-  role?: string; 
+  full_name: string;
+  gender: 'male' | 'female' | 'other' | '';
+  birthdate: string;
+  city: string;
+
+  coin: number;
+  star: number;
+
+  password: string;
+  two_factor_enabled: boolean;
+  account_status: 'active' | 'inactive' | 'deleted';
+
+  last_login?: string;
+  created_at?: string;
+  role?: 'user' | 'admin';
 }

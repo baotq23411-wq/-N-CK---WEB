@@ -84,7 +84,7 @@ export class RegisterPageComponent implements OnInit {
   formatPhoneNumber() {
     let phoneControl = this.registerForm.get('phone_number');
     if (!phoneControl) return;
-    let phoneValue = phoneControl.value;
+    let phoneValue = phoneControl.value || '';
     phoneValue = phoneValue.replace(/[^0-9+]/g, '');
     if (phoneValue.startsWith('0') && phoneValue.length === 10) {
       phoneValue = '+84' + phoneValue.substring(1);
@@ -112,8 +112,7 @@ export class RegisterPageComponent implements OnInit {
       return;
     }
     const formData = this.registerForm.value;
-    const payload = {
-      id: 1,
+    const payload: Partial<any> = {
       full_name: formData.full_name,
       email: formData.email,
       phone_number: formData.phone_number,

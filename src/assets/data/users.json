@@ -1,12 +1,19 @@
 [
   {
-    "id": 1,
-    "full_name": "Nguyễn Văn A",
+    "user_id": "US01",
     "email": "vana@example.com",
     "phone_number": "+84123456789",
+    "full_name": "Nguyễn Văn A",
+    "gender": "male",
+    "birthdate": "1990-01-01",
+    "city": "Hà Nội",
+    "coin": 120,
+    "star": 58,
     "password": "123456",
-    "point": 120,
-    "star": 5,
+    "two_factor_enabled": false,
+    "account_status": "active",
+    "last_login": "",
+    "created_at": "",
     "role": "user"
   }
 ]

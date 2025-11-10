@@ -1,0 +1,315 @@
+/* Layout */
+.acc-point-wrapper {
+    background-color: #f8faff;
+    min-height: 100vh;
+}
+
+.acc-point-card {
+    background: white;
+    border-radius: 1rem;
+    border: 1.5px solid #132fba;
+    overflow: hidden;
+}
+
+/* Header */
+.banner-img {
+    width: 100%;
+    max-height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+/* Summary Section */
+.summary {
+    background: linear-gradient(135deg, #f0f4ff, #ffffff);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.summary-item {
+    flex: 1 1 30%;
+    margin: 0.5rem;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.summary-icon {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+}
+
+/* Benefit Section */
+.benefit-item {
+    background: #f8f9ff;
+    border: 1px solid #d0d8ff;
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.benefit-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(19, 47, 186, 0.15);
+}
+
+.benefit-icon {
+    width: 50px;
+    height: 50px;
+}
+
+/* ==== POINT INFO CARDS ==== */
+.info-card {
+    border-radius: 20px;
+    padding: 1.8rem;
+    color: white;
+    height: 100%;
+    box-shadow: 0 8px 16px rgba(19, 47, 186, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Gradient cho ô Xu Panacea */
+.gradient-blue {
+    background: linear-gradient(180deg, #799CF0, #132fba);
+}
+
+/* Màu sáng hơn cho ô Learn How */
+.light-blue {
+    background: linear-gradient(180deg, #1255f0, #799CF0);
+}
+
+/* Hiệu ứng nền gợn sóng giả */
+.info-card::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 160px;
+    height: 80px;
+    background: url('https://example.com/fake-wave.png') no-repeat;
+    background-size: contain;
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+/* ==== HISTORY SECTION ==== */
+.history-section {
+    background: #f8faff;
+    border-radius: 12px;
+    border: 1px solid #dee2f7;
+    padding: 1.5rem;
+    box-shadow: 0 4px 10px rgba(19, 47, 186, 0.08);
+}
+
+.table thead th {
+    background-color: #132fba !important;
+    color: white;
+    font-weight: 600;
+}
+
+.table tbody tr:hover {
+    background-color: #f3f7ff;
+    transition: background 0.2s ease;
+}
+
+.badge {
+    font-size: 0.85rem;
+}
+
+.text-blue {
+    color: #132fba;
+}
+
+.text-yellow {
+    color: #f7da1d;
+}
+
+.icon-blue {
+    color: #132fba;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+    .table thead {
+        display: none;
+    }
+
+    .table tbody tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 0.8rem;
+    }
+
+    .table tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.3rem 0;
+    }
+
+    .table tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #132fba;
+    }
+}
+
+/* Responsive summary cards */
+@media (max-width: 992px) {
+    .summary-item {
+        flex: 1 1 45%;
+    }
+}
+
+@media (max-width: 768px) {
+    .summary-item {
+        flex: 1 1 100%;
+    }
+}
+
+/* ===== MODAL LAYOUT ===== */
+.pnx-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+    z-index: 1050;
+}
+
+.pnx-modal-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1060;
+    width: 90%;
+    max-width: 600px;
+    background: transparent;
+}
+
+.pnx-modal-content {
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* Header */
+.pnx-modal-header {
+    background: linear-gradient(135deg, #132fba, #ffe74b);
+    color: white;
+    padding: 1rem 1.5rem;
+}
+
+.btn-close-white {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+}
+
+/* Body & Footer */
+.pnx-modal-body {
+    padding: 1.5rem;
+}
+
+.pnx-modal-footer {
+    border-top: 1px solid #dee2f7;
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+}
+
+/* ===== Panacea Modal Buttons (scoped) ===== */
+.pnx-modal-footer .btn {
+    border-radius: 999px;
+    /* pill shape */
+    padding: 0.55rem 1.25rem;
+    font-weight: 600;
+    transition: background-color .2s ease, color .2s ease,
+        border-color .2s ease, box-shadow .2s ease, transform .06s ease;
+}
+
+/* Solid primary */
+.pnx-modal-footer .btn-primary {
+    background-color: #132FBA;
+    /* chủ đạo */
+    border-color: #132FBA;
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(19, 47, 186, 0.18);
+}
+
+.pnx-modal-footer .btn-primary:hover {
+    background-color: #0f25a1;
+    /* hơi tối khi hover */
+    border-color: #0f25a1;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(19, 47, 186, 0.24);
+}
+
+.pnx-modal-footer .btn-primary:active {
+    background-color: #0c1e86;
+    border-color: #0c1e86;
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(19, 47, 186, 0.18) inset;
+}
+
+.pnx-modal-footer .btn-primary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 .25rem rgba(19, 47, 186, 0.3);
+}
+
+/* Outline (ghost) primary */
+.pnx-modal-footer .btn-outline-primary {
+    background-color: #ffffff;
+    color: #132FBA;
+    border-color: #132FBA;
+    box-shadow: 0 4px 12px rgba(19, 47, 186, 0.10);
+}
+
+.pnx-modal-footer .btn-outline-primary:hover {
+    background-color: #132FBA;
+    /* hover lật ngược: nền xanh, chữ trắng */
+    color: #ffffff;
+    border-color: #132FBA;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(19, 47, 186, 0.18);
+}
+
+.pnx-modal-footer .btn-outline-primary:active {
+    background-color: #0f25a1;
+    border-color: #0f25a1;
+    color: #ffffff;
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(19, 47, 186, 0.16) inset;
+}
+
+.pnx-modal-footer .btn-outline-primary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 .25rem rgba(19, 47, 186, 0.25);
+}
+
+/* Disabled state sync */
+.pnx-modal-footer .btn:disabled,
+.pnx-modal-footer .btn.disabled {
+    opacity: .7;
+    box-shadow: none;
+    transform: none;
+    cursor: not-allowed;
+}
+
+/* ===== MODAL HISTORY DETAIL ===== */
+.pnx-modal-body ul li {
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+}
+
+.pnx-modal-body strong {
+    color: #132fba;
+}
+
+.pnx-modal-body .border {
+    border-color: #dee2f7 !important;
+}

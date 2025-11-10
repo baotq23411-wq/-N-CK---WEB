@@ -1,20 +1,29 @@
 import { Routes } from '@angular/router';
-import { RegisterPageComponent } from './register-page/register-page';
 import { LoginPageComponent } from './login-page/login-page';
-import { UserToolbarComponent } from './user-toolbar/user-toolbar';
-import { AccPointComponent } from './account-point/account-point';
-import { BookingHistory } from './booking-history/booking-history';
-import { AccountInformation } from './account-information/account-information';
-import { AccountEdit } from './account-edit/account-edit';
+import { RegisterPageComponent } from './register-page/register-page';
+import { CustomerAccountComponent } from './customer-account/customer-account';
+import { AccountInformationComponent } from './account-information/account-information';
+import { PasswordSecurityComponent } from './password-security/password-security';
+import { CustomerCoinComponent } from './customer-coin/customer-coin';
+import { CustomerStarComponent } from './customer-star/customer-star';
+import { BookingHistoryComponent } from './booking-history/booking-history';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent },
-  { path: 'user-toolbar', component: UserToolbarComponent },
-  { path: 'account-point', component: AccPointComponent },
-  { path: 'account-booking-history', component: BookingHistory },
-  { path: 'account-information', component: AccountInformation },
-  { path: 'account-edit', component: AccountEdit }
+  {
+    path: 'customer-account',
+    component: CustomerAccountComponent,
+    children: [
+      { path: 'account-information', component: AccountInformationComponent },
+      { path: 'password-security', component: PasswordSecurityComponent },
+      { path: '', redirectTo: 'account-information', pathMatch: 'full' },
+    ],
+  },
+  { path: 'customer-coin', component: CustomerCoinComponent },
+  { path: 'customer-star', component: CustomerStarComponent },
+  { path: 'booking-history', component: BookingHistoryComponent },
 
+  { path: '**', redirectTo: '/login' },
 ];

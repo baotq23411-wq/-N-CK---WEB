@@ -1,0 +1,12 @@
+/* Layout */
+.acc-point-wrapper {
+    background-color: #f8faff;
+    min-height: 100vh;
+}
+
+.acc-point-card {
+    background: white;
+    border-radius: 1rem;
+    border: 1.5px solid #132fba;
+    overflow: hidden;
+}

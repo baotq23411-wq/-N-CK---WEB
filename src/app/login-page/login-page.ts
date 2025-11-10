@@ -1,28 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { AuthService } from '../services/auth';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
 import { catchError, EMPTY } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 export function emailOrPhoneValidator(control: AbstractControl): ValidationErrors | null {
-  const value: string = control.value?.trim();
+  const value: string = (control.value || '').toString().trim();
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^(\+?\d{1,3}[-\s]?)?(\d{10,15})$/;
+  const phoneRegex = /^\+?\d{6,15}$/; // hỗ trợ +84... hoặc số thuần đã chuẩn hóa
+  if (!value) return { required: true };
   return emailRegex.test(value) || phoneRegex.test(value) ? null : { emailOrPhone: true };
 }
 
 @Component({
   selector: 'app-login-page',
+  imports: [CommonModule, FormsModule, ReactiveFormsModule], // <-- thêm ReactiveFormsModule
   templateUrl: './login-page.html',
   styleUrls: ['./login-page.css'],
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule]
 })
 export class LoginPageComponent implements OnInit {
   loginForm!: FormGroup;
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
@@ -41,36 +41,33 @@ export class LoginPageComponent implements OnInit {
     const control = this.loginForm.get('emailOrPhone');
     if (!control) return;
 
-    let value = control.value;
-
-    // Nếu người dùng nhập toàn số hoặc bắt đầu bằng 0/+, giả định là số điện thoại
-    const isPhone = /^(\+?\d{0,15}|\d{0,15})$/.test(value);
-
-    if (isPhone) {
-      // Chỉ định dạng khi là số
+    let value = control.value || '';
+    // Nếu là chuỗi số, chuẩn hóa thành E.164 (+84...) để match data
+    const isPhoneTyping = /^(\+?\d{0,15}|\d{0,15})$/.test(value);
+    if (isPhoneTyping) {
       value = value.replace(/[^0-9+]/g, '');
-
       if (value.startsWith('0') && value.length === 10) {
         value = '+84' + value.substring(1);
       }
-
       control.setValue(value, { emitEvent: false });
     }
   }
-
 
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
+    const { emailOrPhone, password } = this.loginForm.value;
 
-    this.authService.login(this.loginForm.value).pipe(
-      catchError((error) => {
-        if (error.message === 'Sai mật khẩu') {
+    this.isLoading = true;
+    this.authService.login(emailOrPhone, password).pipe(
+      catchError((err) => {
+        this.isLoading = false;
+        if (err?.message === 'wrong_password') {
           Swal.fire('Đăng nhập thất bại!', 'Mật khẩu không đúng.', 'error');
           this.loginForm.get('password')?.reset();
-        } else if (error.message === 'Email/Số điện thoại chưa đăng ký') {
+        } else if (err?.message === 'not_registered') {
           Swal.fire({
             title: 'Tài khoản chưa được đăng ký!',
             text: 'Bạn muốn đăng ký ngay?',
@@ -78,8 +75,8 @@ export class LoginPageComponent implements OnInit {
             showCancelButton: true,
             confirmButtonText: 'Đăng ký',
             cancelButtonText: 'Hủy'
-          }).then((result) => {
-            if (result.isConfirmed) this.router.navigate(['/register']);
+          }).then((r) => {
+            if (r.isConfirmed) this.router.navigate(['/register']);
           });
         } else {
           Swal.fire('Lỗi', 'Có lỗi xảy ra. Vui lòng thử lại.', 'error');
@@ -87,8 +84,9 @@ export class LoginPageComponent implements OnInit {
         return EMPTY;
       })
     ).subscribe(() => {
+      this.isLoading = false;
       Swal.fire('Thành công', 'Đăng nhập thành công!', 'success').then(() => {
-        this.router.navigate(['/user-toolbar']); // hoặc về trang dashboard
+        this.router.navigate(['/customer-account']);
       });
     });
   }
