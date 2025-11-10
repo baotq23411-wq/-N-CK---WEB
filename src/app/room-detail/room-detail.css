@@ -8,13 +8,50 @@
 .room-tabs {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 2rem;
   border-bottom: 1px solid #ddd;
   background: white;
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 2rem;
+}
+
+/* 🟩 ADDED: Nút quay lại (icon trong hình tròn) */
+.room-tabs .back-button {
+  position: absolute;
+  left: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #132fba;
+  background-color: #fff;
+  color: #132fba;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(19, 47, 186, 0.15);
+}
+
+.room-tabs .back-button:hover {
+  background-color: #132fba;
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(19, 47, 186, 0.3);
+}
+
+.room-tabs .back-button:active {
+  transform: scale(0.95);
+}
+
+.room-tabs .back-button i {
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .room-tabs .tab {
@@ -701,19 +738,22 @@
   transform: translateY(-2px);
 }
 
-.service-item input[type="checkbox"] {
+.service-item input[type="checkbox"],
+.service-item .form-check-input {
   margin-top: 6px;
   accent-color: #132fba;
   width: 18px;
   height: 18px;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .service-content {
   flex: 1;
 }
 
-.service-content h4 {
+.service-content h4,
+.service-content .fw-semibold {
   margin: 0;
   color: #001a41;
   font-size: 1rem;
@@ -730,11 +770,12 @@
 .service-right {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Giúp giá + nút nằm chính giữa */
-  justify-content: center;
+  align-items: flex-end;
+  justify-content: flex-start;
   gap: 0.5rem;
-  min-width: 130px;
-  text-align: center;
+  min-width: 140px;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .service-price {

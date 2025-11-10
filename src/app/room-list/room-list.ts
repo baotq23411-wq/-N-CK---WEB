@@ -75,10 +75,15 @@ get visibleSpaceTags(): string[] {
 
 
   ngOnInit() {
+    // 🟩 ADDED: Scroll to top khi vào trang
+    window.scrollTo(0, 0);
+    
     this.http.get<any[]>('assets/data/rooms.json').subscribe(data => {
       this.rawPackages = data;
       this.originalPackages = [...data];
       this.flattenPackages();
+      // 🟩 ADDED: Scroll to top sau khi load dữ liệu (đảm bảo scroll hoạt động)
+      setTimeout(() => window.scrollTo(0, 0), 100);
     });
   }
 

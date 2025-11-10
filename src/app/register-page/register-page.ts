@@ -51,6 +51,9 @@ export class RegisterPageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // 🟩 ADDED: Scroll to top khi vào trang
+    window.scrollTo(0, 0);
+    
     this.registerForm = this.fb.group(
       {
         full_name: [
