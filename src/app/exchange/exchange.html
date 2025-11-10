@@ -1,0 +1,51 @@
+<div class="page">
+  <!-- 🔹 Tiêu đề chính -->
+  <h1>🎁 Đổi điểm nhận quà</h1>
+  <p class="intro">
+    Sử dụng điểm của bạn để đổi voucher hoặc vật phẩm hấp dẫn!
+  </p>
+
+  <!-- 🔹 Điểm hiện tại -->
+  <div class="card-block" style="text-align: center; margin-bottom: 30px;">
+    <h3>
+      Số điểm hiện có:
+      <span style="color:#0f89f3; font-weight:700;">{{ userPoints | number }}</span> 💎
+    </h3>
+  </div>
+
+  <!-- 🔹 Khu vực voucher -->
+  <h2 class="section-title">🎟️ Danh sách Voucher</h2>
+  <div class="voucher-grid">
+    <div class="voucher-card" *ngFor="let v of vouchers">
+      <img [src]="v.img" alt="Voucher" class="voucher-img" />
+      <div class="voucher-body text-center">
+        <h4 class="card-title">{{ v.type }}</h4>
+        <p>Cần: <b>{{ v.pointsRequired | number }}</b> điểm</p>
+        <button class="btn" (click)="redeemVoucher(v)">
+          <i class="bi bi-ticket-perforated"></i> Đổi ngay
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 Khu vực vật phẩm -->
+  <h2 class="section-title">🎁 Danh sách Vật phẩm</h2>
+  <div class="item-grid">
+    <div class="item-card" *ngFor="let i of items">
+      <img [src]="i.img" alt="Item" />
+      <div class="item-info text-center">
+        <h4 class="card-title">{{ i.name }}</h4>
+        <p>Cần: <b>{{ i.pointsRequired | number }}</b> điểm</p>
+        <button class="btn" (click)="redeemItem(i)">
+          <i class="bi bi-box-seam"></i> Đổi ngay
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 Footer -->
+  <div style="text-align:center; margin-top:40px; color:#777; font-size:14px;">
+    <p>✨ Lưu ý: Điểm sau khi đổi sẽ không thể hoàn lại.</p>
+    <p>© 2025 Đổi quà thành viên | Giao diện cảm hứng từ Traveloka</p>
+  </div>
+</div>

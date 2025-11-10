@@ -1,0 +1,126 @@
+[
+  {
+  "id": "BK001",
+  "roomId": "R001",
+  "room": {
+    "id": "R001",
+    "name": "Phòng Chơi Bí Ẩn",
+    "capacity": "4 - 6 người",
+    "pricePerHour": 350000
+  },
+  "range": "2-6 người",
+  "services": [
+    {
+      "id": "S001",
+      "name": "Đồ uống miễn phí",
+      "price": 50000
+    },
+    {
+      "id": "S002",
+      "name": "Trang phục hóa trang",
+      "price": 80000
+    }
+  ],
+  "startTime": "12:00 10/11/2025",
+  "endTime": "15:00 10/11/2025",
+  "checkInTime": "",
+  "checkOutTime": "",
+  "voucherCode": "WELCOME",
+  "discountValue": 50000,
+  "totalPrice": 430000,
+  "status": "pending",
+  "customerName": "Nguyễn Văn A",
+  "customerPhone": "0905123456",
+  "customerEmail": "nguyenvana@example.com",
+  "rewardPointsEarned": 430
+},
+  {
+    "id": "BK002",
+    "roomId": "R001",
+    "room": {
+      "id": "R001",
+      "name": "Phòng Chơi Bí Ẩn",
+      "capacity": "4 -6 người",
+      "pricePerHour": 350000
+    },
+    "range": "2-6 người",
+    "services": [
+      {
+        "id": "S001",
+        "name": "Đồ uống miễn phí",
+        "price": 50000
+      },
+      {
+        "id": "S002",
+        "name": "Trang phục hóa trang",
+        "price": 80000
+      }
+    ],
+    "startTime": "12:00 10/11/2025",
+    "endTime": "15:00 10/11/2025",
+    "checkInTime": "",
+    "checkOutTime": "",
+    "voucherCode":null,
+    "discountValue": null,
+    "totalPrice": 480000,
+    "status": "pending",
+    "customerName": "Nguyễn Văn A",
+    "customerPhone": "0905123456",
+    "customerEmail": "nguyenvana@example.com",
+    "rewardPointsEarned": 480
+  },
+  {
+    "id": "BK003",
+    "roomId": "R003",
+    "room": {
+      "id": "R003",
+      "name": "Phòng Kỳ Ảo Phép Thuật",
+      "capacity": 8,
+      "pricePerHour": 400000
+    },
+    "range": "6-8 người",
+    "services": [],
+    "startTime": "09:00 09/11/2025",
+    "endTime": "11:00 09/11/2025",
+    "checkInTime": "",
+    "checkOutTime": "",
+    "voucherCode": "MAGIC10",
+    "discountValue": 100000,
+    "totalPrice": 700000,
+    "status": "completed",
+    "customerName": "Phạm Quốc C",
+    "customerPhone": "0911122233",
+    "customerEmail": "phamquocc@example.com",
+    "rewardPointsEarned": 50
+  },
+  {
+    "id": "BK004",
+    "roomId": "R004",
+    "room": {
+      "id": "R004",
+      "name": "Phòng Phiêu Lưu Thoát Hiểm",
+      "capacity": 5,
+      "pricePerHour": 300000
+    },
+    "range": "4-5 người",
+    "services": [
+      {
+        "id": "S004",
+        "name": "Hướng dẫn viên riêng",
+        "price": 120000
+      }
+    ],
+    "startTime": "16:00 08/11/2025",
+    "endTime": "18:00 08/11/2025",
+    "checkInTime": "",
+    "checkOutTime": "",
+    "voucherCode": null,
+    "discountValue": 0,
+    "totalPrice": 720000,
+    "status": "cancelled",
+    "customerName": "Lê Hoàng D",
+    "customerPhone": "0977333444",
+    "customerEmail": "lehoangd@example.com",
+    "rewardPointsEarned": 0
+  }
+]

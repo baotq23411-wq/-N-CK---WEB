@@ -1,1 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
+/* Bootstrap Icons - import from node_modules
+	 Using a relative path so the Angular builder can include the CSS. */
+@import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
+
+/* Small helper for icon buttons */
+.icon-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	border-radius: 6px;
+}
+
+.redeem-code {
+	font-family: monospace;
+	background: #f8f9fa;
+	padding: 6px 10px;
+	border-radius: 6px;
+	border: 1px dashed #ddd;
+}

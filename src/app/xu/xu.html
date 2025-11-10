@@ -1,0 +1,85 @@
+<div class="bg" id="bg">
+  <div class="content">
+    <!-- HEADER -->
+    <section class="header">
+      <h1>Thư giãn thả ga, nhận thưởng bao la!</h1>
+      <p>Hãy tìm hiểu tất cả về Xu Panacea và cách kiếm Xu</p>
+    </section>
+
+    <!-- XU CƠ BẢN -->
+    <section class="card-section">
+      <div class="info-card">
+        <div class="icon">
+          <img src="../assets/image/6.png" alt="Wallet Icon" />
+        </div>
+        <div class="text">
+          <h2>Xu Cơ Bản</h2>
+          <p class="mt-3">
+            Kiếm Xu Cơ Bản thông qua mã hoàn xu, chuyển đổi xu thưởng chưa sử dụng từ các ứng dụng khác và nhiều cách khác.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIẾT KIỆM HƠN -->
+    <section class="save-more">
+      <h2>Tiết Kiệm Hơn Cho Chuyến Thư Giãn với Xu Panacea</h2>
+      <p>
+        Từ việc giảm giá trực tiếp cho các trải nghiệm thư giãn của bạn, ưu đãi đặc biệt từ các đối tác đa dạng, cho đến khuyến mãi hấp dẫn cho các phòng giải trí và hoạt động yêu thích trên Panacea.
+      </p>
+    </section>
+
+    <!-- TRẢI NGHIỆM BẰNG XU -->
+    <section class="travel-box">
+      <div class="travel-left">
+        <h3>Trải nghiệm bằng Xu</h3>
+        <p>
+          Bây giờ bạn có thể sử dụng Xu để giảm giá trực tiếp cho đặt phòng bằng cách đổi nó trên Trang
+          Thanh toán. Tiện lợi và dễ dàng.
+        </p>
+        <p class="exchange-text">Có thể đổi lấy Ưu đãi cho các sản phẩm sau:</p>
+        <div class="icons">
+          <div>✈️ Vé máy bay</div>
+          <div>🏨 Khách sạn</div>
+          <div>🎫 Combo tiết kiệm</div>
+          <div>🚌 Bus & Shuttle</div>
+          <div>🎢 Xperience</div>
+        </div>
+      </div>
+
+      <div class="travel-right">
+        <img
+          src="https://res.cloudinary.com/dxjzlh1hm/image/upload/v1730650601/traveloka-payment.png"
+          alt="Payment UI"
+        />
+      </div>
+    </section>
+
+    <!-- BUTTON -->
+    <div class="btn-container">
+      <button class="priority-btn">Bắt đầu hành trình Priority ngay hôm nay</button>
+    </div>
+
+    <!-- FAQ -->
+    <section class="faq-section">
+      <h2>Các Câu Hỏi Thường Gặp</h2>
+      <div class="faq-box">
+        <details *ngFor="let faq of faqList">
+          <summary>{{ faq.question }}</summary>
+          <p style="margin: 3px 0">{{ faq.answer }}</p>
+        </details>
+      </div>
+      <p class="help-link">
+        Có câu hỏi khác? <a href="#">Hãy truy cập Trung Tâm Trợ Giúp</a> để biết thêm thông tin.
+      </p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>
+        Khám phá các quy tắc cơ bản bằng cách đọc các <a href="#">điều khoản và điều kiện</a>.
+        Sẵn sàng bắt đầu cuộc hành trình của bạn với nhau chưa nào?
+      </p>
+    </footer>
+  </div>
+</div>
