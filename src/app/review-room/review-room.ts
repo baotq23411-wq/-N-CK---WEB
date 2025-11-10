@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import {
@@ -9,27 +9,91 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { ReviewService } from '../services/review';
 import { UserService } from '../services/user';
 import { AuthService } from '../services/auth';
 import { ReviewListItem } from '../models/review';
 
+// Booking interface
+export interface Booking {
+  id: string;
+  hotelName: string;
+  roomName: string;
+  dateFrom: string; // ISO date string
+  dateTo: string; // ISO date string
+  thumbnail: string;
+  bookingRef: string;
+}
+
 @Component({
   selector: 'app-review-room',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './review-room.html',
   styleUrls: ['./review-room.css'],
 })
-export class ReviewRoom implements OnInit {
+export class ReviewRoom implements OnInit, OnDestroy {
   reviewForm!: FormGroup;
   selectedFiles: File[] = [];
   imagePreviews: string[] = [];
   recentReviews: ReviewListItem[] = [];
   isLoading = false;
   isSubmitting = false;
+
+  // Booking selector properties
+  bookings: Booking[] = [
+    {
+      id: 'BK001',
+      hotelName: '🌿 Catharsis - Vườn An Nhiên',
+      roomName: 'Phòng Yoga & Thiền Định',
+      dateFrom: '2024-11-10T14:00:00.000Z',
+      dateTo: '2024-11-10T16:00:00.000Z',
+      thumbnail: '/assets/images/catharsis_room_1.jpg',
+      bookingRef: 'CAT-2024-001'
+    },
+    {
+      id: 'BK002',
+      hotelName: '💧 Oasis - Vườn Tâm Hồn',
+      roomName: 'Phòng Tư Vấn Tâm Lý',
+      dateFrom: '2024-11-08T09:00:00.000Z',
+      dateTo: '2024-11-08T10:30:00.000Z',
+      thumbnail: '/assets/images/oasis_room_1.jpg',
+      bookingRef: 'OAS-2024-002'
+    },
+    {
+      id: 'BK003',
+      hotelName: '🎨 Genii - Vườn Cảm Hứng',
+      roomName: 'Phòng Vẽ Tranh Trị Liệu',
+      dateFrom: '2024-11-05T15:00:00.000Z',
+      dateTo: '2024-11-05T17:00:00.000Z',
+      thumbnail: '/assets/images/oasis_room_5.jpg',
+      bookingRef: 'GEN-2024-003'
+    },
+    {
+      id: 'BK004',
+      hotelName: '🔥 Mutiny - Vườn Cách Mạng',
+      roomName: 'Phòng Đập Phá An Toàn',
+      dateFrom: '2024-11-03T18:00:00.000Z',
+      dateTo: '2024-11-03T19:30:00.000Z',
+      thumbnail: '/assets/images/catharsis_room_3.jpg',
+      bookingRef: 'MUT-2024-004'
+    },
+    {
+      id: 'BK005',
+      hotelName: '🌿 Catharsis - Vườn An Nhiên',
+      roomName: 'Phòng Massage Thư Giãn',
+      dateFrom: '2024-11-01T10:00:00.000Z',
+      dateTo: '2024-11-01T11:30:00.000Z',
+      thumbnail: '/assets/images/oasis_room_8.jpg',
+      bookingRef: 'CAT-2024-005'
+    }
+  ];
+  selectedBooking: Booking | null = null;
+  isLoadingBookings = false;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -53,14 +117,24 @@ export class ReviewRoom implements OnInit {
     this.loadReviews();
     
     // Lấy bookingId từ query params nếu có
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       if (params['bookingId']) {
         this.reviewForm.patchValue({ bookingId: params['bookingId'] });
+        // Tự động chọn booking nếu có bookingId trong query params
+        const booking = this.bookings.find(b => b.id === params['bookingId']);
+        if (booking) {
+          this.selectBooking(booking);
+        }
       }
     });
 
     // Load draft từ localStorage nếu có
     this.loadDraft();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   initForm(): void {
@@ -70,6 +144,7 @@ export class ReviewRoom implements OnInit {
       images: [[]],
       isPublic: [true],
       bookingId: [''],
+      bookingRef: [''], // Readonly field để hiển thị mã đặt phòng
     });
   }
 
@@ -174,6 +249,14 @@ export class ReviewRoom implements OnInit {
         this.imagePreviews.push(e.target.result as string);
       }
     };
+    reader.onerror = () => {
+      Swal.fire({
+        title: 'Lỗi',
+        text: 'Không thể đọc file ảnh. Vui lòng thử lại.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    };
     reader.readAsDataURL(file);
   }
 
@@ -185,7 +268,12 @@ export class ReviewRoom implements OnInit {
 
   formatFiles(): FormData {
     const formData = new FormData();
-    const UID = localStorage.getItem('UID') || '';
+    let UID = '';
+    try {
+      UID = localStorage.getItem('UID') || '';
+    } catch (e) {
+      console.warn('Could not read UID from localStorage:', e);
+    }
 
     formData.append('userId', UID);
     formData.append('rating', this.reviewForm.get('rating')?.value.toString());
@@ -251,147 +339,159 @@ export class ReviewRoom implements OnInit {
     // Lưu draft trước khi gửi
     this.saveDraft();
 
-    this.reviewService.registerReview(formData).subscribe({
-      next: (response) => {
-        this.isSubmitting = false;
-        
-        if (response.success) {
-          // Xóa draft
-          this.clearDraft();
+    this.reviewService.registerReview(formData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.isSubmitting = false;
+          
+          if (response.success) {
+            // Xóa draft
+            this.clearDraft();
 
-          // Thêm điểm nếu có
-          if (response.pointsAdded && response.pointsAdded > 0) {
-            this.userService.addPoints(response.pointsAdded).subscribe();
-          }
-
-          // Hiển thị thông báo thành công
-          Swal.fire({
-            title: 'Thành công!',
-            text: response.pointsAdded 
-              ? `Đánh giá của bạn đã được gửi. Bạn nhận được ${response.pointsAdded} điểm thưởng!`
-              : 'Đánh giá của bạn đã được gửi thành công.',
-            icon: 'success',
-            confirmButtonText: 'OK',
-          }).then(() => {
-            // Refresh reviews
-            this.loadReviews();
-            
-            // Reset form
-            this.reviewForm.reset();
-            this.reviewForm.patchValue({ rating: 0, isPublic: true });
-            this.selectedFiles = [];
-            this.imagePreviews = [];
-
-            // Chuyển hướng về trang chi tiết phòng hoặc profile
-            const bookingId = this.reviewForm.get('bookingId')?.value;
-            if (bookingId) {
-              // Có thể chuyển về trang chi tiết phòng
-              this.router.navigate(['/']);
-            } else {
-              this.router.navigate(['/']);
+            // Thêm điểm nếu có
+            if (response.pointsAdded && response.pointsAdded > 0) {
+              this.userService.addPoints(response.pointsAdded)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe();
             }
-          });
-        }
-      },
-      error: (error) => {
-        this.isSubmitting = false;
-        
-        // Lưu draft khi lỗi
-        this.saveDraft();
 
-        let errorMessage = 'Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại.';
-        let errorTitle = 'Lỗi';
+            // Hiển thị thông báo thành công
+            Swal.fire({
+              title: 'Thành công!',
+              text: response.pointsAdded 
+                ? `Đánh giá của bạn đã được gửi. Bạn nhận được ${response.pointsAdded} điểm thưởng!`
+                : 'Đánh giá của bạn đã được gửi thành công.',
+              icon: 'success',
+              confirmButtonText: 'OK',
+            }).then(() => {
+              // Refresh reviews
+              this.loadReviews();
+              
+              // Reset form
+              this.reviewForm.reset();
+              this.reviewForm.patchValue({ rating: 0, isPublic: true });
+              this.selectedFiles = [];
+              this.imagePreviews = [];
+              this.selectedBooking = null;
 
-        if (error.error) {
-          if (error.error.message === 'Duplicate review' || error.error.message?.includes('đã đánh giá')) {
-            errorTitle = 'Đánh giá đã tồn tại';
-            errorMessage = 'Bạn đã đánh giá cho đặt phòng này rồi. Bạn có muốn sửa đánh giá không?';
-            
-            Swal.fire({
-              title: errorTitle,
-              text: errorMessage,
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'Sửa đánh giá',
-              cancelButtonText: 'Hủy',
-            }).then((result) => {
-              if (result.isConfirmed) {
-                // Có thể điều hướng đến trang sửa đánh giá
-                this.router.navigate(['/']);
-              }
+              // Chuyển hướng về trang chủ
+              this.router.navigate(['/']);
             });
-            return;
-          } else if (error.error.message === 'Unauthorized' || error.error.message === 'Chưa đăng nhập') {
-            errorTitle = 'Chưa đăng nhập';
-            errorMessage = 'Vui lòng đăng nhập để gửi đánh giá.';
-            
-            Swal.fire({
-              title: errorTitle,
-              text: errorMessage,
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'Đăng nhập',
-              cancelButtonText: 'Hủy',
-            }).then((result) => {
-              if (result.isConfirmed) {
-                this.router.navigate(['/login']);
-              }
-            });
-            return;
-          } else {
-            errorMessage = error.error.message || errorMessage;
           }
-        }
+        },
+        error: (error) => {
+          this.isSubmitting = false;
+          
+          // Lưu draft khi lỗi
+          this.saveDraft();
 
-        Swal.fire({
-          title: errorTitle,
-          text: errorMessage,
-          icon: 'error',
-          confirmButtonText: 'OK',
-        });
-      },
-    });
+          let errorMessage = 'Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại.';
+          let errorTitle = 'Lỗi';
+
+          if (error.error) {
+            if (error.error.message === 'Duplicate review' || error.error.message?.includes('đã đánh giá')) {
+              errorTitle = 'Đánh giá đã tồn tại';
+              errorMessage = 'Bạn đã đánh giá cho đặt phòng này rồi. Bạn có muốn sửa đánh giá không?';
+              
+              Swal.fire({
+                title: errorTitle,
+                text: errorMessage,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sửa đánh giá',
+                cancelButtonText: 'Hủy',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  // Có thể điều hướng đến trang sửa đánh giá
+                  this.router.navigate(['/']);
+                }
+              });
+              return;
+            } else if (error.error.message === 'Unauthorized' || error.error.message === 'Chưa đăng nhập') {
+              errorTitle = 'Chưa đăng nhập';
+              errorMessage = 'Vui lòng đăng nhập để gửi đánh giá.';
+              
+              Swal.fire({
+                title: errorTitle,
+                text: errorMessage,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Đăng nhập',
+                cancelButtonText: 'Hủy',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  this.router.navigate(['/login']);
+                }
+              });
+              return;
+            } else {
+              errorMessage = error.error.message || errorMessage;
+            }
+          }
+
+          Swal.fire({
+            title: errorTitle,
+            text: errorMessage,
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
+        },
+      });
   }
 
   loadReviews(): void {
     this.isLoading = true;
-    this.reviewService.getRecentReviews(undefined, 5).subscribe({
-      next: (reviews) => {
-        this.recentReviews = reviews;
-        this.isLoading = false;
-      },
-      error: (error) => {
-        this.isLoading = false;
-        // Không hiển thị lỗi nếu không load được reviews
-        console.error('Error loading reviews:', error);
-      },
-    });
+    this.reviewService.getRecentReviews(undefined, 5)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (reviews) => {
+          this.recentReviews = reviews;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          this.isLoading = false;
+          // Không hiển thị lỗi nếu không load được reviews
+          console.error('Error loading reviews:', error);
+        },
+      });
   }
 
   saveDraft(): void {
-    const draft = {
-      rating: this.reviewForm.get('rating')?.value,
-      content: this.reviewForm.get('content')?.value,
-      isPublic: this.reviewForm.get('isPublic')?.value,
-      bookingId: this.reviewForm.get('bookingId')?.value,
-    };
-    localStorage.setItem('reviewDraft', JSON.stringify(draft));
+    try {
+      const draft = {
+        rating: this.reviewForm.get('rating')?.value,
+        content: this.reviewForm.get('content')?.value,
+        isPublic: this.reviewForm.get('isPublic')?.value,
+        bookingId: this.reviewForm.get('bookingId')?.value,
+      };
+      localStorage.setItem('reviewDraft', JSON.stringify(draft));
+    } catch (e) {
+      // Ignore localStorage errors (e.g., in private browsing mode)
+      console.warn('Could not save draft to localStorage:', e);
+    }
   }
 
   loadDraft(): void {
-    const draftStr = localStorage.getItem('reviewDraft');
-    if (draftStr) {
-      try {
+    try {
+      const draftStr = localStorage.getItem('reviewDraft');
+      if (draftStr) {
         const draft = JSON.parse(draftStr);
         this.reviewForm.patchValue(draft);
-      } catch (e) {
-        // Ignore parse errors
       }
+    } catch (e) {
+      // Ignore parse errors or localStorage errors
+      console.warn('Could not load draft from localStorage:', e);
     }
   }
 
   clearDraft(): void {
-    localStorage.removeItem('reviewDraft');
+    try {
+      localStorage.removeItem('reviewDraft');
+    } catch (e) {
+      // Ignore localStorage errors
+      console.warn('Could not clear draft from localStorage:', e);
+    }
   }
 
   viewMoreReviews(): void {
@@ -401,5 +501,42 @@ export class ReviewRoom implements OnInit {
 
   openImage(imageUrl: string): void {
     window.open(imageUrl, '_blank');
+  }
+
+
+  selectBooking(booking: Booking): void {
+    this.selectedBooking = booking;
+    // Patch form với bookingRef (hoặc bookingId nếu cần)
+    this.reviewForm.patchValue({ 
+      bookingId: booking.id,
+      bookingRef: booking.bookingRef 
+    });
+  }
+
+  isBookingSelected(booking: Booking): boolean {
+    return this.selectedBooking?.id === booking.id;
+  }
+
+  trackByBookingId(index: number, booking: Booking): string {
+    return booking.id;
+  }
+
+  clearSelected(): void {
+    this.selectedBooking = null;
+    this.reviewForm.patchValue({ bookingId: '', bookingRef: '' });
+  }
+
+  scrollToReview(): void {
+    const formElement = document.getElementById('review-form');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Focus vào rating để người dùng bắt đầu đánh giá
+      setTimeout(() => {
+        const ratingButton = formElement.querySelector('.rating-star') as HTMLElement;
+        if (ratingButton) {
+          ratingButton.focus();
+        }
+      }, 500);
+    }
   }
 }

@@ -13,6 +13,7 @@ export interface Ticket {
 export interface FAQ {
   question: string;
   answer: string;
+  category: string;
 }
 
 export interface CreateTicketDto {

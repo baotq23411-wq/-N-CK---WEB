@@ -11,13 +11,14 @@
 
 import { Routes } from '@angular/router';
 import { ReviewRoom } from './review-room/review-room';
+import { SupportPageComponent } from './support-page/support-page';
 
 export const routes: Routes = [
   // 👉 Vào thẳng support page khi mở app
   { path: '', redirectTo: 'review-room', pathMatch: 'full' },
 
   // Giữ route support & blog để có thể chuyển qua lại
-  { path: 'review-room', component: ReviewRoom },
+  { path: 'review-room', component: ReviewRoom},
 
 ];
 

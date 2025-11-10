@@ -2,11 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, RouterOutlet } from '@angular/router';
-import { SupportPageComponent } from "./support-page/support-page";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, FormsModule, SupportPageComponent],
+  imports: [RouterOutlet, CommonModule, FormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

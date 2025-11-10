@@ -1,4 +1,100 @@
 <div class="container my-5">
+    <!-- Booking Selector Section -->
+    <section class="booking-selector-section mb-4" *ngIf="bookings.length > 0">
+        <div class="card shadow-sm">
+            <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-calendar-check"></i> Chọn phòng đã từng đặt để feedback
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Error state -->
+                <div *ngIf="bookings.length === 0" class="text-center py-4 text-muted">
+                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                    <p class="mt-2 mb-0">Không tìm thấy đặt phòng.</p>
+                </div>
+
+                <!-- Booking list and preview -->
+                <div *ngIf="bookings.length > 0" class="row">
+                    <!-- Booking list - Left -->
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <h5 class="mb-3">Danh sách đặt phòng</h5>
+                        <div class="booking-list" role="listbox" aria-label="Danh sách đặt phòng">
+                            <div *ngFor="let booking of bookings; trackBy: trackByBookingId" class="booking-item"
+                                [class.active]="isBookingSelected(booking)" [attr.role]="'option'"
+                                [attr.aria-selected]="isBookingSelected(booking)" [attr.tabindex]="0"
+                                (click)="selectBooking(booking)" (keydown.enter)="selectBooking(booking)"
+                                (keydown.space)="selectBooking(booking); $event.preventDefault()">
+                                <div class="booking-item-thumb">
+                                    <img [src]="booking.thumbnail || '/assets/default-room.jpg'"
+                                        [alt]="booking.roomName" class="booking-thumb-img"
+                                        onerror="this.src='/assets/default-room.jpg'" />
+                                </div>
+                                <div class="booking-item-content">
+                                    <h6 class="mb-1">{{ booking.hotelName }}</h6>
+                                    <p class="mb-1 small text-muted">{{ booking.roomName }}</p>
+                                    <p class="mb-0 small">
+                                        <i class="bi bi-calendar3"></i>
+                                        {{ booking.dateFrom | date: 'dd/MM/yyyy' }} -
+                                        {{ booking.dateTo | date: 'dd/MM/yyyy' }}
+                                    </p>
+                                </div>
+                                <div class="booking-item-check" *ngIf="isBookingSelected(booking)">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preview card - Right -->
+                    <div class="col-md-6">
+                        <div *ngIf="selectedBooking" class="booking-preview-card">
+                            <h5 class="mb-3">Thông tin đặt phòng</h5>
+                            <div class="preview-content">
+                                <div class="preview-image mb-3">
+                                    <img [src]="selectedBooking.thumbnail || '/assets/default-room.jpg'"
+                                        [alt]="selectedBooking.roomName" class="img-fluid rounded"
+                                        onerror="this.src='/assets/default-room.jpg'" />
+                                </div>
+                                <div class="preview-details">
+                                    <h6 class="fw-bold">{{ selectedBooking.hotelName }}</h6>
+                                    <p class="text-muted mb-2">{{ selectedBooking.roomName }}</p>
+                                    <p class="mb-2">
+                                        <i class="bi bi-calendar3 me-2"></i>
+                                        <strong>Ngày nhận:</strong> {{ selectedBooking.dateFrom | date: 'dd/MM/yyyy' }}
+                                    </p>
+                                    <p class="mb-2">
+                                        <i class="bi bi-calendar3 me-2"></i>
+                                        <strong>Ngày trả:</strong> {{ selectedBooking.dateTo | date: 'dd/MM/yyyy' }}
+                                    </p>
+                                    <p class="mb-3">
+                                        <i class="bi bi-tag me-2"></i>
+                                        <strong>Mã đặt phòng:</strong>
+                                        <code>{{ selectedBooking.bookingRef }}</code>
+                                    </p>
+                                    <div class="d-flex gap-2">
+                                        <button type="button" class="btn btn-primary btn-sm" (click)="scrollToReview()">
+                                            <i class="bi bi-arrow-down-circle"></i>
+                                            Gửi đánh giá cho phòng này
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm"
+                                            (click)="clearSelected()">
+                                            <i class="bi bi-x-circle"></i> Bỏ chọn
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="!selectedBooking" class="booking-preview-placeholder text-center py-5 text-muted">
+                            <i class="bi bi-info-circle" style="font-size: 3rem;"></i>
+                            <p class="mt-2">Chọn một đặt phòng để xem chi tiết</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <div class="row">
         <!-- Form đánh giá - Bên trái -->
         <div class="col-lg-6 mb-4 mb-lg-0">
@@ -7,7 +103,7 @@
                     <h3 class="mb-0">Viết đánh giá</h3>
                 </div>
                 <div class="card-body">
-                    <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+                    <form id="review-form" [formGroup]="reviewForm" (ngSubmit)="submitReview()">
                         <!-- Rating -->
                         <div class="mb-4">
                             <label class="form-label fw-bold">Đánh giá sao <span class="text-danger">*</span></label>

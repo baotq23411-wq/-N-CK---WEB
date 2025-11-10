@@ -37,17 +37,17 @@ export class SupportPageComponent implements OnInit, OnDestroy {
   // logged-in flag (DO NOT call localStorage from template)
   isLoggedIn = false;
 
-  // Categories for the “Phân loại theo sản phẩm” grid
+  // Categories for the "Phân loại theo sản phẩm" grid
   productCategories: { key: string; label: string; icon: string }[] = [
     { key: 'Thông tin chung', label: 'Thông tin chung', icon: 'bi bi-info-circle' },
-    { key: 'Tài khoản', label: 'Tài khoản và bảo mật', icon: 'bi bi-person-circle' },
-    { key: 'Vé máy bay', label: 'Vé máy bay', icon: 'bi bi-airplane' },
-    { key: 'Khách sạn', label: 'Khách sạn', icon: 'bi bi-building' },
-    { key: 'Hoạt động', label: 'Hoạt động du lịch', icon: 'bi bi-bag-heart' },
+    { key: 'Đặt phòng', label: 'Đặt phòng & Lịch', icon: 'bi bi-calendar-check' },
+    { key: 'Catharsis', label: '🌿 Catharsis - Vườn An Nhiên', icon: 'bi bi-flower1' },
+    { key: 'Oasis', label: '💧 Oasis - Vườn Tâm Hồn', icon: 'bi bi-droplet' },
+    { key: 'Genii', label: '🎨 Genii - Vườn Cảm Hứng', icon: 'bi bi-palette' },
+    { key: 'Mutiny', label: '🔥 Mutiny - Vườn Cách Mạng', icon: 'bi bi-lightning' },
     { key: 'Thanh toán', label: 'Thanh toán', icon: 'bi bi-credit-card' },
-    { key: 'Đưa đón', label: 'Đưa đón sân bay', icon: 'bi bi-taxi-front' },
-    { key: 'Points', label: 'Panacea Points', icon: 'bi bi-coin' },
-    { key: 'Bảo hiểm', label: 'Bảo hiểm', icon: 'bi bi-shield-check' }
+    { key: 'Panacea Points', label: 'Panacea Points', icon: 'bi bi-coin' },
+    { key: 'Tài khoản', label: 'Tài khoản và bảo mật', icon: 'bi bi-person-circle' }
   ];
 
   private destroy$ = new Subject<void>();
