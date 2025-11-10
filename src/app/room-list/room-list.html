@@ -178,17 +178,19 @@
 
     <!-- XEM DỌC -->
     <div *ngIf="viewMode === 'vertical'" class="d-flex flex-column gap-4">
-      <div *ngFor="let pkg of allPackages" class="d-flex border rounded overflow-hidden shadow-sm p-3">
+      <div *ngFor="let pkg of allPackages" 
+            class="d-flex border rounded overflow-hidden shadow-sm p-3 room-card"  
+            (click)="goToRoomDetail(pkg.room_id)">
         <!-- Ảnh -->
         <div class="image-wrapper">
           <img [src]="pkg.image"
-              alt="{{ pkg.roomName }}"
+              alt="{{ pkg.room_name }}"
               style="width: 200px; height: 150px; object-fit: cover;">
         </div>
 
         <!-- Thông tin -->
         <div class="p-3 flex-grow-1">
-          <h5 class="fw-bold text-primary mb-2">{{ pkg.roomName }}</h5>
+          <h5 class="fw-bold text-primary mb-2">{{ pkg.room_name }}</h5>
           <p class="mb-1"><strong>Gói:</strong> {{ pkg.range }}</p>
           <p class="text-muted small">{{ pkg.description }}</p>
 
@@ -203,7 +205,7 @@
             <div class="text-danger fw-bold fs-5">{{ pkg.price | number }} VND</div>
             <small class="text-muted">Chưa gồm thuế & phí</small>
           </div>
-          <button class="btn btn-warning mt-2">Chọn gói</button>
+          <button class="btn btn-warning mt-2" (click)="goToRoomDetail(pkg.room_id)">Chọn gói</button>
         </div>
       </div>
 
@@ -213,17 +215,25 @@
     </div>
 
     <!-- XEM NGANG (GRID 3 CỘT) -->
-    <div *ngIf="viewMode === 'horizontal'" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+    <div *ngIf="viewMode === 'horizontal'" 
+          class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
       <div *ngFor="let pkg of allPackages" class="col">
-        <div class="card h-100 shadow-sm">
-          <img [src]="pkg.image" class="card-img-top" [alt]="pkg.roomName" style="height: 150px; object-fit: cover;">
+        <div class="card h-100 shadow-sm room-card"
+             (click)="goToRoomDetail(pkg.room_id)">
+          <img [src]="pkg.image" 
+               class="card-img-top" 
+               [alt]="pkg.room_name" 
+               style="height: 150px; object-fit: cover;">
           <div class="card-body d-flex flex-column justify-content-between">
-            <h5 class="card-title text-primary">{{ pkg.roomName }}</h5>
+            <h5 class="card-title text-primary">{{ pkg.room_name }}</h5>
             <p class="card-text"><strong>Gói:</strong> {{ pkg.range }}</p>
             <p class="card-text text-muted small">{{ pkg.description }}</p>
 
             <div class="mb-2">
-              <span *ngFor="let tag of pkg.tags" class="badge bg-secondary me-1">{{ tag }}</span>
+              <span *ngFor="let tag of pkg.tags" 
+                     class="badge bg-secondary me-1">
+                {{ tag }}
+              </span>
             </div>
 
             <div class="mt-auto">

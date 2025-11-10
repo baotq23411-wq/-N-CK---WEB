@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 
 
 class RoomService {
@@ -13,13 +14,13 @@ class RoomService {
 @Component ({
   selector: 'app-room-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule, RouterModule],
   templateUrl: './room-list.html',
   styleUrl: './room-list.css',
 })
 
 export class RoomList {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
   rawPackages: any[] = [];
   allPackages: any[] = [];
   originalPackages: any[] = [];
@@ -67,6 +68,11 @@ showAllSpaceTags: boolean = false;
 get visibleSpaceTags(): string[] {
   return this.showAllSpaceTags ? this.spaceTags : this.spaceTags.slice(0, 5);
 }
+
+  goToRoomDetail(roomId: number) {
+    this.router.navigate(['/room-detail', roomId]);
+  }
+
 
   ngOnInit() {
     this.http.get<any[]>('assets/data/rooms.json').subscribe(data => {
@@ -121,7 +127,7 @@ get visibleSpaceTags(): string[] {
 
     // Lọc các phòng phù hợp với từ khóa
     this.allPackages = this.originalPackages.filter(pkg => {
-      const inRoomName = pkg.roomName.toLowerCase().includes(keyword);
+      const inRoomName = pkg.room_name.toLowerCase().includes(keyword);
       const inDescription = pkg.description.toLowerCase().includes(keyword);
       const inTags = pkg.tags.some((tag: string) => tag.toLowerCase().includes(keyword));
       const matchesKeyword = keyword === '' || inRoomName || inDescription || inTags;
@@ -158,7 +164,7 @@ get visibleSpaceTags(): string[] {
       const guestMatch = !maxGuest || this.parseMaxGuest(pkg.range) <= maxGuest;
       const tagMatch = this.selectedTags.length === 0 || this.selectedTags.every(tag => pkg.tags.includes(tag));
       const keywordMatch = !this.keywordInput || (
-        pkg.roomName.toLowerCase().includes(keyword) ||
+        pkg.room_name.toLowerCase().includes(keyword) ||
         pkg.description.toLowerCase().includes(keyword)
       );
       return guestMatch && tagMatch && keywordMatch;

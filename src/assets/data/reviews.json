@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "roomId": 1,
+    "user": "Nguyễn Thị Minh",
+    "rating": 5,
+    "comment": "Không gian yên tĩnh, rất thích hợp để nghỉ ngơi và thiền. Dịch vụ tốt, nhân viên thân thiện.",
+    "date": "2025-11-05"
+  },
+  {
+    "id": 2,
+    "roomId": 1,
+    "user": "Trần Quốc Huy",
+    "rating": 4,
+    "comment": "Phòng đẹp, sạch sẽ. Có điều hơi xa trung tâm một chút.",
+    "date": "2025-11-06"
+  },
+  {
+    "id": 3,
+    "roomId": 1,
+    "user": "Lê Thanh Hà",
+    "rating": 5,
+    "comment": "Rất tuyệt vời, có dịp sẽ quay lại lần nữa!",
+    "date": "2025-11-07"
+  }
+]
