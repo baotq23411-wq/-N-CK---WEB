@@ -1,0 +1,455 @@
+/* ================== CƠ BẢN ================== */
+body {
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  background: #f8fbff;
+  color: #333;
+  overflow-x: hidden;
+}
+
+h2 {
+  text-align: center;
+  color: #132fba;
+  margin-bottom: 25px;
+}
+
+.white-bg {
+  background-color: #fff;
+}
+
+.blue-bg {
+  background-color: #eef1ff;
+}
+
+/* ================== PHẦN HẠNG ================== */
+.rank-section {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.rank-img {
+  width: 80%;
+  max-width: 900px;
+  border-radius: 10px;
+  margin-top: 20px;
+  border: 2px solid #132fba20;
+}
+
+/* ================== PHẦN KHÁM PHÁ ================== */
+.features-section {
+  padding: 60px 20px;
+}
+
+.features {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-top: 30px;
+}
+
+.feature {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding: 20px;
+  width: 300px;
+  transition: 0.3s ease;
+  border: 1px solid #dee3ff;
+}
+
+.feature:hover {
+  box-shadow: 0 4px 12px rgba(19, 47, 186, 0.15);
+  border-color: #132fba;
+}
+
+.feature img {
+  width: 60px;
+  margin-bottom: 10px;
+}
+
+/* ================== PHẦN JOIN ================== */
+.join-section {
+  padding: 60px 20px;
+}
+
+.join-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.app-image {
+  width: 250px;
+  border-radius: 12px;
+  margin: 15px;
+  border: 2px solid #132fba25;
+}
+
+.join-text {
+  max-width: 480px;
+  text-align: left;
+}
+
+/* Nút chính */
+.btn {
+  background-color: #132fba;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background-color: #0f28a0;
+}
+
+/* ================== FAQ / TABS ================== */
+.faq {
+  padding: 60px 20px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  border-bottom: 2px solid #d4daff;
+}
+
+.tab {
+  background: none;
+  border: none;
+  font-weight: 600;
+  padding: 10px 15px;
+  cursor: pointer;
+  color: #666;
+  border-bottom: 3px solid transparent;
+  transition: 0.25s ease;
+}
+
+.tab.active {
+  color: #132fba;
+  border-bottom-color: #132fba;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ================== ACCORDION ================== */
+.accordion {
+  max-width: 850px;
+  margin: auto;
+  text-align: left;
+}
+
+.accordion-item {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.accordion-header {
+  position: relative;
+  padding: 18px 45px 18px 20px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  background: #fff;
+  text-align: left;
+  width: 100%;
+  color: #132fba;
+}
+
+/* Mũi tên */
+.accordion-header::after {
+  content: '▾';
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%) rotate(0deg);
+  font-size: 20px;
+  color: #132fba;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.accordion-item.active .accordion-header::after {
+  transform: translateY(-50%) rotate(180deg);
+  color: #0f28a0;
+}
+
+.priority-title {
+  font-size: 28px;
+  text-align: left;
+  color: #132fba;
+  margin-bottom: 5px;
+  padding: 10px 20px 0px 20px;
+}
+
+ol {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #333;
+  max-width: 800px;
+  margin: 10px auto;
+}
+
+/* Nội dung accordion */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  background: #fafafa;
+  padding: 0 20px;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  line-height: 1.6;
+}
+
+.accordion-item.active .accordion-content {
+  padding: 0 20px 16px;
+  max-height: 500px;
+}
+
+.accordion-content p,
+.accordion-content ol {
+  margin: 12px 0;
+  color: #333;
+}
+
+.accordion-content ol {
+  padding-left: 18px;
+}
+
+/* ================== POPUP ================== */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.popup {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease;
+}
+
+.popup-icon {
+  width: 80px;
+  margin-bottom: 10px;
+}
+
+.popup h3 {
+  color: #132fba;
+  margin-bottom: 10px;
+}
+
+.popup p {
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.qr-image {
+  width: 160px;
+  height: 160px;
+  margin-bottom: 20px;
+  border: 2px solid #132fba25;
+  border-radius: 8px;
+}
+
+.store-buttons img {
+  width: 140px;
+  margin: 5px;
+}
+
+.close-btn {
+  background: none;
+  color: #132fba;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  margin-top: 15px;
+  transition: 0.3s;
+}
+
+.close-btn:hover {
+  color: #0f28a0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ================== RESPONSIVE ================== */
+
+/* ---------- Tablet (≤1024px) ---------- */
+@media (max-width: 1024px) {
+
+  .rank-section,
+  .features-section,
+  .join-section,
+  .faq {
+    padding: 40px 15px;
+  }
+
+  .features {
+    gap: 20px;
+  }
+
+  .feature {
+    width: 45%;
+  }
+
+  .join-content {
+    flex-direction: column;
+  }
+
+  .join-text {
+    max-width: 90%;
+    text-align: center;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .accordion {
+    width: 90%;
+  }
+}
+
+/* ---------- Mobile (≤768px) ---------- */
+@media (max-width: 768px) {
+  h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+
+  .feature {
+    width: 100%;
+  }
+
+  .rank-section,
+  .features-section,
+  .join-section,
+  .faq {
+    padding: 40px 12px;
+  }
+
+  .join-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .join-text {
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .app-image {
+    width: 200px;
+  }
+
+  .tabs {
+    gap: 15px;
+  }
+
+  .tab {
+    font-size: 0.95rem;
+    padding: 8px 10px;
+  }
+
+  .accordion-header {
+    padding: 16px 40px 16px 16px;
+    font-size: 1rem;
+  }
+
+  .accordion-content {
+    font-size: 0.95rem;
+  }
+
+  .popup {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .store-buttons img {
+    width: 120px;
+  }
+}
+
+/* ---------- Small Mobile (≤480px) ---------- */
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .rank-img {
+    width: 100%;
+  }
+
+  .feature img {
+    width: 50px;
+  }
+
+  .btn {
+    font-size: 0.9rem;
+    padding: 10px 18px;
+  }
+
+  .accordion-header {
+    font-size: 0.95rem;
+  }
+
+  .priority-title {
+    font-size: 20px;
+  }
+
+  ol {
+    font-size: 14px;
+  }
+
+  .popup {
+    padding: 18px;
+  }
+
+  .popup-icon {
+    width: 60px;
+  }
+
+  .qr-image {
+    width: 120px;
+    height: 120px;
+  }
+}

@@ -1,21 +1,18 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-
 interface FAQItem {
   question: string;
   answer: string;
 }
-
 @Component({
-  selector: 'app-xu',
-  standalone: true,
+  selector: 'app-coin',
   imports: [CommonModule],
-  templateUrl: './xu.html',
-  styleUrls: ['./xu.css']
+  templateUrl: './coin.html',
+  styleUrl: './coin.css',
 })
-export class Xu implements AfterViewInit {
-  faqList: FAQItem[] = [
+export class Coin {
+faqList: FAQItem[] = [
     { question: 'Tại sao Điểm Cơ Bản và Điểm Priority của tôi biến mất?', answer: 'Điểm có thể được chuyển đổi hoặc cập nhật do thay đổi trong chương trình thưởng của Panacea.' },
     { question: 'Điểm Priority của tôi có ảnh hưởng đến tiến trình không?', answer: 'Không, điểm Priority hoạt động độc lập và không ảnh hưởng đến tiến trình của bạn.' },
     { question: 'Làm thế nào để kích hoạt Xu?', answer: 'Xu được kích hoạt tự động khi bạn hoàn tất giao dịch và có hạn sử dụng tùy từng loại.' },
@@ -43,3 +40,5 @@ export class Xu implements AfterViewInit {
     });
   }
 }
+
+
