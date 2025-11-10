@@ -1,21 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { RoomList } from './room-list/room-list';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, RouterOutlet } from '@angular/router';
-import { Sao } from './sao/sao';
-import { Xu } from './xu/xu';
-import { Exchange } from './exchange/exchange'; 
-import { Payment } from './payment/payment';
-import { Star } from './star/star';
-import { Coin } from './coin/coin';
-import { Banking } from './banking/banking';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, CommonModule, FormsModule, RouterModule, Sao, Xu, Exchange, Payment, Star, Coin, Banking],
+  imports: [RouterOutlet, CommonModule, FormsModule],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrls: ['./app.css']
 })
 export class App {
   protected readonly title = signal('panacea');
