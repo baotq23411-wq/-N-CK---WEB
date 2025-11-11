@@ -1,9 +1,14 @@
 <!-- THANH TRƯỢT -->
 <nav class="room-tabs">
-    <a class="tab active" (click)="scrollToSection('overview')">Tổng quan</a>
-    <a class="tab" (click)="scrollToSection('rooms')">Dịch vụ & Gói đi kèm</a>
-    <a class="tab" (click)="scrollToSection('policy')">Chính sách</a>
-    <a class="tab" (click)="scrollToSection('reviews')">Đánh giá</a>
+    <!-- 🟩 ADDED: Nút quay lại (icon trong hình tròn) -->
+    <button class="back-button" (click)="navigateBack()" title="Quay lại danh sách phòng">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    
+    <a class="tab" [class.active]="activeSection === 'overview'" (click)="scrollToSection('overview')">Tổng quan</a>
+    <a class="tab" [class.active]="activeSection === 'rooms'" (click)="scrollToSection('rooms')">Dịch vụ & Gói đi kèm</a>
+    <a class="tab" [class.active]="activeSection === 'policy'" (click)="scrollToSection('policy')">Chính sách</a>
+    <a class="tab" [class.active]="activeSection === 'reviews'" (click)="scrollToSection('reviews')">Đánh giá</a>
 </nav>
 
 <!-- NỘI DUNG -->
@@ -112,18 +117,24 @@
     <!-- DỊCH VỤ CHUYÊN GIA -->
     <div class="package-expert">
         <h3>Dịch vụ chuyên gia</h3>
-        <div class="service-item"
+        <div class="service-item d-flex align-items-start"
             *ngFor="let ex of expertServices | slice:0:(showAllExperts ? expertServices.length : 4)">
-            <input type="checkbox" [(ngModel)]="ex.selected" (change)="updateTotal()" />
-            <div class="service-content">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="ex.selected" 
+              (change)="updateTotal()" 
+              class="form-check-input me-2 mt-1"
+              style="width: 18px; height: 18px; cursor: pointer"
+            />
+            <div class="service-content flex-grow-1">
                 <div class="service-top">
-                    <h4>{{ ex.name }}</h4>
+                    <h4 class="mb-1 fw-semibold">{{ ex.name }}</h4>
                 </div>
-                <p>{{ ex.description }}</p>
+                <p class="text-muted small mb-0">{{ ex.description }}</p>
             </div>
 
-            <div class="service-right">
-                <span class="service-price">{{ ex.price | currency:'VND' }}</span>
+            <div class="service-right ms-3">
+                <span class="text-primary fw-semibold">{{ ex.price | number }} VND</span>
             </div>
         </div>
 
@@ -138,15 +149,21 @@
     <!-- DỊCH VỤ THUÊ THÊM -->
     <div class="package-extra">
         <h3>Dịch vụ thuê thêm</h3>
-        <div class="service-item" *ngFor="let s of extraServices | slice:0:(showAllExtras ? extraServices.length : 4)">
-            <input type="checkbox" [(ngModel)]="s.selected" (change)="updateTotal()" />
-            <div class="service-content">
-                <h4>{{ s.name }}</h4>
-                <p>{{ s.description }}</p>
+        <div class="service-item d-flex align-items-start" *ngFor="let s of extraServices | slice:0:(showAllExtras ? extraServices.length : 4)">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="s.selected" 
+              (change)="updateTotal()" 
+              class="form-check-input me-2 mt-1"
+              style="width: 18px; height: 18px; cursor: pointer"
+            />
+            <div class="service-content flex-grow-1">
+                <h4 class="mb-1 fw-semibold">{{ s.name }}</h4>
+                <p class="text-muted small mb-0">{{ s.description }}</p>
             </div>
 
-            <div class="service-right">
-                <span class="service-price">{{ s.price | currency:'VND' }}</span>
+            <div class="service-right ms-3 d-flex flex-column align-items-end">
+                <span class="text-primary fw-semibold mb-2">{{ s.price | number }} VND</span>
                 <div class="input-group quantity-control">
                     <button class="btn btn-primary btn-sm" type="button"
                         (click)="s.quantity = Math.max(1, s.quantity - 1); updateTotal()">−
@@ -307,36 +324,43 @@
         <h5 class="cart-title"><i class="bi bi-cart-check me-2"></i>Giỏ hàng</h5>
 
         <div *ngIf="cart.length > 0; else emptyCart">
-            <div class="cart-item" *ngFor="let item of cart; let i = index">
-                <img [src]="item.photo" alt="Ảnh phòng" class="cart-img" />
-                <div class="cart-info">
-                    <h6>{{ item.roomName }}</h6>
-                    <p>{{ item.date }} · {{ item.time }}</p>
-                    <div *ngIf="item.expertServices?.length">
-                        <small class="text-primary">Dịch vụ chuyên gia:</small>
-                        <ul>
-                            <li *ngFor="let ex of item.expertServices">{{ ex.name }} (+{{ ex.price | currency:'VND' }})
-                            </li>
-                        </ul>
+            <!-- 🟩 UPDATED: Hiển thị items đã được gộp (theo phòng và giờ liên tiếp) -->
+            <div class="cart-item-group mb-3" *ngFor="let group of getGroupedCartItems(); let groupIndex = index">
+                <div class="cart-item">
+                    <img [src]="group.photo" alt="Ảnh phòng" class="cart-img" />
+                    <div class="cart-info">
+                        <h6>{{ group.roomName }}</h6>
+                        <p>{{ group.date }} · {{ group.time }}</p>
+                        <div *ngIf="group.expertServices?.length">
+                            <small class="text-primary">Dịch vụ chuyên gia:</small>
+                            <ul>
+                                <li *ngFor="let ex of group.expertServices">{{ ex.name }} (+{{ ex.price | currency:'VND' }})
+                                </li>
+                            </ul>
+                        </div>
+                        <div *ngIf="group.extraServices?.length">
+                            <small class="text-primary">Dịch vụ thêm:</small>
+                            <ul>
+                                <li *ngFor="let s of group.extraServices">{{ s.name }} x{{ s.quantity || 1 }} (+{{ (s.price * (s.quantity || 1)) | currency:'VND' }})</li>
+                            </ul>
+                        </div>
+                        <span class="price">{{ group.totalPrice | currency:'VND' }}</span>
                     </div>
-                    <div *ngIf="item.extraServices?.length">
-                        <small class="text-primary">Dịch vụ thêm:</small>
-                        <ul>
-                            <li *ngFor="let s of item.extraServices">{{ s.name }} x{{ s.quantity }} (+{{ s.total |
-                                currency:'VND' }})</li>
-                        </ul>
-                    </div>
-                    <span class="price">{{ item.totalPrice | currency:'VND' }}</span>
+
+                    <button class="btn-remove" (click)="removeGroupFromCart(group)">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
-
-                <button class="btn-remove" (click)="removeFromCart(i)">
-                    <i class="bi bi-x-lg"></i>
-                </button>
-            </div>
-
-            <div class="cart-summary">
-                <p>Tổng cộng: <strong>{{ getCartTotal() | currency:'VND' }}</strong></p>
-                <button class="btn btn-primary w-100 fw-semibold" (click)="goToPayment()">Thanh toán</button>
+                
+                <!-- 🟩 ADDED: Nút thanh toán cho nhóm này -->
+                <div class="cart-item-payment mt-2">
+                    <button class="btn btn-primary w-100 fw-semibold" (click)="goToPaymentForGroup(group)">
+                        Thanh toán
+                    </button>
+                </div>
+                
+                <!-- Dòng phân cách giữa các nhóm -->
+                <hr *ngIf="groupIndex < getGroupedCartItems().length - 1" class="my-3">
             </div>
         </div>
 

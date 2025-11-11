@@ -109,7 +109,7 @@ export class BookingService {
 
     const booking: Booking = {
       id: this.generateBookingId(),
-      roomId: d.room.roomId,
+      roomId: String((d.room as any).room_id ?? ''),
       room: d.room,
       range: d.range,
       services: d.services,
