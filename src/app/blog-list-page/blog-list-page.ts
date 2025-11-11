@@ -10,13 +10,13 @@ interface PanaceaArticle {
 }
 
 @Component({
-  selector: 'app-blog-list',
+  selector: 'app-blog-list-page',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './blog-list.html',
-  styleUrls: ['./blog-list.css'],
+  templateUrl: './blog-list-page.html',
+  styleUrls: ['./blog-list-page.css'],
 })
-export class BlogList {
+export class BlogListPage {
   articles: PanaceaArticle[] = [
     {
       image: '/assets/PuLuong.jpg',

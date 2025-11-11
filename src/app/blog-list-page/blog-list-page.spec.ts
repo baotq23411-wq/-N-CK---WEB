@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import BlogList from './blog-list';
+import BlogListPage from './blog-list-page';
 
-describe('BlogList', () => {
-  let component: BlogList;
-  let fixture: ComponentFixture<BlogList>;
+describe('BlogListPage', () => {
+  let component: BlogListPage;
+  let fixture: ComponentFixture<BlogListPage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BlogList]
+      imports: [BlogListPage]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(BlogList);
+    fixture = TestBed.createComponent(BlogListPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
