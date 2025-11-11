@@ -1,0 +1,176 @@
+body {
+  margin: 0;
+  height: 100vh;
+  overflow-y: auto;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  color: #333;
+}
+
+/* Hiệu ứng nền */
+.bg {
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  /* background-image: 
+    url('/src/assets/6.png'),
+    url('/src/assets/5.png'),
+    url('/src/assets/4.png'); */
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-size: 300px auto, 300px auto, cover;
+  background-position: 10% 50%, 90% 50%, center;
+  transition: background-position 0.1s ease;
+}
+
+
+/* Lớp nội dung nổi trên nền */
+.content {
+  position: relative;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding-bottom: 60px;
+}
+
+/* Nội dung chính */
+section {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 25px 20px;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-top: 20px;
+}
+.header h1 {
+  color: #0f298b;
+  font-size: 26px;
+  margin-bottom: 8px;
+}
+.header p {
+  color: #555;
+  font-size: 15px;
+}
+
+/* CARD */
+.info-card {
+  background-color: #f4f9ff;
+  border: 1px solid #d5e3ff;
+  border-radius: 12px;
+  padding: 20px 25px;
+  display: flex;
+  align-items: center;
+}
+.info-card .icon img {
+  width: 60px;
+  margin-right: 20px;
+}
+.info-card h2 {
+  color: #0f298b;
+  margin: 0;
+  font-size: 18px;
+}
+
+/* SAVE MORE */
+.save-more {
+  text-align: center;
+  margin-top: 40px;
+}
+.save-more h2 {
+  color: #0f298b;
+  font-size: 20px;
+}
+
+/* TRAVEL */
+.travel-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 35px auto;
+  background-color: #f9fbff;
+  border-radius: 12px;
+  border: 1px solid #d8e4ff;
+  padding: 25px 35px;
+  flex-wrap: wrap;
+}
+.travel-left {
+  flex: 1;
+  min-width: 300px;
+}
+.travel-left h3 {
+  color: #0f298b;
+  font-size: 18px;
+}
+.icons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+}
+.travel-right {
+  flex: 1;
+  text-align: center;
+}
+.travel-right img {
+  width: 270px;
+  border-radius: 8px;
+}
+
+/* BUTTON */
+.btn-container {
+  text-align: center;
+}
+.priority-btn {
+  background-color: #ff6600;
+  color: #fff;
+  border: none;
+  padding: 14px 25px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+}
+.priority-btn:hover {
+  background-color: #e65a00;
+}
+
+/* FAQ */
+.faq-section h2 {
+  text-align: center;
+  color: #0f298b;
+}
+.faq-box {
+  background-color: #f4f8ff;
+  border: 1px solid #d5e3ff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 15px;
+}
+details {
+  background-color: #fff;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  padding: 10px 15px;
+  border: 1px solid #e0e6f6;
+}
+summary {
+  cursor: pointer;
+  font-weight: bold;
+  color: #0f298b;
+}
+.help-link {
+  text-align: center;
+  margin-top: 15px;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  margin-top: 40px;
+  color: #555;
+  font-size: 13px;
+}
+footer a {
+  color: #0f298b;
+}
+

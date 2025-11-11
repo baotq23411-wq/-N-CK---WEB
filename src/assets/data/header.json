@@ -1,0 +1,10 @@
+{
+  "title": "Zodiac House Dalat",
+  "subtitle": "",
+  "rating": 10.0,
+  "reviews": 119,
+  "steps": [
+    { "id": 1, "label": "Xem lại" },
+    { "id": 2, "label": "Thanh toán" }
+  ]
+}
