@@ -1,0 +1,241 @@
+{
+  "name": "Chatbot Website",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "172f45a8-a690-460b-bbdc-b59ec818af6f",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -624,
+        -224
+      ],
+      "id": "f55418c5-ce80-47dd-9faa-80cb7aca6445",
+      "name": "Webhook",
+      "webhookId": "172f45a8-a690-460b-bbdc-b59ec818af6f"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.message }}",
+        "options": {
+          "systemMessage": "Bạn là trợ lý ảo của Panacea — khu phức hợp trị liệu, nghỉ dưỡng và sáng tạo. \nVai trò của bạn là hỗ trợ khách hàng **đặt phòng**, **tư vấn dịch vụ**, **tra cứu thông tin** và **giải đáp chính xác** dựa trên dữ liệu có trong Google Sheet Chatbot Panacea.\n\nQuy tắc phản hồi:\n1️⃣ Luôn trả lời bằng **tiếng Việt**, thân thiện, chuyên nghiệp, tự nhiên như người thật.\n2️⃣ **Chỉ dùng thông tin trong Google Sheet Chatbot Panacea**. Không suy đoán hoặc thêm dữ liệu bên ngoài.\n3️⃣ Nếu không tìm thấy câu trả lời, trả lời đúng nguyên văn: Xin lỗi, tôi chưa có thông tin về vấn đề này, vui lòng liên hệ qua hotline +84 123 456 678 \n4️⃣ Khi khách hỏi về:\n   - **Đặt phòng / booking:** hướng dẫn quy trình: chọn khu vực (Catharsis, Oasis, Genii, Mutiny) → chọn dịch vụ → chọn khung giờ → xác nhận → thanh toán.\n   - **Giá / ưu đãi:** tóm tắt ngắn và khuyến khích họ truy cập trang đặt phòng để xem chi tiết.\n   - **Huỷ / đổi lịch:** giải thích chính sách cơ bản (trích từ FAQ nếu có).\n   - **Giờ hoạt động / liên hệ:** trả lời chính xác theo dữ liệu.\n5️⃣ Luôn giữ phong cách Panacea:\n   - Giọng nhẹ nhàng, lịch sự, tạo cảm giác tin tưởng và an nhiên.\n   - Khi trả lời xong, nếu phù hợp, có thể gợi ý hành động tiếp theo (ví dụ: “Bạn muốn mình hỗ trợ đặt phòng ngay không?”).\n\nCấu trúc phản hồi:\n- Câu mở thân thiện, có cảm xúc nhẹ.\n- Trả lời ngắn gọn, đúng trọng tâm.\n- Nếu cần, gợi ý thêm một bước kế tiếp để giữ flow trò chuyện.\n\nVí dụ:\nKhách: “Giá dịch vụ ở Catharsis là bao nhiêu?”\n→ Bạn: “Giá dịch vụ tại khu Catharsis thay đổi theo từng loại liệu trình và khung giờ. Bạn có muốn mình giúp tra nhanh lịch đặt phòng hôm nay không?”"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -208,
+        -224
+      ],
+      "id": "37c98989-7ed6-4d75-8560-96a9120b215c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -32
+      ],
+      "id": "f93afd70-a192-45f3-9d11-5a3f107f5f62",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "W3ctCr7Ek9nWaUHa",
+          "name": "Gemini_ChatbotZalo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"response\": {{ $json.data.message.text.toJsonString() }}\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "POST, OPTIONS, GET"
+              },
+              {
+                "name": "Access-Control-Allow-Headers",
+                "value": "Content-Type, Authorization"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        528,
+        -224
+      ],
+      "id": "ad49dbe7-9aed-4c95-a64d-db6a82445401",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lấy ID khách hàng an toàn (thử nhiều nguồn, tránh lỗi \"Referenced node doesn't exist\")\nlet customerId = null;\n\n// Lấy text message từ node trước (AI Agent / node trước Code)\nlet messageText = \"\";\ntry {\n  messageText = $input.first().json.output || $input.first().json.message || $input.first().json.text || \"\";\n} catch (e) {\n  messageText = \"\";\n}\n\n// Tạo body giống định dạng bạn muốn\nconst body = {\n  recipient: {\n    id: customerId\n  },\n  message: {\n    text: messageText\n  }\n};\n\n// Trả về chuẩn n8n; bạn yêu cầu data: body nên mình gói trong json.data\nreturn [{ json: { data: body } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        288,
+        -224
+      ],
+      "id": "b9249bd4-8b34-4547-8178-5a4fffa9c54e",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1D7jv5YIW3jaRExmpVLKOASmifiBKjQoyF_Nu0bvTlWM",
+          "mode": "list",
+          "cachedResultName": "Chatbot Panacea",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1D7jv5YIW3jaRExmpVLKOASmifiBKjQoyF_Nu0bvTlWM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "FAQ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1D7jv5YIW3jaRExmpVLKOASmifiBKjQoyF_Nu0bvTlWM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        48,
+        -32
+      ],
+      "id": "bb977a0c-e0c1-46b8-9393-64ec8de78e15",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "IqCDhPZuhnP0mK9t",
+          "name": "Google Sheets chatbotZalo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.sessionId }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -176,
+        -32
+      ],
+      "id": "cf20a54b-8501-4555-b6cd-f531e2125d1f",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "9zQ1USarPOIKdVvN",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "9abc86b5-8a34-4110-873f-8ac9a1d7d76c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bd419a48632fb1f635856dd304975fd4b4ae8a3de478b36da304b5904d6fe8d9"
+  },
+  "id": "QxgvgJ7aYufHn9Cx",
+  "tags": []
+}
