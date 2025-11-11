@@ -141,7 +141,7 @@ export class CustomerStarComponent implements OnInit {
   }
 
   openLearnHow(): void {
-    window.open('https://vnexpress.net/', '_blank');
+    window.open('/star', '_blank');
   }
 
   openAboutStar(): void {

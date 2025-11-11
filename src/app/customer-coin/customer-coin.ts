@@ -78,7 +78,7 @@ export class CustomerCoinComponent implements OnInit {
   }
 
   openLearnHow(): void {
-    window.open('https://vnexpress.net/', '_blank');
+    window.open('/coin', '_blank');
   }
 
   // ESC để đóng modal

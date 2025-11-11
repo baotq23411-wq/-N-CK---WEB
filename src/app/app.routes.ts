@@ -11,6 +11,8 @@ import { RoomList } from './room-list/room-list';
 import { RoomDetail } from './room-detail/room-detail';
 import { Payment } from './payment/payment';
 import { Banking } from './banking/banking';
+import { Star } from './star/star';
+import { Coin } from './coin/coin';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -21,6 +23,8 @@ export const routes: Routes = [
   { path: 'banking', component: Banking },
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent },
+  { path: 'star', component: Star },
+  { path: 'coin', component: Coin },
   {
     path: 'customer-account',
     component: CustomerAccountComponent,

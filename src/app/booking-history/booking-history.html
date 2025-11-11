@@ -9,7 +9,107 @@
         <div class="col-lg-9 col-md-8">
             <div class="acc-point-card shadow-lg p-4">
 
-                
+                <h2 class="text-center mb-4 title">Lịch sử đặt phòng</h2>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr class="table-header">
+                                <th>Mã đặt phòng</th>
+                                <th>Phòng</th>
+                                <th>Thời gian</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let booking of bookings" class="booking-row" (click)="openModal(booking)">
+                                <td class="fw-bold">{{ booking.id }}</td>
+                                <td>
+                                    <div class="room-info">
+                                        <div class="room-name">{{ booking.room?.room_name || '—' }}</div>
+                                        <small class="text-muted">{{ booking.range }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>{{ booking.startTime }} - {{ booking.endTime }}</div>
+                                </td>
+                                <td class="text-primary fw-semibold">
+                                    {{ formatCurrency(booking.totalPrice) }}
+                                </td>
+                                <td>
+                                    <span class="badge status-badge {{ getStatusClass(booking.status) }}">
+                                        {{ booking.status | titlecase }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div *ngIf="bookings.length === 0" class="text-center text-muted py-4">
+                    Không có lịch sử đặt phòng nào.
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- MODAL POPUP -->
+    <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()"></div>
+
+    <div class="modal-container" *ngIf="showModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Chi tiết đặt phòng</h4>
+                <button class="btn-close" (click)="closeModal()">×</button>
+            </div>
+
+            <div class="modal-body" *ngIf="selectedBooking">
+                <div class="modal-section">
+                    <h5>Thông tin đặt phòng</h5>
+                    <p><strong>Mã đơn:</strong> {{ selectedBooking.id }}</p>
+                    <p><strong>Phòng:</strong> {{ selectedBooking.room?.room_name }}</p>
+                    <p><strong>Thời gian:</strong> {{ selectedBooking.startTime }} → {{ selectedBooking.endTime }}</p>
+                    <p><strong>Trạng thái:</strong>
+                        <span class="badge status-badge {{ getStatusClass(selectedBooking.status) }}">
+                            {{ selectedBooking.status | titlecase }}
+                        </span>
+                    </p>
+                </div>
+
+                <div class="modal-section">
+                    <h5>Dịch vụ đi kèm</h5>
+                    <ul *ngIf="selectedBooking.services.length > 0; else noService">
+                        <li *ngFor="let s of selectedBooking.services">
+                            {{ s.name }} - {{ formatCurrency(s.price) }}
+                        </li>
+                    </ul>
+                    <ng-template #noService>
+                        <p class="text-muted">Không có dịch vụ thêm</p>
+                    </ng-template>
+                </div>
+
+                <div class="modal-section">
+                    <h5>Voucher & Thanh toán</h5>
+                    <p><strong>Voucher:</strong> {{ selectedBooking.voucherCode || 'Không áp dụng' }}</p>
+                    <p><strong>Giảm giá:</strong> {{ selectedBooking.discountValue ?
+                        formatCurrency(selectedBooking.discountValue) : '0 ₫' }}</p>
+                    <p><strong>Tổng thanh toán:</strong> <span class="text-primary fw-bold">{{
+                            formatCurrency(selectedBooking.totalPrice) }}</span></p>
+                    <p><strong>Xu tích lũy:</strong> {{ selectedBooking.rewardPointsEarned || 0 }} điểm</p>
+                </div>
+
+                <div class="modal-section">
+                    <h5>Khách hàng</h5>
+                    <p><strong>Tên:</strong> {{ selectedBooking.customerName }}</p>
+                    <p><strong>Email:</strong> {{ selectedBooking.customerEmail }}</p>
+                    <p><strong>SĐT:</strong> {{ selectedBooking.customerPhone }}</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="closeModal()">Đóng</button>
+            </div>
         </div>
     </div>
 </div>

@@ -1386,7 +1386,7 @@ export class Payment implements OnInit {
     if (popup.value) {
       const { email, password } = popup.value;
       // 🟩 UPDATED: Sử dụng AuthService để đăng nhập từ users.json
-      this.authService.login({ emailOrPhone: email, password }).subscribe({
+      this.authService.login(email, password).subscribe({
         next: (response: any) => {
           if (response && response.user) {
             // Đăng nhập thành công, reload user data
