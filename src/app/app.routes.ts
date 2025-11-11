@@ -1,3 +1,14 @@
+// import { Routes } from '@angular/router';
+// import { RegisterPageComponent } from './register-page/register-page';
+// import { LoginPageComponent } from './login-page/login-page';
+// import { SupportPageComponent } from './support-page/support-page';
+
+// export const routes: Routes = [
+//   { path: '', redirectTo: 'login', pathMatch: 'full' },
+//   { path: 'login', component: LoginPageComponent },
+//   { path: 'register', component: RegisterPageComponent }
+// ];
+
 import { Routes } from '@angular/router';
 import { RoomList } from './room-list/room-list';
 import { RoomDetail } from './room-detail/room-detail';
@@ -15,3 +26,4 @@ export const routes: Routes = [
   { path: 'login', component: LoginPageComponent },
   { path: 'register', component: RegisterPageComponent }
 ];
+

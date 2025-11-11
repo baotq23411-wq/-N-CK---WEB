@@ -1,23 +1,33 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+  import { Injectable } from '@angular/core';
+  import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+  import { Observable, catchError, throwError } from 'rxjs';
+  import { ReviewResponse, ReviewListItem } from '../models/review';
 
-export interface Review {
-  id: number;
-  roomId: number;
-  user: string;
-  rating: number;
-  comment: string;
-  date: string;
-}
+  @Injectable({
+    providedIn: 'root',
+  })
+  export class ReviewService {
+    private apiUrl = 'http://localhost:3000/api/reviews';
 
-@Injectable({ providedIn: 'root' })
-export class ReviewService {
-  private url = 'assets/data/reviews.json';
+    constructor(private http: HttpClient) {}
 
-  constructor(private http: HttpClient) {}
+    private handleError(err: HttpErrorResponse): Observable<never> {
+      return throwError(() => err.error || { message: 'Unknown error' });
+    }
 
-  getReviews(): Observable<Review[]> {
-    return this.http.get<Review[]>(this.url);
+    registerReview(formData: FormData): Observable<ReviewResponse> {
+      return this.http
+        .post<ReviewResponse>(this.apiUrl, formData)
+        .pipe(catchError(this.handleError));
+    }
+
+    getRecentReviews(serviceId?: string, limit: number = 5): Observable<ReviewListItem[]> {
+      let url = `${this.apiUrl}/recent?limit=${limit}`;
+      if (serviceId) {
+        url += `&serviceId=${serviceId}`;
+      }
+      return this.http
+        .get<ReviewListItem[]>(url)
+        .pipe(catchError(this.handleError));
+    }
   }
-}
