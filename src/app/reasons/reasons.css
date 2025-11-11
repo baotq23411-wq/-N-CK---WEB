@@ -1,0 +1,91 @@
+:root{
+  --brand:#132FBA;
+  --ink:#0f1520;
+  --muted:#5b647b;
+  --paper:#fff;
+  --shadow:0 8px 22px rgba(10,18,40,.12);
+}
+
+/* Section */
+.reasons{ padding: 2rem 1rem; }
+.reasons-title{
+  color:#F7941D; font-weight:800; text-align:center; letter-spacing:.3px;
+  margin-bottom:1.25rem;
+}
+
+/* Grid */
+.reasons-grid{
+  display:grid;
+  grid-template-columns: repeat(3,1fr);
+  gap:16px;
+}
+@media (max-width: 1024px){
+  .reasons-grid{ grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 640px){
+  .reasons-grid{ grid-template-columns: 1fr; }
+}
+
+/* Card */
+.reason-card{
+  background: var(--paper);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow);
+  min-height: 7rem;
+  border:1px solid rgba(0,0,0,.04);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.reason-card:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(10,18,40,.16);
+  border-color: rgba(19,47,186,.14);
+}
+
+/* Content */
+.card-content h3{
+  font-size: 1.05rem; font-weight:700; margin:0 0 .35rem; color: var(--ink);
+}
+.card-content p{
+  font-size:.92rem; color: var(--muted); line-height:1.45; margin:0;
+}
+
+/* ===== CSS-ONLY ICON BADGES ===================================== */
+/* chung: badge tròn, gradient, ký hiệu bằng ::before */
+.card-icon{
+  width: 64px; height: 64px; border-radius: 16px;
+  display:grid; place-items:center;
+  color:#fff; font-weight:900; position:relative; isolation:isolate;
+  box-shadow: 0 10px 22px rgba(10,18,40,.14);
+}
+.card-icon::before{
+  content:""; position:absolute; inset:0; border-radius:inherit;
+  background: radial-gradient(120% 120% at 30% 20%, rgba(255,255,255,.28), transparent 50%);
+  mix-blend-mode: screen;
+}
+.card-icon::after{
+  content: ""; /* sẽ set ở từng biến thể */
+  font-size: 28px; font-weight:900; line-height:1; color:#fff;
+}
+
+/* Biến thể 1: Giá/Ưu đãi (₫) */
+.i-price{
+  background: linear-gradient(160deg,#ffb35c,#f7841d);
+}
+.i-price::after{ content: "₫"; }
+
+/* Biến thể 2: Priority (⭐) */
+.i-priority{
+  background: linear-gradient(160deg,#6e8bff,#2c46d9);
+}
+.i-priority::after{ content: "★"; }
+
+/* Biến thể 3: Linh hoạt (↻) */
+.i-flex{
+  background: linear-gradient(160deg,#66d6b9,#23a78a);
+}
+.i-flex::after{ content: "↻"; }
