@@ -34,6 +34,7 @@ export class AccountInformationComponent implements OnInit {
           if (account) {
             this.user = structuredClone(account);
             this.editableUser = structuredClone(account);
+            (this.editableUser as any).gender = this.toViGender(this.editableUser?.gender as any);
           } else {
             console.warn('Không tìm thấy tài khoản đăng nhập');
           }
@@ -63,6 +64,8 @@ export class AccountInformationComponent implements OnInit {
         // yyyy-mm-dd → dd-mm-yyyy
         this.editableUser.birthdate = `${parts[2]}-${parts[1]}-${parts[0]}`;
       }
+      const payload = structuredClone(this.editableUser);
+      (payload as any).gender = this.fromViGender(this.editableUser.gender as any);
     }
 
     this.userService.updateUserInfo(this.editableUser).subscribe({
@@ -87,5 +90,25 @@ export class AccountInformationComponent implements OnInit {
         });
       },
     });
+  }
+
+  private toViGender(code?: string): 'Nam' | 'Nữ' | 'Khác' | '' {
+    switch ((code || '').toLowerCase()) {
+      case 'male': return 'Nam';
+      case 'female': return 'Nữ';
+      case 'other': return 'Khác';
+      default: return '';
+    }
+  }
+
+  private fromViGender(label?: string): 'male' | 'female' | 'other' | '' {
+    switch ((label || '').toLowerCase()) {
+      case 'nam': return 'male';
+      case 'nữ':  // fallback for 'nu' if không dấu
+      case 'nu': return 'female';
+      case 'khác':
+      case 'khac': return 'other';
+      default: return '';
+    }
   }
 }

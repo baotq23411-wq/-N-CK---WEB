@@ -6,22 +6,24 @@
                 <label class="form-label">Họ và tên</label>
                 <input class="form-control" type="text" name="full_name" [(ngModel)]="editableUser.full_name"
                     [readonly]="!isEditing" required />
-                <p class="form-hint">Họ và tên của bạn cũng sẽ hiển thị như tên hồ sơ.</p>
+                <p class="form-hint">
+                    Họ và tên của bạn cũng sẽ hiển thị như tên hồ sơ.
+                </p>
             </div>
 
             <!-- Hàng: Email + Số điện thoại -->
             <div class="grid-2">
                 <div class="form-col">
-                    <label class="form-label">Email</label>
-                    <input class="form-control" type="email" name="email" [(ngModel)]="editableUser.email"
-                        [readonly]="!isEditing" placeholder="email@domain.com" required />
+                    <label class="form-label">Email (không thể thay đổi)</label>
+                    <input class="form-control always-readonly" type="email" name="email"
+                        [(ngModel)]="editableUser.email" readonly tabindex="-1" placeholder="email@domain.com" />
                 </div>
 
                 <div class="form-col">
-                    <label class="form-label">Số điện thoại</label>
-                    <input class="form-control" type="tel" name="phone_number" [(ngModel)]="editableUser.phone_number"
-                        [readonly]="!isEditing" inputmode="tel" pattern="^[0-9+()\\s-]{8,}$"
-                        placeholder="Ví dụ: +84 912 345 678" required />
+                    <label class="form-label">Số điện thoại (không thể thay đổi)</label>
+                    <input class="form-control always-readonly" type="tel" name="phone_number"
+                        [(ngModel)]="editableUser.phone_number" readonly tabindex="-1"
+                        placeholder="Ví dụ: +84 912 345 678" />
                 </div>
             </div>
 
@@ -29,23 +31,25 @@
             <div class="grid-2">
                 <div class="form-col">
                     <label class="form-label">Giới tính</label>
-                    <select class="form-control form-select" name="gender" [(ngModel)]="editableUser.gender"
-                        [disabled]="!isEditing">
-                        <option value="" disabled>— Chọn giới tính —</option>
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
-                        <option value="Khác">Khác</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select class="form-control custom-select" name="gender" [(ngModel)]="editableUser.gender"
+                            [disabled]="!isEditing">
+                            <option value="" disabled>— Chọn giới tính —</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="form-col">
                     <label class="form-label">Ngày sinh</label>
                     <input class="form-control" type="text" name="birthdate" [(ngModel)]="editableUser.birthdate"
-                        [readonly]="!isEditing" placeholder="dd-mm-yyyy" />
+                        [readonly]="!isEditing" placeholder="dd/mm/yyyy" />
                 </div>
             </div>
 
-            <!-- Thành phố cư trú (full width) -->
+            <!-- Thành phố cư trú -->
             <div class="form-row">
                 <label class="form-label">Thành phố cư trú</label>
                 <input class="form-control" type="text" name="city" [(ngModel)]="editableUser.city"

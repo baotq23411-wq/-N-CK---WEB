@@ -139,3 +139,60 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Giữ nguyên toàn bộ CSS cũ, chỉ thêm phần dưới cùng */
+
+.custom-select {
+    appearance: none;
+    background-color: #f9fbff;
+    background-image: none;
+    border: 1.5px solid #e0e4ff;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 1rem;
+    color: #0f172a;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+/* Bọc select để thêm icon tùy chỉnh */
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper::after {
+    content: '▾';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #132fba;
+    pointer-events: none;
+    font-size: 0.95rem;
+}
+
+/* Hover / Focus đồng bộ theme */
+.custom-select:hover,
+.custom-select:focus {
+    border-color: #132fba;
+    box-shadow: 0 0 0 0.15rem rgba(19, 47, 186, 0.22);
+    background-color: #fff;
+}
+
+/* Trạng thái disabled */
+.custom-select:disabled {
+    background-color: #f4f6ff;
+    color: #6b79c6;
+    cursor: not-allowed;
+}
+
+/* Option styling */
+.custom-select option {
+    color: #0f172a;
+    background-color: #ffffff;
+}
+
+.custom-select option:checked {
+    background-color: #132fba;
+    color: white;
+}

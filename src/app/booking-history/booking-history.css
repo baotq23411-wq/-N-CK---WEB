@@ -1,4 +1,4 @@
-/* Layout */
+/* Layout tổng */
 .acc-point-wrapper {
     background-color: #f8faff;
     min-height: 100vh;
@@ -9,131 +9,143 @@
     border-radius: 1rem;
     border: 1.5px solid #132fba;
     overflow: hidden;
-    animation: fadeInUp 0.6s ease-out;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+    animation: fadeInUp 0.5s ease-out;
 }
 
-/* Title */
 .title {
     color: #132fba;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
-/* Table */
-.table {
-    border-collapse: separate;
-    border-spacing: 0 0.5rem;
+/* Tabs trạng thái */
+.order-tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 2px solid #f0f3ff;
+    margin-bottom: 1rem;
+    overflow-x: auto;
 }
 
-.table-header {
-    background-color: #132fba;
-    color: white;
-    border-radius: 8px;
-}
-
-.table thead th {
+.tab-btn {
+    background: transparent;
+    border: none;
+    padding: 0.75rem 0.25rem;
     font-weight: 600;
-    text-align: center;
-    vertical-align: middle;
+    color: #5a6bbd;
+    position: relative;
+    cursor: pointer;
+    white-space: nowrap;
 }
 
-.table tbody tr {
-    background-color: #ffffff;
-    transition: all 0.2s ease-in-out;
-    border-radius: 10px;
-}
-
-.table tbody tr:hover {
-    background-color: #eaf0ff;
-    transform: scale(1.01);
-}
-
-.table td {
-    vertical-align: middle;
-    text-align: center;
-}
-
-/* Room Info */
-.room-info {
-    text-align: left;
-}
-
-.room-name {
+.tab-btn.active {
     color: #132fba;
-    font-weight: 600;
-    font-size: 1rem;
+}
+
+.tab-btn.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #ff6a00;
+    border-radius: 2px;
+}
+
+/* Card hiển thị đơn hàng */
+.order-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.order-card {
+    background: #fff;
+    border: 1.5px solid #e3e8ff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(19, 47, 186, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.order-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(19, 47, 186, 0.15);
+}
+
+.order-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px dashed #dee3ff;
+}
+
+.order-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 0.8fr;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.order-foot {
+    text-align: right;
+    padding: 0.75rem 1rem 1rem;
 }
 
 /* Badge trạng thái */
 .status-badge {
-    padding: 0.4rem 0.8rem;
+    padding: 0.35rem 0.8rem;
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 600;
-    text-transform: capitalize;
 }
 
 .status-confirmed {
-    background-color: #d0f0d0;
+    background: #d0f0d0;
     color: #0a8a0a;
 }
 
 .status-pending {
-    background-color: #fff3cd;
+    background: #fff3cd;
     color: #a67c00;
 }
 
 .status-completed {
-    background-color: #cfe2ff;
+    background: #cfe2ff;
     color: #132fba;
 }
 
 .status-cancelled {
-    background-color: #f8d7da;
+    background: #f8d7da;
     color: #b10000;
 }
 
-/* Animation */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Modal overlay */
+/* ===== Modal Popup ===== */
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.55);
     z-index: 999;
     animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Modal container */
 .modal-container {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background: white;
-    border-radius: 1rem;
-    width: 90%;
-    max-width: 600px;
+    border-radius: 16px;
+    width: 95%;
+    max-width: 650px;
     z-index: 1000;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
     animation: zoomIn 0.35s ease-out;
 }
 
-/* Modal content */
 .modal-content {
-    padding: 1.5rem 2rem;
+    padding: 1.8rem 2.2rem;
 }
 
 .modal-header {
@@ -152,11 +164,11 @@
 .btn-close {
     border: none;
     background: transparent;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: bold;
     color: #132fba;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s;
 }
 
 .btn-close:hover {
@@ -164,27 +176,58 @@
     color: #0a1e80;
 }
 
+/* Nội dung modal */
+.modal-body {
+    max-height: 75vh;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
 .modal-section {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .modal-section h5 {
     color: #132fba;
     font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+    gap: 0.5rem;
+}
+
+.info-row span {
+    color: #555;
+    font-weight: 600;
+}
+
+.info-row p {
+    margin: 0;
+    text-align: right;
+    flex: 1;
+}
+
+.info-row.highlight p {
+    color: #132fba;
+    font-weight: 700;
 }
 
 .modal-footer {
     text-align: right;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
 }
 
 .modal-footer .btn {
     background-color: #132fba;
     color: white;
     border-radius: 8px;
-    padding: 0.5rem 1.2rem;
+    padding: 0.6rem 1.4rem;
+    font-weight: 600;
     transition: 0.25s;
 }
 
@@ -192,7 +235,7 @@
     background-color: #0a1e80;
 }
 
-/* Animations */
+/* Animation */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -212,5 +255,52 @@
     to {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* ... Giữ nguyên toàn bộ code cũ của bạn ... */
+
+/* Bổ sung màu cho trạng thái no-show */
+.status-no-show {
+    background: #f6d2ea;
+    color: #2e2121;
+}
+
+/* Cải thiện hiển thị phần khách hàng trong modal */
+.modal-section:first-of-type {
+    background: #f8faff;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: inset 0 0 10px rgba(19, 47, 186, 0.06);
+}
+
+.modal-section:first-of-type h5 {
+    margin-top: 0;
+    font-weight: 700;
+    color: #132fba;
+}
+
+.modal-section ul {
+    padding-left: 1.2rem;
+}
+
+.info-row span {
+    width: 50%;
+}
+
+.info-row p {
+    width: 50%;
+    text-align: right;
+}
+
+@media (max-width: 576px) {
+    .info-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .info-row p {
+        text-align: left;
     }
 }
