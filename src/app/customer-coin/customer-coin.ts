@@ -9,6 +9,7 @@ interface MembershipInfo {
   coinsNeeded: number;
   nextLevel?: string;
 }
+type CoinStatusTab = 'all' | 'processing' | 'expired' | 'done';
 
 @Component({
   selector: 'app-cus-coin',
@@ -23,9 +24,15 @@ export class CustomerCoinComponent implements OnInit {
   currentDate: string = new Date().toLocaleDateString('vi-VN');
   expiringPoints: number = 50;
   expiringDate: string = '31/12/2025';
+
   showAboutModal = false;
   showHistoryModal = false;
   selectedHistory: any = null;
+
+  // Tabs
+  activeTab: CoinStatusTab = 'all';
+
+  // Dữ liệu mẫu
   coinHistory = [
     { date: '01/11/2025', description: 'Đổi voucher giảm giá 10%', amount: -100, status: 'Hoàn tất', icon: 'bi bi-ticket-perforated' },
     { date: '25/10/2025', description: 'Nhận thưởng sự kiện “Tri Ân Khách Hàng”', amount: +500, status: 'Hoàn tất', icon: 'bi bi-gift' },
@@ -67,34 +74,58 @@ export class CustomerCoinComponent implements OnInit {
     return Math.min(((star - prev) / (next - prev)) * 100, 100);
   }
 
-  // ====== Actions ======
-  openAboutPoint(): void {
-    this.showAboutModal = true;
-    document.body.style.overflow = 'hidden'; // chặn scroll nền
-  }
-  closeAboutPoint(): void {
-    this.showAboutModal = false;
-    document.body.style.overflow = ''; // cho phép scroll lại
-  }
+  // ====== Actions (giữ nguyên modal) ======
+  openAboutPoint(): void { this.showAboutModal = true; document.body.style.overflow = 'hidden'; }
+  closeAboutPoint(): void { this.showAboutModal = false; document.body.style.overflow = ''; }
+  openLearnHow(): void { window.open('/coin', '_blank'); }
+  @HostListener('document:keydown.escape') onEsc() { if (this.showAboutModal) this.closeAboutPoint(); }
 
-  openLearnHow(): void {
-    window.open('/coin', '_blank');
-  }
-
-  // ESC để đóng modal
-  @HostListener('document:keydown.escape')
-  onEsc() { if (this.showAboutModal) this.closeAboutPoint(); }
-
-  // ===== Modal Lịch sử =====
+  // Modal lịch sử
   openHistoryDetail(item: any): void {
     this.selectedHistory = item;
     this.showHistoryModal = true;
     document.body.style.overflow = 'hidden';
   }
-
   closeHistoryDetail(): void {
     this.showHistoryModal = false;
     this.selectedHistory = null;
     document.body.style.overflow = '';
+  }
+
+  // ====== Tabs + Filter giống booking-history ======
+  mapStatus(item: any): CoinStatusTab {
+    const s = (item?.status || '').toLowerCase();
+    if (s.includes('xử lý')) return 'processing';
+    if (s.includes('quá hạn')) return 'expired';
+    if (s.includes('hoàn tất') || s.includes('hoan tat')) return 'done';
+    return 'processing';
+  }
+  displayStatus(item: any): string {
+    const code = this.mapStatus(item);
+    return code === 'processing' ? 'Đang xử lý'
+      : code === 'expired' ? 'Xu quá hạn'
+        : code === 'done' ? 'Hoàn tất'
+          : 'Đang xử lý';
+  }
+  setTab(tab: CoinStatusTab) { this.activeTab = tab; }
+  get filteredCoinHistory() {
+    if (this.activeTab === 'all') return this.coinHistory;
+    return this.coinHistory.filter(i => this.mapStatus(i) === this.activeTab);
+  }
+
+  getStatusClass(item: any): string {
+    const code = this.mapStatus(item); // 'processing' | 'expired' | 'done'
+    switch (code) {
+      case 'processing': return 'status-processing';
+      case 'expired': return 'status-expired';
+      case 'done': return 'status-done';
+      default: return 'status-processing';
+    }
+  }
+
+  // (Tuỳ chọn) format số xu nếu bạn muốn chuẩn hoá
+  formatCoin(amount: number): string {
+    const sign = amount > 0 ? '+' : '';
+    return `${sign}${amount}`;
   }
 }

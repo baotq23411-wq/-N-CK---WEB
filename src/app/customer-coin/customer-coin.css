@@ -1,4 +1,4 @@
-/* Layout */
+/* ===== BỐ CỤC CHUNG ===== */
 .acc-point-wrapper {
     background-color: #f8faff;
     min-height: 100vh;
@@ -71,17 +71,14 @@
     overflow: hidden;
 }
 
-/* Gradient cho ô Xu Panacea */
 .gradient-blue {
-    background: linear-gradient(180deg, #799CF0, #132fba);
+    background: linear-gradient(180deg, #9cb5ee, #3351e5);
 }
 
-/* Màu sáng hơn cho ô Learn How */
 .light-blue {
     background: linear-gradient(180deg, #1255f0, #799CF0);
 }
 
-/* Hiệu ứng nền gợn sóng giả */
 .info-card::after {
     content: "";
     position: absolute;
@@ -95,83 +92,228 @@
     pointer-events: none;
 }
 
-/* ==== HISTORY SECTION ==== */
-.history-section {
-    background: #f8faff;
-    border-radius: 12px;
-    border: 1px solid #dee2f7;
-    padding: 1.5rem;
-    box-shadow: 0 4px 10px rgba(19, 47, 186, 0.08);
+/* ===== BUTTON TRONG INFO CARD ===== */
+.info-card .btn-light {
+    color: #132fba !important;
+    font-weight: 700;
+    border: 2px solid #132fba;
+    transition: all 0.25s ease;
 }
 
-.table thead th {
+.info-card .btn-light:hover {
     background-color: #132fba !important;
-    color: white;
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(19, 47, 186, 0.25);
+}
+
+/* ==== HISTORY SECTION ==== */
+.history-section {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* ======= TAB TRẠNG THÁI ======= */
+.order-tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 2px solid #edf0ff;
+    margin-bottom: 1.25rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    padding: 0.75rem 0.25rem;
+    font-weight: 700;
+    color: #5a6bbd;
+    position: relative;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.25s ease;
+}
+
+.tab-btn::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #132fba, #f7941d);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.35s ease;
+}
+
+.tab-btn:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.tab-btn.active::after {
+    transform: scaleX(1);
+    transform-origin: left;
+}
+
+.tab-btn.active {
+    color: #132fba;
+}
+
+/* ======= LIST VIEW (card) ======= */
+.order-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.order-card {
+    background: #fff;
+    border: 1.5px solid #e3e8ff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(19, 47, 186, 0.08);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(19, 47, 186, 0.15);
+    border-color: #132fba;
+}
+
+.order-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    border-bottom: 1px dashed #dee3ff;
+}
+
+.order-head .order-id {
+    color: #5a6bbd;
     font-weight: 600;
 }
 
-.table tbody tr:hover {
-    background-color: #f3f7ff;
-    transition: background 0.2s ease;
+.order-body {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem 1rem;
+    align-items: center;
+    padding: 0.75rem 1rem;
 }
 
-.badge {
+.order-desc {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+}
+
+.order-desc .icon {
+    font-size: 1.2rem;
+    line-height: 1;
+    color: #132fba;
+    margin-top: 2px;
+}
+
+.order-desc .title {
+    font-weight: 700;
+    color: #132fba;
+    margin: 0;
+}
+
+.order-desc .sub {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-top: 2px;
+}
+
+.order-amount {
+    text-align: right;
+}
+
+.order-amount .label {
+    color: #5a6bbd;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.order-amount .value {
+    font-weight: 800;
+    font-size: 1.05rem;
+}
+
+.order-amount .value.positive {
+    color: #0a8a0a;
+}
+
+.order-amount .value.negative {
+    color: #c21a1a;
+}
+
+/* Footer nút xem chi tiết */
+.order-foot {
+    text-align: right;
+    padding: 0.5rem 1rem 1rem;
+}
+
+.order-foot .btn {
+    background: transparent;
+    border: 2px solid #132fba;
+    color: #132fba;
+    border-radius: 8px;
+    padding: 0.45rem 1rem;
+    font-weight: 700;
+    transition: all 0.25s ease;
+}
+
+.order-foot .btn:hover {
+    background: #132fba;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 16px rgba(19, 47, 186, 0.25);
+}
+
+/* ======= STATUS BADGES ======= */
+.status-badge {
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
     font-size: 0.85rem;
+    font-weight: 700;
 }
 
-.text-blue {
-    color: #132fba;
+.status-processing {
+    background: #fff6e6;
+    color: #a86a00;
 }
 
-.text-yellow {
-    color: #f7da1d;
+.status-expired {
+    background: #fff3cd;
+    color: #946200;
 }
 
-.icon-blue {
-    color: #132fba;
+.status-done {
+    background: #e8fff2;
+    color: #0a8a0a;
 }
 
-/* Responsive table */
-@media (max-width: 768px) {
-    .table thead {
-        display: none;
-    }
-
-    .table tbody tr {
-        display: block;
-        margin-bottom: 1rem;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        padding: 0.8rem;
-    }
-
-    .table tbody td {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.3rem 0;
-    }
-
-    .table tbody td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: #132fba;
-    }
+/* ======= EMPTY STATE ======= */
+.order-empty {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #6875b4;
 }
 
-/* Responsive summary cards */
-@media (max-width: 992px) {
-    .summary-item {
-        flex: 1 1 45%;
-    }
+.order-empty .empty-icon {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
 }
 
-@media (max-width: 768px) {
-    .summary-item {
-        flex: 1 1 100%;
-    }
-}
-
-/* ===== MODAL LAYOUT ===== */
+/* ===== MODAL ===== */
 .pnx-modal-backdrop {
     position: fixed;
     inset: 0;
@@ -197,9 +339,8 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
-/* Header */
 .pnx-modal-header {
-    background: linear-gradient(135deg, #132fba, #ffe74b);
+    background: linear-gradient(135deg, #132fba, #f7da1d);
     color: white;
     padding: 1rem 1.5rem;
 }
@@ -211,105 +352,93 @@
     font-size: 1.2rem;
 }
 
-/* Body & Footer */
+/* ===== MODAL BODY ===== */
 .pnx-modal-body {
     padding: 1.5rem;
 }
 
+.pnx-modal-body h5,
+.pnx-modal-body h6,
+.pnx-modal-body .fw-bold,
+.pnx-modal-body .fw-semibold {
+    color: #132fba !important;
+}
+
+.pnx-modal-body i,
+.pnx-modal-body .icon-blue {
+    color: #132fba !important;
+}
+
+.pnx-modal-body .icon-yellow {
+    color: #f7da1d !important;
+    font-size: 3rem !important;
+}
+
+.pnx-modal-body p,
+.pnx-modal-body li,
+.pnx-modal-body span {
+    color: #1e1e1e;
+}
+
+.pnx-bullet {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.5rem;
+}
+
+.pnx-modal-body .fs-1.text-blue {
+    color: #132fba !important;
+}
+
+.pnx-modal-body ul li {
+    margin-bottom: 0.6rem; 
+    line-height: 1.6;  
+}
+
+.text-blue{
+    color: #132fba;
+}
+
+/* ===== MODAL FOOTER ===== */
 .pnx-modal-footer {
     border-top: 1px solid #dee2f7;
     border-bottom-left-radius: 1rem;
     border-bottom-right-radius: 1rem;
 }
 
-/* ===== Panacea Modal Buttons (scoped) ===== */
 .pnx-modal-footer .btn {
     border-radius: 999px;
-    /* pill shape */
     padding: 0.55rem 1.25rem;
     font-weight: 600;
-    transition: background-color .2s ease, color .2s ease,
-        border-color .2s ease, box-shadow .2s ease, transform .06s ease;
+    transition: all 0.25s ease;
 }
 
-/* Solid primary */
+.pnx-modal-footer .btn-outline-primary {
+    background-color: #ffffff;
+    color: #132fba;
+    border-color: #132fba;
+    box-shadow: 0 4px 12px rgba(19, 47, 186, 0.10);
+}
+
+.pnx-modal-footer .btn-outline-primary:hover {
+    background-color: #132fba;
+    color: #ffffff;
+    border-color: #132fba;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(19, 47, 186, 0.18);
+}
+
 .pnx-modal-footer .btn-primary {
-    background-color: #132FBA;
-    /* chủ đạo */
-    border-color: #132FBA;
+    background-color: #132fba;
+    border-color: #132fba;
     color: #fff;
     box-shadow: 0 6px 16px rgba(19, 47, 186, 0.18);
 }
 
 .pnx-modal-footer .btn-primary:hover {
     background-color: #0f25a1;
-    /* hơi tối khi hover */
     border-color: #0f25a1;
     transform: translateY(-1px);
     box-shadow: 0 8px 22px rgba(19, 47, 186, 0.24);
-}
-
-.pnx-modal-footer .btn-primary:active {
-    background-color: #0c1e86;
-    border-color: #0c1e86;
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(19, 47, 186, 0.18) inset;
-}
-
-.pnx-modal-footer .btn-primary:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 .25rem rgba(19, 47, 186, 0.3);
-}
-
-/* Outline (ghost) primary */
-.pnx-modal-footer .btn-outline-primary {
-    background-color: #ffffff;
-    color: #132FBA;
-    border-color: #132FBA;
-    box-shadow: 0 4px 12px rgba(19, 47, 186, 0.10);
-}
-
-.pnx-modal-footer .btn-outline-primary:hover {
-    background-color: #132FBA;
-    /* hover lật ngược: nền xanh, chữ trắng */
-    color: #ffffff;
-    border-color: #132FBA;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 22px rgba(19, 47, 186, 0.18);
-}
-
-.pnx-modal-footer .btn-outline-primary:active {
-    background-color: #0f25a1;
-    border-color: #0f25a1;
-    color: #ffffff;
-    transform: translateY(0);
-    box-shadow: 0 4px 12px rgba(19, 47, 186, 0.16) inset;
-}
-
-.pnx-modal-footer .btn-outline-primary:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 .25rem rgba(19, 47, 186, 0.25);
-}
-
-/* Disabled state sync */
-.pnx-modal-footer .btn:disabled,
-.pnx-modal-footer .btn.disabled {
-    opacity: .7;
-    box-shadow: none;
-    transform: none;
-    cursor: not-allowed;
-}
-
-/* ===== MODAL HISTORY DETAIL ===== */
-.pnx-modal-body ul li {
-    margin-bottom: 0.6rem;
-    font-size: 0.95rem;
-}
-
-.pnx-modal-body strong {
-    color: #132fba;
-}
-
-.pnx-modal-body .border {
-    border-color: #dee2f7 !important;
 }
