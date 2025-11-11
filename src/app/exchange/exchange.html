@@ -1,27 +1,155 @@
 <div class="page">
   <!-- 🔹 Tiêu đề chính -->
-  <h1>🎁 Đổi điểm nhận quà</h1>
-  <p class="intro">
-    Sử dụng điểm của bạn để đổi voucher hoặc vật phẩm hấp dẫn!
-  </p>
 
-  <!-- 🔹 Điểm hiện tại -->
-  <div class="card-block" style="text-align: center; margin-bottom: 30px;">
-    <h3>
-      Số điểm hiện có:
-      <span style="color:#0f89f3; font-weight:700;">{{ userPoints | number }}</span> 💎
-    </h3>
+  <!-- 🔹 Điểm hiện tại và Bộ lọc (Gộp chung) -->
+  <div class="top-section">
+    <!-- Điểm hiện tại -->
+    <div class="points-card-compact">
+      <div class="points-content-compact">
+        <div class="points-icon-compact">
+          <i class="bi bi-coin"></i>
+        </div>
+        <div class="points-info-compact">
+          <p class="points-label-compact">Số điểm hiện có</p>
+          <h3 class="points-value-compact">
+            <span>{{ userPoints | number }}</span>
+            <span class="points-unit-compact">Xu</span>
+          </h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔹 Bộ lọc và tìm kiếm -->
+    <div class="filter-section-compact">
+      <!-- Hàng 1: Search + Category Tabs -->
+      <div class="filter-row-top">
+        <!-- Search Box -->
+        <div class="search-box-compact">
+          <i class="bi bi-search"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            (input)="onSearch()"
+            (keydown.enter)="onSearch()"
+            placeholder="Tìm kiếm..."
+            class="search-input-compact"
+          />
+          <button 
+            type="button"
+            class="btn-clear-search-compact" 
+            *ngIf="searchQuery" 
+            (click)="clearSearch()"
+            title="Xóa tìm kiếm">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+        
+        <!-- Category Tabs -->
+        <div class="category-tabs-compact">
+          <button 
+            class="tab-btn-compact" 
+            [class.active]="selectedCategory === 'all'"
+            (click)="changeCategory('all')">
+            <i class="bi bi-grid"></i> Tất cả
+          </button>
+          <button 
+            class="tab-btn-compact" 
+            [class.active]="selectedCategory === 'voucher'"
+            (click)="changeCategory('voucher')">
+            <i class="bi bi-ticket-perforated"></i> Voucher
+          </button>
+          <button 
+            class="tab-btn-compact" 
+            [class.active]="selectedCategory === 'item'"
+            (click)="changeCategory('item')">
+            <i class="bi bi-gift"></i> Vật phẩm
+          </button>
+        </div>
+      </div>
+      
+      <!-- Hàng 2: Filter Group -->
+      <div class="filter-row-bottom">
+        <div class="filter-group">
+          <div class="filter-group-header">
+            <i class="bi bi-funnel"></i>
+            <span>Bộ lọc</span>
+          </div>
+          <div class="filter-group-content">
+            <!-- Sắp xếp theo điểm -->
+            <div class="filter-item">
+              <i class="bi bi-coin"></i>
+              <select [(ngModel)]="pointsSort" (change)="changePointsSort(pointsSort)" class="filter-select">
+                <option value="none">Sắp xếp điểm</option>
+                <option value="low">Điểm: Thấp → Cao</option>
+                <option value="high">Điểm: Cao → Thấp</option>
+              </select>
+            </div>
+            <div class="filter-divider"></div>
+            <!-- Sắp xếp theo tên -->
+            <div class="filter-item">
+              <i class="bi bi-sort-alpha-down"></i>
+              <select [(ngModel)]="nameSort" (change)="changeNameSort(nameSort)" class="filter-select">
+                <option value="none">Sắp xếp tên</option>
+                <option value="asc">Tên: A → Z</option>
+                <option value="desc">Tên: Z → A</option>
+              </select>
+            </div>
+            <div class="filter-divider"></div>
+            <!-- Lọc theo điểm -->
+            <div class="filter-item">
+              <i class="bi bi-funnel-fill"></i>
+              <select [(ngModel)]="pointsFilter" (change)="changePointsFilter(pointsFilter)" class="filter-select">
+                <option value="all">Tất cả điểm</option>
+                <option value="0-200">0-200 Xu</option>
+                <option value="200-400">200-400 Xu</option>
+                <option value="400-600">400-600 Xu</option>
+                <option value="600+">600+ Xu</option>
+              </select>
+            </div>
+          </div>
+          <!-- Nút xóa bộ lọc -->
+          <button class="btn-clear-filters" (click)="clearFilters()" title="Xóa tất cả bộ lọc">
+            Xóa
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 🔹 Khu vực voucher -->
-  <h2 class="section-title">🎟️ Danh sách Voucher</h2>
-  <div class="voucher-grid">
-    <div class="voucher-card" *ngFor="let v of vouchers">
-      <img [src]="v.img" alt="Voucher" class="voucher-img" />
+  <h2 class="section-title" *ngIf="selectedCategory === 'all' || selectedCategory === 'voucher'">
+    <i class="bi bi-ticket-perforated"></i> Danh sách Voucher
+    <span class="count-badge" *ngIf="filteredVouchers.length !== vouchers.length">
+      ({{ filteredVouchers.length }}/{{ vouchers.length }})
+    </span>
+  </h2>
+  <div class="no-results" *ngIf="(selectedCategory === 'all' || selectedCategory === 'voucher') && filteredVouchers.length === 0">
+    <i class="bi bi-inbox"></i>
+    <p>Không tìm thấy voucher nào</p>
+  </div>
+  <div class="voucher-grid" *ngIf="(selectedCategory === 'all' || selectedCategory === 'voucher') && filteredVouchers.length > 0">
+    <div class="voucher-card" *ngFor="let v of filteredVouchers; let i = index">
+      <div class="voucher-image-wrapper">
+        <img [src]="v.img" alt="Voucher" class="voucher-img" (error)="handleImageError($event)" />
+        <div class="image-overlay">
+          <button class="btn-change-image" (click)="changeVoucherImage(getVoucherIndex(v))" title="Thay đổi hình ảnh">
+            <i class="bi bi-image"></i>
+          </button>
+        </div>
+        <input 
+          type="file" 
+          [id]="'voucher-image-' + getVoucherIndex(v)" 
+          accept="image/*" 
+          style="display: none;"
+          (change)="onVoucherImageChange($event, getVoucherIndex(v))"
+        />
+      </div>
       <div class="voucher-body text-center">
         <h4 class="card-title">{{ v.type }}</h4>
-        <p>Cần: <b>{{ v.pointsRequired | number }}</b> điểm</p>
-        <button class="btn" (click)="redeemVoucher(v)">
+        <p class="points-required">
+          <i class="bi bi-coin"></i> Cần: <b>{{ v.pointsRequired | number }}</b> Xu
+        </p>
+        <button class="btn btn-redeem" (click)="redeemVoucher(v)">
           <i class="bi bi-ticket-perforated"></i> Đổi ngay
         </button>
       </div>
@@ -29,14 +157,39 @@
   </div>
 
   <!-- 🔹 Khu vực vật phẩm -->
-  <h2 class="section-title">🎁 Danh sách Vật phẩm</h2>
-  <div class="item-grid">
-    <div class="item-card" *ngFor="let i of items">
-      <img [src]="i.img" alt="Item" />
+  <h2 class="section-title" *ngIf="selectedCategory === 'all' || selectedCategory === 'item'">
+    <i class="bi bi-gift"></i> Danh sách Vật phẩm
+    <span class="count-badge" *ngIf="filteredItems.length !== items.length">
+      ({{ filteredItems.length }}/{{ items.length }})
+    </span>
+  </h2>
+  <div class="no-results" *ngIf="(selectedCategory === 'all' || selectedCategory === 'item') && filteredItems.length === 0">
+    <i class="bi bi-inbox"></i>
+    <p>Không tìm thấy vật phẩm nào</p>
+  </div>
+  <div class="item-grid" *ngIf="(selectedCategory === 'all' || selectedCategory === 'item') && filteredItems.length > 0">
+    <div class="item-card" *ngFor="let i of filteredItems; let idx = index">
+      <div class="item-image-wrapper">
+        <img [src]="i.img" alt="Item" class="item-img" (error)="handleImageError($event)" />
+        <div class="image-overlay">
+          <button class="btn-change-image" (click)="changeItemImage(getItemIndex(i))" title="Thay đổi hình ảnh">
+            <i class="bi bi-image"></i>
+          </button>
+        </div>
+        <input 
+          type="file" 
+          [id]="'item-image-' + getItemIndex(i)" 
+          accept="image/*" 
+          style="display: none;"
+          (change)="onItemImageChange($event, getItemIndex(i))"
+        />
+      </div>
       <div class="item-info text-center">
         <h4 class="card-title">{{ i.name }}</h4>
-        <p>Cần: <b>{{ i.pointsRequired | number }}</b> điểm</p>
-        <button class="btn" (click)="redeemItem(i)">
+        <p class="points-required">
+          <i class="bi bi-coin"></i> Cần: <b>{{ i.pointsRequired | number }}</b> Xu
+        </p>
+        <button class="btn btn-redeem" (click)="redeemItem(i)">
           <i class="bi bi-box-seam"></i> Đổi ngay
         </button>
       </div>
@@ -44,8 +197,8 @@
   </div>
 
   <!-- 🔹 Footer -->
-  <div style="text-align:center; margin-top:40px; color:#777; font-size:14px;">
-    <p>✨ Lưu ý: Điểm sau khi đổi sẽ không thể hoàn lại.</p>
-    <p>© 2025 Đổi quà thành viên | Giao diện cảm hứng từ Traveloka</p>
+  <div class="footer-note">
+    <p><i class="bi bi-info-circle"></i> Lưu ý: Điểm sau khi đổi sẽ không thể hoàn lại.</p>
+    <p class="copyright">© 2025 Đổi quà thành viên Panacea</p>
   </div>
 </div>
