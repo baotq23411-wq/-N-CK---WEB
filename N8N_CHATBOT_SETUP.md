@@ -18,7 +18,7 @@ Mở file `src/index.html` và thêm script tag vào thẻ `<body>`:
     <!-- Chatbot Widget Script -->
     <script
       src="https://cdn.jsdelivr.net/npm/@kieng/just-chat/dist/just-chat.umd.js"
-      data-webhook-url="https://52836.vpsvinahost.vn/webhook-test/172f45a8-a690-460b-bbdc-b59ec818af6f"
+      data-webhook-url="https://52836.vpsvinahost.vn/webhook/172f45a8-a690-460b-bbdc-b59ec818af6f"
       data-theme-color="#1E40AF"
       data-position="bottom-right"
       data-title="Chat with us"
