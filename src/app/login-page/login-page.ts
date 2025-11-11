@@ -71,25 +71,16 @@ export class LoginPageComponent implements OnInit {
           Swal.fire('Đăng nhập thất bại!', 'Mật khẩu không đúng.', 'error');
           this.loginForm.get('password')?.reset();
         } else if (error.message === 'Email/Số điện thoại chưa đăng ký') {
-          Swal.fire({
-            title: 'Tài khoản chưa được đăng ký!',
-            text: 'Bạn muốn đăng ký ngay?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Đăng ký',
-            cancelButtonText: 'Hủy'
-          }).then((result) => {
-            if (result.isConfirmed) this.router.navigate(['/register']);
-          });
+          // Nếu chưa có tài khoản → chuyển thẳng tới trang đăng ký
+          this.router.navigate(['/register']);
         } else {
           Swal.fire('Lỗi', 'Có lỗi xảy ra. Vui lòng thử lại.', 'error');
         }
         return EMPTY;
       })
     ).subscribe(() => {
-      Swal.fire('Thành công', 'Đăng nhập thành công!', 'success').then(() => {
-        this.router.navigate(['/']); // hoặc về trang dashboard
-      });
+      // Đăng nhập thành công → chuyển đến trang BlogListPage
+      this.router.navigate(['/blog']);
     });
   }
 }

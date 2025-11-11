@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SreachBar } from './sreach-bar';
+import { SreachBarComponent } from './sreach-bar';
 
-describe('SreachBar', () => {
-  let component: SreachBar;
-  let fixture: ComponentFixture<SreachBar>;
+describe('SreachBarComponent', () => {
+  let component: SreachBarComponent;
+  let fixture: ComponentFixture<SreachBarComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SreachBar]
+      imports: [SreachBarComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(SreachBar);
+    fixture = TestBed.createComponent(SreachBarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

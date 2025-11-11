@@ -4,13 +4,12 @@ import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { RoomList } from './room-list/room-list';
 import { FormsModule } from '@angular/forms';
 import { filter, Subscription } from 'rxjs';
-import { Exchange } from './exchange/exchange';
 
 // removed duplicate RouterOutlet import (kept RouterOutlet above)
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule, FormsModule, Exchange],
+  imports: [RouterOutlet, CommonModule, FormsModule],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })

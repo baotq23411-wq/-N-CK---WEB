@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule, CurrencyPipe, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ServiceDataService } from '../services/service';
-import { ReviewService, Review } from '../services/review';
+import { ReviewService } from '../services/review';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -28,7 +28,7 @@ export class RoomDetail implements OnDestroy {
   expertServices: any[] = [];
   extraServices: any[] = [];
   totalPrice: number = 0;
-  reviews: Review[] = [];
+  reviews: any[] = [];
   averageRating: number = 0;
   totalReviews: number = 0;
   showAllExperts: boolean = false;
@@ -77,8 +77,8 @@ export class RoomDetail implements OnDestroy {
   window.addEventListener('keydown', this.handleKeyEvents.bind(this));
 
   // 5️⃣ Gọi dữ liệu đánh giá từ file JSON
-  this.reviewService.getReviews().subscribe((data) => {
-    this.reviews = data.filter(r => r.roomId === roomId);
+  this.reviewService.getReviews().subscribe((data: any[]) => {
+    this.reviews = data.filter((r: any) => r.roomId === roomId);
     this.totalReviews = this.reviews.length;
     this.averageRating = this.calculateAverageRating();
   });

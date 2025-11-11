@@ -30,4 +30,11 @@
         .get<ReviewListItem[]>(url)
         .pipe(catchError(this.handleError));
     }
+
+    // Local helper: read reviews from local JSON (used by components that read demo data)
+    getReviews(): Observable<any[]> {
+      // Many templates in the project use a local JSON at assets/data/reviews.json
+      // Return as any[] to be permissive with the demo data shape.
+      return this.http.get<any[]>('assets/data/reviews.json').pipe(catchError(this.handleError));
+    }
   }
