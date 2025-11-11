@@ -8,6 +8,7 @@ import vouchersData from '../../assets/data/voucher.json';
 import itemsData from '../../assets/data/items.json';
 import { Voucher } from '../interfaces/voucher';
 import { Items } from '../interfaces/items';
+import { InvoiceService } from '../services/invoice';
 
 @Component({
   selector: 'app-exchange',
@@ -17,14 +18,28 @@ import { Items } from '../interfaces/items';
   styleUrls: ['./exchange.css']
 })
 export class Exchange implements OnInit {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private invoiceService: InvoiceService
+  ) {}
 
   // ===== DỮ LIỆU NGƯỜI DÙNG =====
-  userPoints: number = 600;
+  userPoints: number = 0;
+  currentUser: any = null;
+  isLoggedIn: boolean = false;
 
   // ===== DỮ LIỆU VOUCHER & ITEM =====
-  vouchers: Voucher[] = (vouchersData as any[]).map(v => ({ ...v, status: 'Còn hiệu lực' }));
+  vouchers: Voucher[] = (vouchersData as any[]).map(v => ({ ...v, status: v.status || 'Còn hiệu lực' }));
   items: Items[] = itemsData as Items[];
+  
+  // ===== BỘ LỌC & TÌM KIẾM =====
+  searchQuery: string = '';
+  selectedCategory: string = 'all'; // 'all', 'voucher', 'item'
+  pointsSort: string = 'none'; // 'none', 'low', 'high'
+  nameSort: string = 'none'; // 'none', 'asc', 'desc'
+  pointsFilter: string = 'all'; // 'all', '0-200', '200-400', '400-600', '600+'
+  filteredVouchers: Voucher[] = [];
+  filteredItems: Items[] = [];
 
   // ===== DANH SÁCH TỈNH & HUYỆN =====
   provinces = [
@@ -36,7 +51,33 @@ export class Exchange implements OnInit {
   ];
 
   ngOnInit(): void {
+    this.loadUserData();
     this.checkVoucherStatus();
+    // Khởi tạo filtered arrays
+    this.filteredVouchers = [...this.vouchers];
+    this.filteredItems = [...this.items];
+    this.applyFilters();
+  }
+
+  /** 👤 Load dữ liệu user và điểm */
+  loadUserData(): void {
+    this.invoiceService.getUser().subscribe({
+      next: (user: any) => {
+        this.currentUser = user;
+        this.isLoggedIn = !!(user && (user.full_name || user.email || user.id));
+        
+        if (this.isLoggedIn && user.point !== undefined) {
+          const parsed = Number.isFinite(Number(user.point)) ? Number(user.point) : 0;
+          this.userPoints = parsed;
+        } else {
+          this.userPoints = 0;
+        }
+      },
+      error: () => {
+        this.userPoints = 0;
+        this.isLoggedIn = false;
+      }
+    });
   }
 
   /** ✅ Kiểm tra trạng thái voucher */
@@ -90,6 +131,18 @@ export class Exchange implements OnInit {
     if (!confirmRes.isConfirmed) return;
 
     this.userPoints -= v.pointsRequired;
+    
+    // Cập nhật điểm vào user nếu đã đăng nhập
+    if (this.isLoggedIn && this.currentUser) {
+      this.invoiceService.updateUserPoints(this.currentUser.id, this.userPoints).subscribe({
+        next: () => {
+          if (this.currentUser) {
+            this.currentUser.point = this.userPoints;
+          }
+        }
+      });
+    }
+    
     const code = this.generateCode(v.code);
 
     await Swal.fire({
@@ -270,6 +323,17 @@ export class Exchange implements OnInit {
 
     // Trừ điểm & hiện thông báo thành công
     this.userPoints -= item.pointsRequired;
+    
+    // Cập nhật điểm vào user nếu đã đăng nhập
+    if (this.isLoggedIn && this.currentUser) {
+      this.invoiceService.updateUserPoints(this.currentUser.id, this.userPoints).subscribe({
+        next: () => {
+          if (this.currentUser) {
+            this.currentUser.point = this.userPoints;
+          }
+        }
+      });
+    }
     const isHCM = result.value.province === 'TP. Hồ Chí Minh';
     const feeText = isHCM ? 'Miễn phí ship trong TP.HCM' : 'Phí ship 30.000đ';
 
@@ -294,5 +358,268 @@ export class Exchange implements OnInit {
   private generateCode(prefix: string): string {
     const random = Math.floor(100000 + Math.random() * 900000);
     return `${prefix}-${random}`;
+  }
+
+  /** 🖼️ Xử lý lỗi khi ảnh không load được */
+  handleImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+  }
+
+  /** 📷 Mở file picker để thay đổi ảnh voucher */
+  changeVoucherImage(index: number): void {
+    const fileInput = document.getElementById(`voucher-image-${index}`) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  /** 📷 Mở file picker để thay đổi ảnh item */
+  changeItemImage(index: number): void {
+    const fileInput = document.getElementById(`item-image-${index}`) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  /** 🖼️ Xử lý khi chọn ảnh voucher mới */
+  onVoucherImageChange(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    
+    if (!file) return;
+
+    // Kiểm tra loại file
+    if (!file.type.startsWith('image/')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Vui lòng chọn file ảnh hợp lệ!',
+        confirmButtonColor: '#0f89f3'
+      });
+      return;
+    }
+
+    // Kiểm tra kích thước file (tối đa 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Kích thước ảnh không được vượt quá 5MB!',
+        confirmButtonColor: '#0f89f3'
+      });
+      return;
+    }
+
+    // Đọc file và cập nhật ảnh
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      if (result && this.vouchers[index]) {
+        this.vouchers[index].img = result;
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công!',
+          text: 'Đã thay đổi hình ảnh voucher',
+          confirmButtonColor: '#0f89f3',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /** 🖼️ Xử lý khi chọn ảnh item mới */
+  onItemImageChange(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    
+    if (!file) return;
+
+    // Kiểm tra loại file
+    if (!file.type.startsWith('image/')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Vui lòng chọn file ảnh hợp lệ!',
+        confirmButtonColor: '#0f89f3'
+      });
+      return;
+    }
+
+    // Kiểm tra kích thước file (tối đa 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Kích thước ảnh không được vượt quá 5MB!',
+        confirmButtonColor: '#0f89f3'
+      });
+      return;
+    }
+
+    // Đọc file và cập nhật ảnh
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      if (result && this.items[index]) {
+        this.items[index].img = result;
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Thành công!',
+          text: 'Đã thay đổi hình ảnh vật phẩm',
+          confirmButtonColor: '#0f89f3',
+          timer: 1500,
+          showConfirmButton: false
+        });
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  /** 🔍 Áp dụng bộ lọc và tìm kiếm */
+  applyFilters(): void {
+    // Lọc voucher
+    let vFiltered = [...this.vouchers];
+    
+    // Tìm kiếm
+    if (this.searchQuery.trim()) {
+      const query = this.searchQuery.toLowerCase().trim();
+      vFiltered = vFiltered.filter(v => 
+        v.type.toLowerCase().includes(query) ||
+        v.code.toLowerCase().includes(query)
+      );
+    }
+    
+    // Lọc theo điểm
+    if (this.pointsFilter !== 'all') {
+      vFiltered = vFiltered.filter(v => this.matchesPointsFilter(v.pointsRequired));
+    }
+    
+    // Sắp xếp voucher
+    vFiltered = this.sortItems(vFiltered, 'voucher');
+    this.filteredVouchers = vFiltered;
+    
+    // Lọc items
+    let iFiltered = [...this.items];
+    
+    // Tìm kiếm
+    if (this.searchQuery.trim()) {
+      const query = this.searchQuery.toLowerCase().trim();
+      iFiltered = iFiltered.filter(i => 
+        i.name.toLowerCase().includes(query)
+      );
+    }
+    
+    // Lọc theo điểm
+    if (this.pointsFilter !== 'all') {
+      iFiltered = iFiltered.filter(i => this.matchesPointsFilter(i.pointsRequired));
+    }
+    
+    // Sắp xếp items
+    iFiltered = this.sortItems(iFiltered, 'item');
+    this.filteredItems = iFiltered;
+  }
+
+  /** ✅ Kiểm tra điểm có khớp với bộ lọc không */
+  private matchesPointsFilter(points: number): boolean {
+    switch (this.pointsFilter) {
+      case '0-200':
+        return points >= 0 && points <= 200;
+      case '200-400':
+        return points > 200 && points <= 400;
+      case '400-600':
+        return points > 400 && points <= 600;
+      case '600+':
+        return points > 600;
+      default:
+        return true;
+    }
+  }
+
+  /** 📊 Sắp xếp danh sách */
+  private sortItems(items: any[], type: 'voucher' | 'item'): any[] {
+    const sorted = [...items];
+    
+    // Sắp xếp theo điểm (ưu tiên)
+    if (this.pointsSort === 'low') {
+      sorted.sort((a, b) => a.pointsRequired - b.pointsRequired);
+    } else if (this.pointsSort === 'high') {
+      sorted.sort((a, b) => b.pointsRequired - a.pointsRequired);
+    }
+    
+    // Sắp xếp theo tên (thứ yếu)
+    if (this.nameSort === 'asc') {
+      sorted.sort((a, b) => {
+        const nameA = type === 'voucher' ? a.type : a.name;
+        const nameB = type === 'voucher' ? b.type : b.name;
+        return nameA.localeCompare(nameB, 'vi');
+      });
+    } else if (this.nameSort === 'desc') {
+      sorted.sort((a, b) => {
+        const nameA = type === 'voucher' ? a.type : a.name;
+        const nameB = type === 'voucher' ? b.type : b.name;
+        return nameB.localeCompare(nameA, 'vi');
+      });
+    }
+    
+    return sorted;
+  }
+
+  /** 🔄 Thay đổi category */
+  changeCategory(category: string): void {
+    this.selectedCategory = category;
+  }
+
+  /** 🔄 Thay đổi sắp xếp điểm */
+  changePointsSort(sort: string): void {
+    this.pointsSort = sort;
+    this.applyFilters();
+  }
+
+  /** 🔄 Thay đổi sắp xếp tên */
+  changeNameSort(sort: string): void {
+    this.nameSort = sort;
+    this.applyFilters();
+  }
+
+  /** 🔄 Thay đổi lọc điểm */
+  changePointsFilter(filter: string): void {
+    this.pointsFilter = filter;
+    this.applyFilters();
+  }
+
+  /** 🔍 Tìm kiếm */
+  onSearch(): void {
+    this.applyFilters();
+  }
+
+  /** 🧹 Xóa tìm kiếm */
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.applyFilters();
+  }
+
+  /** 🧹 Xóa bộ lọc */
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.selectedCategory = 'all';
+    this.pointsSort = 'none';
+    this.nameSort = 'none';
+    this.pointsFilter = 'all';
+    this.applyFilters();
+  }
+
+  /** 🔍 Tìm index của voucher trong mảng gốc */
+  getVoucherIndex(voucher: Voucher): number {
+    return this.vouchers.findIndex(v => v.code === voucher.code);
+  }
+
+  /** 🔍 Tìm index của item trong mảng gốc */
+  getItemIndex(item: Items): number {
+    return this.items.findIndex(i => i.id === item.id);
   }
 }

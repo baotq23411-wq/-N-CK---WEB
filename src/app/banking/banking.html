@@ -48,7 +48,13 @@
 
           <div class="qr-box p-3 rounded">
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <img src="assets/vietqr.png" alt="VietQR" height="22" />
+              <img 
+                src="https://img.vietqr.io/image/vietqr-logo.png" 
+                alt="VietQR" 
+                height="22" 
+                style="max-width: 120px; object-fit: contain;"
+                onerror="this.onerror=null; this.src='https://vietqr.io/img/logo.svg';"
+              />
               <button class="btn btn-outline-primary btn-sm" (click)="downloadQR()">
                 Tải về mã QR
               </button>
@@ -95,38 +101,101 @@
 
           <hr />
 
-          <!-- ✅ Thông tin phòng -->
-          <p><strong>Phòng:</strong> {{ booking?.room?.name }}</p>
-<p><strong>Số lượng:</strong> {{ booking?.room?.capacity || booking?.range }}</p>
-
-<!-- ✅ Hiển thị giá phòng (theo giờ hoặc theo đơn vị) -->
-<p *ngIf="roomPrice > 0">
-  <strong>Giá phòng:</strong>
-  <span> {{ roomPrice | number }} VND</span>
-</p>
-
-
-          <!-- ✅ Hiển thị ngày (giống Payment) -->
-          <p><strong>Ngày:</strong> {{ bookingDate }}</p>
-          <p><strong>Giờ nhận:</strong> {{ checkInTime }}</p>
-          <p><strong>Giờ trả:</strong> {{ checkOutTime }}</p>
-
+          <!-- ✅ Thông tin phòng (hiển thị nhiều bookings nếu có) -->
+          <ng-container *ngIf="bookings.length > 0; else singleBookingInfo">
+            <div *ngFor="let bk of bookings; let i = index" 
+                 [class]="bookings.length > 1 ? 'mb-3 pb-3' : ''"
+                 [style.border-bottom]="bookings.length > 1 && i < bookings.length - 1 ? '1px solid #e0e0e0' : 'none'">
+              <p *ngIf="bookings.length > 1" class="text-primary fw-bold mb-2">
+                {{ bk.roomName || bk.room?.room_name || booking?.room?.name }}
+              </p>
+              <p><strong>Phòng:</strong> {{ bk.roomName || bk.room?.room_name || booking?.room?.name || 'N/A' }}</p>
+              <p><strong>Số lượng:</strong> {{ bk.room?.range || bk.room?.capacity || booking?.room?.capacity || booking?.range || 'N/A' }}</p>
+              <p *ngIf="bk.basePrice > 0">
+                <strong>Giá phòng{{ bookings.length > 1 ? ' (' + getBookingHours(bk) + ' giờ)' : '' }}:</strong>
+                <span> {{ bk.basePrice | number }} VND</span>
+              </p>
+              <p><strong>Ngày:</strong> 
+                <span *ngIf="bk.checkInDate">
+                  {{ bk.checkInDate | date: 'EEEE, dd MMMM yyyy' : undefined : 'vi' }}
+                </span>
+                <span *ngIf="!bk.checkInDate">{{ bookingDate }}</span>
+              </p>
+              <p><strong>Giờ nhận:</strong> {{ bk.checkInTime || checkInTime }}</p>
+              <p><strong>Giờ trả:</strong> {{ bk.checkOutTime || checkOutTime }}</p>
+            </div>
+          </ng-container>
+          
+          <ng-template #singleBookingInfo>
+            <p><strong>Phòng:</strong> {{ booking?.room?.name || booking?.roomName || 'N/A' }}</p>
+            <p><strong>Số lượng:</strong> {{ booking?.room?.capacity || booking?.range || 'N/A' }}</p>
+            <p *ngIf="roomPrice > 0">
+              <strong>Giá phòng:</strong>
+              <span> {{ roomPrice | number }} VND</span>
+            </p>
+            <p><strong>Ngày:</strong> {{ bookingDate }}</p>
+            <p><strong>Giờ nhận:</strong> {{ checkInTime }}</p>
+            <p><strong>Giờ trả:</strong> {{ checkOutTime }}</p>
+          </ng-template>
 
           <hr />
 
-          <!-- ✅ Dịch vụ đi kèm -->
-          <p class="fw-bold mb-2">
-            Dịch vụ đi kèm:
-            <span *ngIf="!booking?.services || booking?.services.length === 0" class="text-muted fw-normal">
+          <!-- ✅ Dịch vụ đi kèm (chia thành 2 phần: Dịch vụ chuyên gia và Dịch vụ thuê thêm) -->
+          <div class="mb-3">
+            <p class="fw-bold mb-2">Dịch vụ đi kèm:</p>
+            
+            <!-- Dịch vụ chuyên gia -->
+            <div *ngIf="expertServices.length > 0" class="mb-3">
+              <p class="fw-semibold text-primary small mb-1">Dịch vụ chuyên gia:</p>
+              <ul class="list-unstyled ms-3 mb-0">
+                <li *ngFor="let ex of expertServices" class="small">
+                  {{ ex.name }} - {{ ex.price | number }} VND
+                </li>
+              </ul>
+            </div>
+            
+            <!-- Dịch vụ thuê thêm -->
+            <div *ngIf="extraServices.length > 0" class="mb-3">
+              <p class="fw-semibold text-primary small mb-1">Dịch vụ thuê thêm:</p>
+              <ul class="list-unstyled ms-3 mb-0">
+                <li *ngFor="let s of extraServices" class="small">
+                  {{ s.name }} x{{ s.quantity || 1 }} - {{ (s.price * (s.quantity || 1)) | number }} VND
+                </li>
+              </ul>
+            </div>
+            
+            <!-- Dịch vụ cũ (nếu có, từ booking.services) -->
+            <div *ngIf="(!expertServices || expertServices.length === 0) && (!extraServices || extraServices.length === 0) && booking?.services?.length > 0">
+              <ul class="list-unstyled ms-3 mb-0">
+                <li *ngFor="let s of booking.services" class="small">
+                  {{ s.name }} - {{ s.price | number }} VND
+                </li>
+              </ul>
+            </div>
+            
+            <!-- Không có dịch vụ -->
+            <p *ngIf="(!expertServices || expertServices.length === 0) && (!extraServices || extraServices.length === 0) && (!booking?.services || booking?.services.length === 0)" 
+               class="text-muted small mb-0">
               Không có dịch vụ kèm theo
-            </span>
-          </p>
-
-          <ul class="list-unstyled ms-3" *ngIf="booking?.services?.length > 0">
-            <li *ngFor="let s of booking.services">
-              {{ s.name }} - {{ s.price | number }} VND
-            </li>
-          </ul>
+            </p>
+          </div>
+          
+          <!-- ✅ Mã giảm giá (nếu có) -->
+          <div *ngIf="discountValue > 0" class="mb-2">
+            <p class="small mb-0">
+              <strong>Mã giảm giá:</strong> 
+              <span class="text-success">-{{ discountValue | number }} VND</span>
+              <span *ngIf="promoCode" class="text-muted"> ({{ promoCode }})</span>
+            </p>
+          </div>
+          
+          <!-- ✅ Đã dùng Xu (nếu có) -->
+          <div *ngIf="usePoints && pointsDiscountValue > 0" class="mb-2">
+            <p class="small mb-0">
+              <strong>Đã dùng 100 Xu:</strong> 
+              <span class="text-success">-{{ pointsDiscountValue | number }} VND</span>
+            </p>
+          </div>
 
           <hr />
 
