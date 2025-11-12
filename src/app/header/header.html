@@ -1,0 +1,90 @@
+<header [class.scrolled]="scrolled">
+  <div class="inner">
+    <!-- Logo -->
+    <a class="brand" routerLink="/" (click)="closeMenu()">
+      <img src="assets/Logo.png" alt="Panacea" />
+      <span>Panacea</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="nav-desktop">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Trang chủ</a>
+      <a routerLink="/rooms" routerLinkActive="active">Danh sách phòng</a>
+      <a routerLink="/blog" routerLinkActive="active">Blog</a>
+      <a routerLink="/reviews" routerLinkActive="active">Đánh giá</a>
+      <div class="dropdown" tabindex="0">
+        <span>Hỗ trợ</span>
+        <div class="menu">
+          <a routerLink="/support" (click)="closeMenu()">Trợ giúp</a>
+          <a routerLink="/contact-info" (click)="closeMenu()">Thông tin liên hệ</a>
+        </div>
+      </div>
+      <div class="dropdown" tabindex="0">
+        <span>Chính sách</span>
+        <div class="menu">
+          <a routerLink="/policies" (click)="closeMenu()">Chính sách hoạt động</a>
+          <a routerLink="/terms" (click)="closeMenu()">Điều kiện & Điều khoản</a>
+          <a routerLink="/privacy" (click)="closeMenu()">Bảo mật</a>
+        </div>
+      </div>
+      <a routerLink="/about" routerLinkActive="active">Về chúng tôi</a>
+    </nav>
+
+    <!-- Actions -->
+    <div class="actions" *ngIf="!authService.isLoggedIn()">
+      <a class="btn ghost" routerLink="/login">Đăng nhập</a>
+      <a class="btn primary" routerLink="/register">Đăng ký</a>
+      <button class="burger" (click)="toggle()" aria-label="Mở menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Logged in -->
+    <div class="actions user" *ngIf="authService.isLoggedIn()">
+      <div class="user-drop" tabindex="0">
+        <button class="user-btn">
+          <span class="name">{{ currentAccount?.ho_ten || 'Username' }}</span>
+          <span class="sep">|</span>
+          <i class="bi bi-coin"></i>
+          <span class="points">{{ currentAccount?.diem_kha_dung || 0 }} điểm</span>
+          <i class="bi bi-chevron-down"></i>
+        </button>
+        <div class="panel">
+          <div class="member {{membershipClass}}">
+            <strong>{{ currentAccount?.ho_ten || 'Username' }}</strong>
+            <small>Bạn là thành viên <b>{{ membership }}</b></small>
+          </div>
+          <div class="white">
+            <a class="item" routerLink="/account-point" (click)="closeMenu()"><i class="bi bi-coin"></i> Điểm của tôi</a>
+            <a class="item" routerLink="/my-bookings" (click)="closeMenu()"><i class="bi bi-list"></i> Đặt chỗ của tôi</a>
+            <a class="item" routerLink="/profile" (click)="closeMenu()"><i class="bi bi-person"></i> Tài khoản</a>
+            <button class="item danger" (click)="logout()"><i class="bi bi-power"></i> Đăng xuất</button>
+          </div>
+        </div>
+      </div>
+      <button class="burger" (click)="toggle()" aria-label="Mở menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile sheet -->
+  <div class="mobile" *ngIf="isOpen" (click)="closeMenu()">
+    <nav class="mobile-menu" (click)="$event.stopPropagation()">
+      <a routerLink="/" (click)="closeMenu()">Trang chủ</a>
+      <a routerLink="/rooms" (click)="closeMenu()">Danh sách phòng</a>
+      <a routerLink="/blog" (click)="closeMenu()">Blog</a>
+      <a routerLink="/reviews" (click)="closeMenu()">Đánh giá</a>
+      <a routerLink="/support" (click)="closeMenu()">Trợ giúp</a>
+      <a routerLink="/policies" (click)="closeMenu()">Chính sách hoạt động</a>
+      <a routerLink="/terms" (click)="closeMenu()">Điều kiện & Điều khoản</a>
+      <a routerLink="/about" (click)="closeMenu()">Về chúng tôi</a>
+      <hr />
+      <a routerLink="/login" *ngIf="!authService.isLoggedIn()">Đăng nhập</a>
+      <a routerLink="/register" *ngIf="!authService.isLoggedIn()">Đăng ký</a>
+      <a routerLink="/my-bookings" *ngIf="authService.isLoggedIn()">Đặt chỗ của tôi</a>
+      <a routerLink="/profile" *ngIf="authService.isLoggedIn()">Tài khoản</a>
+      <button class="logout" *ngIf="authService.isLoggedIn()" (click)="logout()">Đăng xuất</button>
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,108 @@
+<div class="sb-banner">
+  <div class="container">
+    <!-- Tabs -->
+    <div class="sb-tabs">
+      <button class="sb-tab" [class.active]="isActive('book')" (click)="setTab('book')">
+        <i class="bi bi-calendar2-check"></i> Đặt dịch vụ
+      </button>
+      <button class="sb-tab ghost" [class.active]="isActive('guide')" (click)="setTab('guide')">
+        <i class="bi bi-journal-richtext"></i> Cẩm nang Panacea
+      </button>
+    </div>
+
+    <!-- Card -->
+    <div class="sb-card" *ngIf="activeTab==='book'">
+      <!-- Zones -->
+      <div class="sb-row sb-zones">
+        <label class="sb-label">Khu vườn</label>
+        <div class="sb-chips">
+          <button
+            *ngFor="let z of zones"
+            class="sb-chip"
+            [class.active]="zone===z.key"
+            (click)="zone = z.key; onZoneChange()"
+          >
+            {{ z.label }}
+          </button>
+        </div>
+      </div>
+
+      <div class="sb-grid">
+        <!-- Service -->
+        <div class="sb-field">
+          <label class="sb-label">Dịch vụ</label>
+          <div class="sb-control">
+            <i class="bi bi-stars"></i>
+            <select class="form-select sb-input" [(ngModel)]="service">
+              <option *ngFor="let s of servicesMap[zone]" [value]="s">
+                {{ s }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Date -->
+        <div class="sb-field">
+          <label class="sb-label">Ngày</label>
+          <div class="sb-control">
+            <i class="bi bi-calendar3"></i>
+            <input type="date" class="sb-input" [(ngModel)]="date"/>
+          </div>
+        </div>
+
+        <!-- Time -->
+        <div class="sb-field">
+          <label class="sb-label">Giờ</label>
+          <div class="sb-control">
+            <i class="bi bi-clock"></i>
+            <input type="time" class="sb-input" [(ngModel)]="time"/>
+          </div>
+        </div>
+
+        <!-- Guests -->
+        <div class="sb-field">
+          <label class="sb-label">Số người</label>
+          <div class="sb-control sb-dd">
+            <i class="bi bi-people"></i>
+            <button type="button" class="sb-input sb-dd-btn" (click)="toggleDropdown()">
+              {{ guestsText }} <i class="bi bi-chevron-down ms-1"></i>
+            </button>
+
+            <div class="sb-dropdown" *ngIf="isDropdownOpen">
+              <div class="sb-dd-row">
+                <span>Khách</span>
+                <div class="sb-stepper">
+                  <button (click)="changeGuests(-1)"><i class="bi bi-dash-lg"></i></button>
+                  <span>{{ guests }}</span>
+                  <button (click)="changeGuests(1)"><i class="bi bi-plus-lg"></i></button>
+                </div>
+              </div>
+              <button class="sb-dd-ok" (click)="toggleDropdown()">Xong</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Promo -->
+        <div class="sb-field">
+          <label class="sb-label">Mã ưu đãi</label>
+          <div class="sb-control">
+            <i class="bi bi-ticket-perforated"></i>
+            <input type="text" class="sb-input" placeholder="Nhập mã (nếu có)" [(ngModel)]="promo"/>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="sb-field sb-cta">
+          <button class="sb-search" (click)="onSearch()">
+            <i class="bi bi-search"></i> TÌM LỊCH PHÙ HỢP
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guide tab placeholder -->
+    <div class="sb-card sb-guide" *ngIf="activeTab==='guide'">
+      <p><b>Cẩm nang Panacea</b> — mẹo thư giãn, bài tập thở, checklist chăm sóc bản thân, và thông tin từng khu vườn. (Section này bạn có thể gắn router sau.)</p>
+    </div>
+  </div>
+</div>

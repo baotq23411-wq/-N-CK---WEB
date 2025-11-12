@@ -1,0 +1,142 @@
+/* =================== PALETTE — trắng / xanh / cam =================== */
+:root{
+  --brand:#132FBA;        /* xanh Panacea */
+  --brand-2:#799CF0;      /* xanh dịu */
+  --accent:#F7941D;       /* cam CTA */
+  --accent-2:#FFB24F;     /* cam sáng */
+
+  --paper:#FFFEFA;        /* nền trắng ấm */
+  --butter:#FFF6D2;
+
+  --ink:#0f1520;          /* chữ chính */
+  --ink-2:#3b4663;        /* chữ phụ */
+
+  --stroke:rgba(19,47,186,.18);
+  --shadow:0 10px 26px rgba(2,12,60,.10);
+  --shadow-strong:0 18px 40px rgba(2,12,60,.16);
+}
+
+/* chặn theme dark toàn cục làm đen phần này */
+.gd, .gd *{ color-scheme: light; }
+
+/* =================== SECTION =================== */
+.gd{
+  padding:28px 12px;
+  background:linear-gradient(180deg,var(--paper),var(--butter));
+}
+.gd-head{ text-align:center; margin-bottom:16px }
+.gd-title{ margin:0; color:var(--brand); font-weight:900; letter-spacing:.4px }
+.gd-sub{ margin:6px 0 0; color:var(--ink-2); font-size:.95rem }
+
+/* =================== GRID =================== */
+.gd-grid{
+  display:grid; gap:18px;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+}
+@media (max-width:900px){ .gd-grid{ grid-template-columns:1fr } }
+
+/* =================== CARD =================== */
+.gd-card{
+  border-radius:18px; overflow:hidden;
+  background:#fff; border:1.6px solid var(--stroke);
+  box-shadow:var(--shadow); transition:.18s ease;
+}
+.gd-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-strong) }
+
+/* =================== COVER (ảnh + vignette nhẹ) =================== */
+.gd-cover{
+  --img:none;
+  height:190px;
+  background: var(--paper);
+  background-image: var(--img);
+  background-size: cover; background-position: center;
+  margin:12px 12px 0; border-radius:14px; position:relative;
+}
+.gd-vignette{
+  position:absolute; inset:0; border-radius:14px;
+  background:
+    radial-gradient(120% 70% at 10% 10%, rgba(121,156,240,.18), transparent 50%),
+    radial-gradient(120% 70% at 90% 5%, rgba(247,148,29,.14), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,0) 60%, rgba(255,255,255,.25) 100%);
+  pointer-events:none;
+}
+
+/* =================== BODY =================== */
+.gd-body{ padding:12px 16px 16px; color:var(--ink) }
+
+.gd-badge{
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; border-radius:12px;
+  background:#fff; border:1.6px solid var(--stroke);
+  box-shadow:0 6px 16px rgba(19,47,186,.10);
+}
+.gd-text small{ display:block; color:var(--ink-2); margin-top:2px }
+
+/* Icon tròn xanh */
+.gd-icon{
+  width:34px; height:34px; border-radius:999px; display:grid; place-items:center;
+  font-size:18px; font-weight:900; color:#fff;
+  background:linear-gradient(160deg,var(--brand-2),var(--brand));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 8px 16px rgba(0,0,0,.10);
+}
+.gd-icon.an-nhien::after{ content:"🧘"; }
+.gd-icon.tam-hon::after{  content:"🧠"; }
+.gd-icon.cam-hung::after{ content:"🎨"; }
+.gd-icon.cach-mang::after{ content:"🎮"; }
+
+.gd-desc{ color:var(--ink-2); margin:12px 2px 14px; line-height:1.55 }
+
+/* =================== CTA — CAM (quan trọng) =================== */
+.gd-cta{
+  display:inline-flex; align-items:center; gap:6px; text-decoration:none;
+  padding:10px 16px; border-radius:12px; border:0;
+  background:linear-gradient(90deg,var(--accent),var(--accent-2)) !important;
+  color:#fff !important; font-weight:900;
+  box-shadow:0 12px 28px rgba(247,148,29,.22) !important;
+  transition:.16s ease;
+}
+.gd-cta:hover{ filter:brightness(1.05); transform:translateY(-1px) }
+.gd-cta:visited,.gd-cta:active,.gd-cta:focus{ color:#fff !important }
+
+/* ============ Dự phòng nếu app có class body.dark ============ */
+body.dark .gd,
+body.dark .gd-card,
+body.dark .gd-badge{ background:#fff !important; border-color:var(--stroke) !important; color:#0f1520 !important }
+body.dark .gd-desc{ color:var(--ink-2) !important }
+/* ======= HARD FIX: CTA luôn hiện rõ ở LIGHT MODE ======= */
+/* Tăng specificity + ép cho toàn bộ state để chặn rule global/utility */
+.gd .gd-cta,
+.gd .gd-cta:link,
+.gd .gd-cta:visited,
+.gd .gd-cta:hover,
+.gd .gd-cta:active,
+.gd .gd-cta:focus{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:10px 16px;
+  border-radius:12px;
+
+  /* nền cam gradient + màu chữ trắng – EP mạnh */
+  background-image: linear-gradient(90deg,#F7941D,#FFB24F) !important;
+  background-color:#F7941D !important;
+  color:#fff !important;
+
+  border:0 !important;
+  text-decoration:none !important;
+  box-shadow:0 12px 28px rgba(247,148,29,.22) !important;
+
+  /* chặn các lib thêm overlay/pseudo */
+  outline:none !important;
+  appearance:none !important;
+}
+.gd .gd-cta::before,
+.gd .gd-cta::after{ content:none !important; }
+
+/* Nếu dự án có class theme riêng, ép thêm để chắc cú */
+body.light .gd .gd-cta,
+.theme-light .gd .gd-cta{
+  background-image: linear-gradient(90deg,#F7941D,#FFB24F) !important;
+  background-color:#F7941D !important;
+  color:#fff !important;
+}

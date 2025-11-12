@@ -1,0 +1,249 @@
+/* ================== TOKENS ================== */
+:root{
+  --brand:#132FBA;
+  --brand-2:#799CF0;
+  --accent:#F7941D;
+
+  --paper:#FFFEFA;       /* trắng ấm */
+  --paper-2:#FFFFFF;
+  --butter:#FFF6D2;
+
+  --ink:#0f1520;
+  --ink-2:#3b4663;
+
+  --stroke:rgba(19,47,186,.16);
+  --shadow:0 14px 34px rgba(2,12,60,.12);
+  --shadow-strong:0 18px 44px rgba(2,12,60,.2);
+}
+
+/* Dark scheme – switch màu để luôn đủ tương phản */
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#0d1222;
+    --paper-2:#0f152a;
+    --butter:#0b1022;
+
+    --ink:#e9edff;
+    --ink-2:#b9c4ff;
+
+    --stroke:rgba(121,156,240,.24);
+    --shadow:0 16px 36px rgba(0,0,0,.45);
+    --shadow-strong:0 24px 56px rgba(0,0,0,.55);
+  }
+}
+
+/* ================== BANNER ================== */
+.sb-banner{
+  position:relative; overflow:visible; padding:56px 0 42px;
+  background:
+    radial-gradient(1200px 600px at 14% -10%, rgba(121,156,240,.28), transparent 40%),
+    linear-gradient(160deg, var(--paper), var(--butter));
+}
+@media (prefers-color-scheme: dark){
+  .sb-banner{
+    background:
+      radial-gradient(900px 520px at 80% -10%, rgba(19,47,186,.36), transparent 55%),
+      radial-gradient(700px 420px at 10% 90%, rgba(121,156,240,.18), transparent 60%),
+      linear-gradient(160deg, #0b0f1d, #0a1020 60%, #070b18);
+  }
+}
+
+/* ================== TABS ================== */
+.sb-tabs{ display:flex; gap:10px; margin-bottom:16px }
+.sb-tab{
+  display:inline-flex; gap:8px; align-items:center;
+  padding:10px 14px; border-radius:14px;
+  font-weight:900; letter-spacing:.2px;
+  border:1.6px solid var(--accent);
+  color:var(--accent); background:var(--paper-2);
+  box-shadow:0 6px 16px rgba(247,148,29,.18);
+  transition:.18s ease;
+}
+.sb-tab:hover{ transform:translateY(-1px); filter:brightness(1.03) }
+.sb-tab.active{ background:var(--accent); color:#fff }
+.sb-tab.ghost{
+  border-color:var(--brand); color:var(--brand);
+  background:transparent; box-shadow:none;
+}
+.sb-tab.ghost.active{ background:var(--brand); color:#fff }
+
+/* ================== CARD ================== */
+.sb-card{
+  border-radius:18px; padding:18px 18px 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.70));
+  backdrop-filter: blur(8px) saturate(1.05);
+  border:1px solid var(--stroke);
+  box-shadow: var(--shadow);
+  color:var(--ink);
+}
+@media (prefers-color-scheme: dark){
+  .sb-card{
+    background: linear-gradient(180deg, rgba(15,22,40,.85), rgba(12,18,34,.72));
+  }
+}
+
+/* ================== ZONES ================== */
+.sb-zones{ margin-bottom:8px }
+.sb-label{
+  display:block; margin-bottom:6px; font-weight:900; color:var(--brand);
+}
+@media (prefers-color-scheme: dark){
+  .sb-label{ color:var(--brand-2) }
+}
+.sb-chips{ display:flex; gap:8px; flex-wrap:wrap }
+.sb-chip{
+  border-radius:999px; padding:8px 12px; font-weight:800;
+  border:1.6px solid var(--brand); color:var(--brand);
+  background: var(--paper-2); transition:.16s ease;
+}
+.sb-chip:hover{ transform:translateY(-1px) }
+.sb-chip.active{ background:var(--brand); color:#fff }
+
+/* ================== GRID ================== */
+.sb-grid{
+  display:grid; gap:12px;
+  grid-template-columns: 1.1fr .8fr .8fr .9fr 1fr auto;
+}
+@media (max-width: 1200px){
+  .sb-grid{ grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .sb-cta{ grid-column: 1 / -1; }
+}
+@media (max-width: 768px){
+  .sb-grid{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px){
+  .sb-grid{ grid-template-columns: 1fr; }
+}
+
+/* ================== FIELDS ================== */
+.sb-control{
+  display:grid; grid-template-columns:24px 1fr; align-items:center; gap:8px;
+  border:1.6px solid var(--stroke);
+  background: var(--paper-2);
+  border-radius:12px; padding:8px 10px;
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.sb-control i{ color:var(--brand) }
+.sb-input{
+  min-height:32px; font-size:.98rem; background:transparent; border:0; outline:0;
+  color:var(--ink);
+}
+.sb-input::placeholder{ color:var(--ink-2); opacity:.7 }
+.sb-control:focus-within{
+  border-color: var(--brand-2);
+  box-shadow: 0 0 0 3px rgba(121,156,240,.18);
+}
+
+/* Autofill fix (Chrome light/dark) */
+.sb-input:-webkit-autofill{
+  -webkit-text-fill-color: var(--ink);
+  -webkit-box-shadow: 0 0 0px 1000px var(--paper-2) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* ================== DROPDOWN (Guests) ================== */
+.sb-dd{ position:relative }
+.sb-dd-btn{ text-align:left; width:100% }
+.sb-dropdown{
+  position:absolute; top:calc(100% + 8px); left:0; z-index:50;
+  min-width:260px; padding:10px; border-radius:14px; background:var(--paper-2);
+  border:1.6px solid var(--stroke); box-shadow: var(--shadow-strong);
+}
+.sb-dd-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:8px; color:var(--ink) }
+.sb-stepper{ display:flex; align-items:center; gap:10px }
+.sb-stepper button{
+  width:34px; height:34px; border-radius:10px;
+  border:1.6px solid var(--brand); background:var(--paper-2);
+  color:var(--brand); font-weight:900;
+}
+.sb-dd-ok{
+  display:block; margin:6px auto 0; padding:8px 14px; border-radius:12px;
+  background:linear-gradient(90deg,var(--accent),#ffb24f); color:#fff;
+  border:0; font-weight:900;
+}
+
+/* ================== CTA ================== */
+.sb-cta{ display:flex; align-items:end }
+.sb-search{
+  align-self:stretch; height:100%;
+  background: linear-gradient(90deg, var(--accent), #ffb24f);
+  color:#fff; font-weight:900; border:0; padding:0 18px; border-radius:14px;
+  box-shadow:0 12px 28px rgba(247,148,29,.3); transition:.16s ease;
+}
+.sb-search:hover{ filter:brightness(1.05); transform:translateY(-1px) }
+
+/* ======== BRIGHT MODE OVERRIDES – paste at the END ======== */
+/* 1) Luôn dùng nền sáng cho section, bỏ overlay tối */
+.sb-banner{
+  background: linear-gradient(180deg,#FFFEFA, #FFF6D2) !important;
+  padding: 40px 0 28px !important;
+}
+.sb-banner::after{ display:none !important; }
+
+/* 2) Card glass sáng, viền xanh dịu, chữ đen rõ */
+.sb-card{
+  background:#ffffff !important;
+  border:1.6px solid rgba(19,47,186,.16) !important;
+  box-shadow: 0 14px 34px rgba(2,12,60,.10) !important;
+  color:#0f1520 !important;
+}
+
+/* 3) Label + chip theo brand xanh, dễ đọc trên nền trắng */
+.sb-label{ color:#132FBA !important; }
+.sb-chips{ gap:10px !important; }
+.sb-chip{
+  background:#fff !important; color:#132FBA !important;
+  border:1.6px solid rgba(19,47,186,.35) !important;
+}
+.sb-chip.active{ background:#132FBA !important; color:#fff !important; }
+
+/* 4) Input/control sáng, viền xanh, focus rõ */
+.sb-control{
+  background:#ffffff !important;
+  border:1.6px solid rgba(19,47,186,.18) !important;
+  box-shadow:none !important;
+}
+.sb-control i{ color:#132FBA !important; }
+.sb-input{
+  color:#0f1520 !important; caret-color:#132FBA !important;
+}
+.sb-control:focus-within{
+  border-color:#799CF0 !important;
+  box-shadow:0 0 0 3px rgba(121,156,240,.25) !important;
+}
+
+/* 5) Dropdown sáng, nổi rõ */
+.sb-dropdown{
+  background:#ffffff !important; color:#0f1520 !important;
+  border:1.6px solid rgba(19,47,186,.18) !important;
+  box-shadow:0 16px 36px rgba(2,12,60,.16) !important;
+  z-index: 100 !important;
+}
+.sb-stepper button{
+  background:#fff !important; color:#132FBA !important;
+  border-color:#132FBA !important;
+}
+
+/* 6) Tabs sáng – “Đặt dịch vụ” cam, “Cẩm nang” xanh */
+.sb-tab{ background:#fff !important; color:#F7941D !important; }
+.sb-tab.active{ background:#F7941D !important; color:#fff !important; }
+.sb-tab.ghost{ border-color:#132FBA !important; color:#132FBA !important; }
+.sb-tab.ghost.active{ background:#132FBA !important; color:#fff !important; }
+
+/* 7) Nút tìm kiếm cam sáng, nổi bật */
+.sb-search{
+  background:linear-gradient(90deg,#F7941D,#FFB24F) !important;
+  color:#fff !important; box-shadow:0 12px 28px rgba(247,148,29,.28) !important;
+}
+.sb-search:hover{ filter:brightness(1.05) !important; }
+
+/* 8) Tương phản placeholder */
+.sb-input::placeholder{ color:#3b4663 !important; opacity:.8 !important; }
+
+/* 9) Nếu trình duyệt đang ép dark mode theo hệ thống, ta vô hiệu hóa
+      tất cả rule dark trước đó cho riêng component này */
+@media (prefers-color-scheme: dark){
+  .sb-banner, .sb-card, .sb-control, .sb-dropdown{
+    filter:none !important;
+  }
+}
