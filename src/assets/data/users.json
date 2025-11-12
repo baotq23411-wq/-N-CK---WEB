@@ -1,13 +1,16 @@
 [
   {
-    "id": 1,
+    "user_id": "US01",
+    "email": "vana@example.com",
+    "phone_number": "+84123456789",
     "full_name": "Nguyễn Văn A",
-    "email": "vana@gmail.com",
-    "phone_number": "0123456789",
+    "gender": "male",
+    "birthdate": "01-01-1990",
+    "city": "Hà Nội",
+    "coin": 120,
+    "star": 58,
     "password": "123456",
-    "point": 600,
-    "star": 5,
-    "membership_type": "Gold",
+
     "role": "user"
   }
 ]

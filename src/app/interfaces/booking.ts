@@ -23,7 +23,7 @@ export interface Booking {
   discountValue?: number;               // Số tiền giảm thực tế
   totalPrice: number;                   // Tổng tiền sau giảm
 
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed'; // Trạng thái
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed' | 'no-show'; // Trạng thái
 
   // Thông tin khách hàng nhập trong form
   customerName: string;

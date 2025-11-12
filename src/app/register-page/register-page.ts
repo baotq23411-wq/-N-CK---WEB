@@ -4,6 +4,7 @@ import {
   FormGroup,
   Validators,
   AbstractControl,
+  FormsModule,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -36,7 +37,7 @@ export function MustMatch(controlName: string, matchingControlName: string) {
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './register-page.html',
   styleUrls: ['./register-page.css'],
 })
@@ -86,7 +87,7 @@ export class RegisterPageComponent implements OnInit {
   formatPhoneNumber() {
     let phoneControl = this.registerForm.get('phone_number');
     if (!phoneControl) return;
-    let phoneValue = phoneControl.value;
+    let phoneValue = phoneControl.value || '';
     phoneValue = phoneValue.replace(/[^0-9+]/g, '');
     if (phoneValue.startsWith('0') && phoneValue.length === 10) {
       phoneValue = '+84' + phoneValue.substring(1);
@@ -114,8 +115,7 @@ export class RegisterPageComponent implements OnInit {
       return;
     }
     const formData = this.registerForm.value;
-    const payload = {
-      id: 1,
+    const payload: Partial<any> = {
       full_name: formData.full_name,
       email: formData.email,
       phone_number: formData.phone_number,
