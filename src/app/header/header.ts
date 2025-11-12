@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit {
     this.authService.getCurrentAccount().subscribe({
       next: (acc) => {
         this.currentAccount = acc;
-        this.calculateMembership(acc?.diem_tich_luy ?? 0);
+        this.calculateMembership(acc?.coin ?? 0);
       },
       error: () => {},
     });
