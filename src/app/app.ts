@@ -4,6 +4,7 @@ import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { RoomList } from './room-list/room-list';
 import { FormsModule } from '@angular/forms';
 import { filter, Subscription } from 'rxjs';
+
 // removed duplicate RouterOutlet import (kept RouterOutlet above)
 
 @Component({

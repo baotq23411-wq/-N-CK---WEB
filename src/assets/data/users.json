@@ -10,10 +10,7 @@
     "coin": 120,
     "star": 58,
     "password": "123456",
-    "two_factor_enabled": false,
-    "account_status": "active",
-    "last_login": "",
-    "created_at": "",
+
     "role": "user"
   }
 ]

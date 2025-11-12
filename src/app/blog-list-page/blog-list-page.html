@@ -1,0 +1,45 @@
+<div class="container py-5">
+    <h3 class="text-center fw-bold text-primary mb-5">
+        Thông tin hay cần biết khi đặt phòng Panacea
+    </h3>
+
+    <div class="row g-4">
+        <div class="col-12 col-md-6 col-lg-4" *ngFor="let article of articles">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <a (click)="openModal(article); $event.preventDefault()"
+                    class="text-decoration-none text-dark cursor-pointer">
+                    <div class="article-icon-container">
+                        <i [class]="article.icon" class="article-icon"></i>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title fw-semibold mb-3 text-truncate">
+                            {{ article.title }}
+                        </h5>
+                        <p class="card-text text-muted small mb-4">
+                            {{ article.shortDescription }}
+                        </p>
+                        <span class="text-primary fw-medium">
+                            Đọc thêm →
+                        </span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Blog Modal Popup -->
+<div class="blog-modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="blog-modal-content" (click)="$event.stopPropagation()">
+        <div class="blog-modal-header">
+            <div class="d-flex align-items-center">
+                <i [class]="selectedArticle?.icon" class="blog-modal-icon me-3"></i>
+                <h4 class="mb-0">{{ selectedArticle?.title }}</h4>
+            </div>
+            <button type="button" class="btn-close-modal" (click)="closeModal()" aria-label="Close">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="blog-modal-body" [innerHTML]="getSafeHtml(selectedArticle?.fullContent)"></div>
+    </div>
+</div>

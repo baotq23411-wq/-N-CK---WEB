@@ -1,0 +1,34 @@
+<section class="gd container">
+  <header class="gd-head">
+    <h2 class="gd-title">Bốn Khu Vườn</h2>
+    <p class="gd-sub">Mỗi khu vườn là một hành trình chữa lành riêng</p>
+  </header>
+
+  <div class="gd-grid">
+    <article class="gd-card" *ngFor="let g of gardens; trackBy: trackByKey">
+      <!-- Ảnh cover -->
+      <div class="gd-cover" [style.--img]="'url('+ g.cover +')'">
+        <!-- vignette/overlay chỉ nhẹ để hài hoà, không làm tối -->
+        <div class="gd-vignette"></div>
+      </div>
+
+      <!-- Nội dung -->
+      <div class="gd-body">
+        <div class="gd-badge">
+          <span class="gd-icon" [ngClass]="g.key"></span>
+          <div class="gd-text">
+            <b>{{ g.title }}</b>
+            <small>{{ g.subtitle }}</small>
+          </div>
+        </div>
+
+        <p class="gd-desc">{{ g.desc }}</p>
+
+        <!-- CTA cam (quan trọng) -->
+        <a class="gd-cta" [routerLink]="g.link">
+          Xem phòng <i class="bi bi-arrow-right-short"></i>
+        </a>
+      </div>
+    </article>
+  </div>
+</section>

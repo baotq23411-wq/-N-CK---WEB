@@ -67,27 +67,14 @@ export class LoginPageComponent implements OnInit {
         if (err?.message === 'wrong_password') {
           Swal.fire('Đăng nhập thất bại!', 'Mật khẩu không đúng.', 'error');
           this.loginForm.get('password')?.reset();
-        } else if (err?.message === 'not_registered') {
-          Swal.fire({
-            title: 'Tài khoản chưa được đăng ký!',
-            text: 'Bạn muốn đăng ký ngay?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Đăng ký',
-            cancelButtonText: 'Hủy'
-          }).then((r) => {
-            if (r.isConfirmed) this.router.navigate(['/register']);
-          });
+
         } else {
           Swal.fire('Lỗi', 'Có lỗi xảy ra. Vui lòng thử lại.', 'error');
         }
         return EMPTY;
       })
     ).subscribe(() => {
-      this.isLoading = false;
-      Swal.fire('Thành công', 'Đăng nhập thành công!', 'success').then(() => {
-        this.router.navigate(['/customer-account']);
-      });
+
     });
   }
 }

@@ -1,21 +1,21 @@
 [
   {
-    "id": "balo_traveloka",
-    "name": "Balo Traveloka cao cấp",
+    "id": "balo_panacea",
+    "name": "Balo Panacea cao cấp",
     "img": "#",
     "pointsRequired": 500,
     "stock": 20
   },
   {
     "id": "ly_giu_nhiet",
-    "name": "Ly giữ nhiệt Traveloka",
+    "name": "Ly giữ nhiệt Panacea",
     "img": "#",
     "pointsRequired": 350,
     "stock": 30
   },
   {
     "id": "ao_thun",
-    "name": "Áo thun Traveloka unisex",
+    "name": "Áo thun Panacea unisex",
     "img": "#",
     "pointsRequired": 400,
     "stock": 25
@@ -36,7 +36,7 @@
   },
   {
     "id": "vali_mini",
-    "name": "Vali mini Traveloka",
+    "name": "Vali mini Panacea",
     "img": "#",
     "pointsRequired": 800,
     "stock": 10

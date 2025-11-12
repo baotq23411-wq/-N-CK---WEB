@@ -1,0 +1,28 @@
+<section class="fb-section">
+  <div class="fb-header">
+    <h2 class="fb-title">Phản hồi từ khách hàng</h2>
+    <p class="fb-sub">Những phản hồi thật từ khách hàng — giúp Panacea tốt hơn mỗi ngày.</p>
+  </div>
+
+  <div class="fb-grid">
+    <div class="fb-card" *ngFor="let fb of items">
+      <span class="badge" [ngClass]="getTierClass(fb.tier)" *ngIf="fb.tier">
+        {{ fb.tier }}
+      </span>
+
+      <div class="fb-info">
+        <div class="fb-avatar">{{ getInitial(fb.name) }}</div>
+        <div>
+          <div class="fb-name">{{ fb.name }}</div>
+          <div class="fb-role">{{ fb.role || 'Khách hàng' }}</div>
+        </div>
+      </div>
+
+      <div class="fb-stars" aria-label="rating">
+        <i class="bi bi-star-fill" *ngFor="let _ of getStars(fb.rating)"></i>
+      </div>
+
+      <p class="fb-text">{{ fb.text }}</p>
+    </div>
+  </div>
+</section>
