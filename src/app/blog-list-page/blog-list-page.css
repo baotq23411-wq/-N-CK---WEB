@@ -8,11 +8,218 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
   
-  .article-img {
-    transition: transform 0.4s ease;
+  .article-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f1f5ff 0%, #e9eeff 100%);
+    border-radius: 1rem 1rem 0 0;
+    min-height: 180px;
   }
   
-  .hover-card:hover .article-img {
-    transform: scale(1.05);
+  .article-icon {
+    font-size: 4rem;
+    color: #132FBA;
+    transition: all 0.3s ease;
+  }
+  
+  .hover-card:hover .article-icon {
+    transform: scale(1.1) rotate(5deg);
+    color: #799CF0;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  /* Blog Modal Styles */
+  .blog-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .blog-modal-content {
+    background: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 1200px;
+    max-height: 75vh; /* 3/4 màn hình */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+    overflow: hidden;
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .blog-modal-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #f1f5ff 0%, #e9eeff 100%);
+    flex-shrink: 0;
+  }
+
+  .blog-modal-icon {
+    font-size: 2rem;
+    color: #132FBA;
+  }
+
+  .blog-modal-header h4 {
+    color: #132FBA;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .btn-close-modal {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #132FBA;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .btn-close-modal:hover {
+    background: rgba(19, 47, 186, 0.1);
+    transform: rotate(90deg);
+  }
+
+  .blog-modal-body {
+    padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+    color: #333;
+    line-height: 1.8;
+  }
+
+  .blog-modal-body h4 {
+    color: #132FBA;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .blog-modal-body h5 {
+    color: #132FBA;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .blog-modal-body p {
+    margin-bottom: 1rem;
+  }
+
+  .blog-modal-body ul,
+  .blog-modal-body ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+  }
+
+  .blog-modal-body li {
+    margin-bottom: 0.5rem;
+  }
+
+  .blog-modal-body .lead {
+    font-size: 1.1rem;
+    color: #4b5675;
+    margin-bottom: 1.5rem;
+  }
+
+  .blog-modal-body .alert {
+    border-radius: 12px;
+    border: none;
+    padding: 1rem 1.25rem;
+  }
+
+  .testimonial-card {
+    border-left: 4px solid #132FBA;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .blog-modal-overlay {
+      padding: 1rem;
+    }
+
+    .blog-modal-content {
+      max-height: 85vh;
+      border-radius: 16px;
+    }
+
+    .blog-modal-header {
+      padding: 1rem 1.5rem;
+    }
+
+    .blog-modal-header h4 {
+      font-size: 1.1rem;
+    }
+
+    .blog-modal-icon {
+      font-size: 1.5rem;
+    }
+
+    .blog-modal-body {
+      padding: 1.5rem;
+    }
+  }
+
+  /* Custom scrollbar for modal */
+  .blog-modal-body::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .blog-modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  .blog-modal-body::-webkit-scrollbar-thumb {
+    background: #799CF0;
+    border-radius: 10px;
+  }
+
+  .blog-modal-body::-webkit-scrollbar-thumb:hover {
+    background: #132FBA;
   }
   

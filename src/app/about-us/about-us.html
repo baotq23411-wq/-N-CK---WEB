@@ -1,0 +1,165 @@
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow">Về Panacea</span>
+        <h1>Nơi chữa lành tâm hồn <span class="accent">dành cho bạn</span></h1>
+        <p>Panacea là không gian giúp bạn lắng nghe chính mình, giải toả áp lực
+          bằng các hoạt động mindful & trị liệu mềm, với trải nghiệm thư giãn – an toàn – có đo lường.</p>
+        <div class="hero-ctas">
+          <a class="btn primary" routerLink="/services">Khám phá dịch vụ</a>
+          <a class="btn ghost" routerLink="/blog">Đọc câu chuyện</a>
+        </div>
+      </div>
+      <div class="hero-media" role="img" aria-label="Hình hero"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION / VALUES -->
+<section class="mission">
+  <div class="container">
+    <div class="split">
+      <div>
+        <h2>Sứ mệnh</h2>
+        <p>Chúng tôi kiến tạo những khoảnh khắc chậm lại, để bạn phục hồi năng lượng tích cực,
+          cân bằng cảm xúc và nuôi dưỡng lòng an yên từ bên trong.</p>
+        <div class="quote" role="note">
+          <i class="bi bi-quote"></i>
+          <p>“Không chỉ là vui chơi, mà là vui chơi <b>có chữa lành</b>.”</p>
+        </div>
+      </div>
+
+      <div class="values">
+        <div class="value" *ngFor="let v of values">
+          <div class="v-icon" aria-hidden="true"><i class="bi" [ngClass]="v.icon"></i></div>
+          <div class="v-body">
+            <h5>{{ v.title }}</h5>
+            <p>{{ v.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY TIMELINE -->
+<section class="story">
+  <div class="container">
+    <h2>Câu chuyện Panacea</h2>
+    <div class="timeline" aria-label="Dòng thời gian">
+      <div class="tl-item" *ngFor="let t of timeline">
+        <div class="tl-year">{{ t.year }}</div>
+        <article class="tl-card">
+          <h6>{{ t.title }}</h6>
+          <p>{{ t.desc }}</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="container">
+    <div class="stat-grid">
+      <div class="stat" *ngFor="let s of stats">
+        <div class="badge" aria-hidden="true"></div>
+        <div class="num">{{ s.value }}</div>
+        <div class="label">{{ s.label }}</div>
+        <div class="note" *ngIf="s.note">{{ s.note }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCES -->
+<section class="experiences">
+  <div class="container">
+    <h2>Trải nghiệm tiêu biểu</h2>
+    <div class="exp-grid">
+      <article class="exp-card">
+        <div class="thumb" aria-label="Thiền chuông đồng"></div>
+        <h5>Thiền chuông đồng</h5>
+        <p>Giải phóng căng thẳng với rung động dịu êm, phù hợp cho người mới bắt đầu.</p>
+      </article>
+      <article class="exp-card">
+        <div class="thumb" aria-label="Photo Mood Space"></div>
+        <h5>Photo Mood Space</h5>
+        <p>Lưu lại khoảnh khắc cảm xúc tích cực trong không gian ánh sáng êm dịu.</p>
+      </article>
+      <article class="exp-card">
+        <div class="thumb" aria-label="Paint Fight"></div>
+        <h5>Paint Fight</h5>
+        <p>Xả stress sáng tạo, kết nối đội nhóm qua nghệ thuật phóng khoáng.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="team">
+  <div class="container">
+    <h2>Đội ngũ</h2>
+    <div class="team-grid">
+      <div class="member" *ngFor="let m of team; index as i">
+        <div class="avatar" [attr.aria-label]="m.name">
+          <img [src]="m.avatar" [alt]="m.name" *ngIf="m.avatar">
+        </div>
+        <h6>{{ m.name }}</h6>
+        <p>{{ m.role }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="partners">
+  <div class="container">
+    <h2>Đối tác đồng hành</h2>
+    <div class="partner-grid">
+      <div class="partner-logo">
+        <img src="assets/images/MoMo_Logo.webp" alt="MoMo">
+      </div>
+      <div class="partner-logo">
+        <img src="assets/images/5ACB.webp" alt="ACB">
+      </div>
+      <div class="partner-logo">
+        <img src="assets/images/6HSBC.webp" alt="HSBC">
+      </div>
+      <div class="partner-logo">
+        <img src="assets/images/7Vietcombank.webp" alt="Vietcombank">
+      </div>
+      <div class="partner-logo">
+        <img src="assets/images/8MBbank.webp" alt="MB Bank">
+      </div>
+      <div class="partner-logo">
+        <img src="assets/images/9Citibank.webp" alt="Citibank">
+      </div>
+      <div class="partner-logo">
+        <img src="assets/images/10VietinBank.webp" alt="VietinBank">
+      </div>
+      <div class="partner-logo">
+        <img src="assets/images/11TPbank.webp" alt="TPBank">
+      </div>
+      <div class="partner-logo">
+        <img src="assets/images/12BIDV.webp" alt="BIDV">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIAL -->
+<section class="testimonial">
+  <div class="container">
+    <div class="card-quote">
+      <i class="bi bi-chat-quote"></i>
+      <p>“Có những lúc mình hoang mang nhưng khi đến Panacea, mình được chậm lại để lắng nghe và chữa lành.
+         Mỗi lần về là một lần tim nhẹ hơn.”</p>
+      <span>— Bạn P. chia sẻ</span>
+    </div>
+  </div>
+</section>
+
+

@@ -1,6 +1,7 @@
 <!-- HERO -->
 <section class="support-hero text-white">
-    <div class="container py-5">
+    <img src="assets/images/BACKGROUND.webp" alt="Panacea Banner" />
+    <div class="banner-inner container">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10 text-center">
                 <h1 class="fw-bold display-5 mb-2">Trung tâm Hỗ trợ Panacea</h1>
@@ -17,13 +18,6 @@
                     </button>
 
                 </form>
-
-                <div class="mt-2">
-                    <button type="button" class="btn btn-outline-light btn-sm rounded-pill" *ngIf="selectedCategory"
-                        (click)="clearFilter()" aria-label="Xóa bộ lọc">
-                        Xóa bộ lọc: {{ selectedCategory }}
-                    </button>
-                </div>
             </div>
         </div>
     </div>
@@ -35,23 +29,43 @@
         <div class="row g-4">
             <!-- Left: Popular topics -->
             <div class="col-12 col-lg-7">
-                <h2 class="h4 fw-bold mb-3">Chủ đề phổ biến</h2>
-                <div class="list-group list-group-flush bg-white rounded-4 shadow-sm overflow-hidden">
-                    <div class="p-3 text-muted small" *ngIf="!popularTopics.length">Không tìm thấy kết quả.</div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h4 fw-bold mb-0">Chủ đề phổ biến</h2>
+                    <!-- ✅ FIXED: Navigation buttons -->
+                    <div class="faq-navigation d-flex gap-2" *ngIf="filteredFaqs.length > itemsPerPage">
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-circle p-2"
+                            [disabled]="!canGoPrev" (click)="goToPrev()" [attr.aria-label]="'Xem câu hỏi trước'"
+                            [attr.aria-disabled]="!canGoPrev">
+                            <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm rounded-circle p-2"
+                            [disabled]="!canGoNext" (click)="goToNext()" [attr.aria-label]="'Xem câu hỏi tiếp theo'"
+                            [attr.aria-disabled]="!canGoNext">
+                            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Inline Accordion for details -->
-                <div class="accordion mt-3" id="faqInline">
-                    <div class="accordion-item rounded-3 mb-2" *ngFor="let item of filteredFaqs; index as i">
+                <!-- ✅ FIXED: Empty state -->
+                <div class="p-3 text-muted small bg-white rounded-4 shadow-sm" *ngIf="!filteredFaqs.length">
+                    Không tìm thấy kết quả.
+                </div>
+
+                <!-- ✅ FIXED: Inline Accordion for details - chỉ hiển thị 7 items mỗi lần -->
+                <div class="accordion mt-3" id="faqInline" *ngIf="filteredFaqs.length > 0">
+                    <div class="accordion-item rounded-3 mb-2" *ngFor="let item of paginatedFaqs; index as i">
                         <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" [attr.aria-expanded]="isFaqOpen(i)"
-                                [attr.aria-controls]="'faq-body-' + i" (click)="toggleFaq(i)"
-                                (keydown.enter)="toggleFaq(i)" (keydown.space)="toggleFaq(i)">
+                            <button class="accordion-button" type="button"
+                                [attr.aria-expanded]="isFaqOpen(currentPage * itemsPerPage + i)"
+                                [attr.aria-controls]="'faq-body-' + (currentPage * itemsPerPage + i)"
+                                (click)="toggleFaq(currentPage * itemsPerPage + i)"
+                                (keydown.enter)="toggleFaq(currentPage * itemsPerPage + i)"
+                                (keydown.space)="toggleFaq(currentPage * itemsPerPage + i)">
                                 {{ item.question }}
                             </button>
                         </h2>
-                        <div [id]="'faq-body-' + i" class="accordion-collapse" [class.collapse]="true"
-                            [class.show]="isFaqOpen(i)">
+                        <div [id]="'faq-body-' + (currentPage * itemsPerPage + i)" class="accordion-collapse"
+                            [class.collapse]="true" [class.show]="isFaqOpen(currentPage * itemsPerPage + i)">
                             <div class="accordion-body">
                                 {{ item.answer }}
                             </div>
@@ -59,11 +73,22 @@
                     </div>
                 </div>
 
+                <!-- ✅ FIXED: Page indicator -->
+                <div class="text-center mt-3 text-muted small" *ngIf="filteredFaqs.length > itemsPerPage">
+                    Trang {{ currentPage + 1 }} / {{ totalPages }} ({{ filteredFaqs.length }} câu hỏi)
+                </div>
+
             </div>
 
             <!-- Right: Product categories -->
             <div class="col-12 col-lg-5">
-                <h2 class="h4 fw-bold mb-3">Phân loại theo sản phẩm</h2>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h4 fw-bold mb-0">Phân loại theo sản phẩm</h2>
+                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" *ngIf="selectedCategory"
+                        (click)="clearFilter()" aria-label="Xóa bộ lọc">
+                        Xóa bộ lọc: {{ selectedCategory }}
+                    </button>
+                </div>
                 <div class="row g-3">
                     <div class="col-6 col-sm-4" *ngFor="let c of productCategories">
                         <button type="button" class="category-tile w-100 text-center p-3 rounded-4"
@@ -88,11 +113,8 @@
                 <div class="row g-4 align-items-center">
                     <div class="col-12 col-md-4 d-flex justify-content-center">
                         <div class="qr-lg rounded-4 p-3">
-                            <img alt="QR" width="160" height="160" src="data:image/svg+xml;utf8,
-                <svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'>
-                  <rect width='160' height='160' rx='12' fill='%23f1f5ff'/>
-                  <text x='50%' y='55%' font-size='24' text-anchor='middle' fill='%23477bff'>QR</text>
-                </svg>" />
+                            <img alt="QR Code" width="160" height="160" src="../../assets/images/QR ZALO.webp"
+                                class="qr-image" />
                         </div>
                     </div>
                     <div class="col-12 col-md-8">
@@ -103,7 +125,7 @@
                                     href="tel:+84123456789">+84 123 456
                                     789</a></span>
                             <span class="me-3"><i class="bi bi-envelope text-primary"></i> <a
-                                    href="mailto:support@panacea.vn">support@panacea.vn</a></span>
+                                    href="mailto:support@panacea.vn"> support@panacea.vn</a></span>
                             <span><i class="bi bi-chat-dots text-primary"></i> Hỗ trợ chat trực tuyến</span>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
@@ -113,9 +135,6 @@
                             <button class="btn btn-primary" type="button" (click)="gotoLogin()"
                                 aria-label="Đăng nhập">Đăng
                                 nhập</button>
-                            <button class="btn btn-light ms-auto" type="button" aria-label="Xem số điện thoại">
-                                Xem số điện thoại
-                            </button>
                         </div>
                     </div>
                 </div>

@@ -6,6 +6,7 @@
   background: none;
   padding: 0;
   margin: 0;
+  position: relative;
 }
 
 .rating-star:hover {
@@ -13,15 +14,19 @@
 }
 
 .rating-star i {
-  transition: color 0.2s;
+  transition: all 0.2s ease;
+  display: inline-block;
 }
 
-.rating-star.active i {
+/* Sao đã chọn: fill màu vàng */
+.rating-star.filled i.bi-star-fill {
   color: #ffc107 !important;
 }
 
-.rating-star:not(.active) i {
-  color: #dee2e6;
+/* Sao chưa chọn: chỉ có viền (outline) màu xám */
+.rating-star:not(.filled) i.bi-star {
+  color: transparent !important;
+  -webkit-text-stroke: 2px #dee2e6;
 }
 
 /* Upload area */
@@ -313,4 +318,75 @@ button:disabled {
     top: 0.5rem;
     right: 0.5rem;
   }
+}
+
+/* Review Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1050;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-header h4 {
+  margin: 0;
+  color: #132FBA;
+  font-weight: 600;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6c757d;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+}
+
+.btn-close:hover {
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.modal-body {
+  padding: 1.5rem;
 }

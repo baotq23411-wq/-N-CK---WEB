@@ -1,7 +1,7 @@
 <section>
     <div class="p-3">
         <a href="">
-            <img src="../../assets/images/title.png" alt="Panacea Logo" height="100" />
+            <img src="../../assets/images/TITLE.webp" alt="Panacea Logo" height="100" />
         </a>
     </div>
     <div class="container">
@@ -18,7 +18,7 @@
                         <div class="mb-3 form-group">
                             <label for="phone" class="form-label">Số điện thoại</label>
                             <input type="text" id="phone" name="phone" class="form-control" placeholder="+84123456789"
-                                formControlName="phone_number" (input)="formatPhoneNumber()" />
+                                formControlName="phone_number" (blur)="formatPhoneNumber()" />
                             <small
                                 *ngIf="registerForm.get('phone_number')?.touched && registerForm.get('phone_number')?.errors?.['required']">
                                 Vui lòng nhập số điện thoại.

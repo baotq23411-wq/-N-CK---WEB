@@ -1,7 +1,7 @@
 <section>
     <div class="p-4">
         <a href="">
-            <img src="../../assets/images/title.png" alt="Panacea Logo" height="100" />
+            <img src="../../assets/images/TITLE.webp" alt="Panacea Logo" height="100" />
         </a>
     </div>
     <div class="container">
@@ -47,8 +47,9 @@
                             <span>Chưa có tài khoản? | </span>
                             <a href="/register">Đăng ký ngay!</a>
                         </div>
-                        <button type="submit" class="btn btn-lg rounded-4 d-block mx-auto px-4 mb-3">
-                            Đăng nhập
+                        <button type="submit" class="btn btn-lg rounded-4 d-block mx-auto px-4 mb-3" [disabled]="isLoading">
+                            <span *ngIf="!isLoading">Đăng nhập</span>
+                            <span *ngIf="isLoading">Đang xử lý...</span>
                         </button>
                     </form>
                     <div class="bottom text-center">

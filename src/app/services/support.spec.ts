@@ -20,7 +20,7 @@ describe('SupportService', () => {
   });
 
   it('getFaqs should GET faqs', (done) => {
-    const mockFaqs: FAQ[] = [{ question: 'Q1', answer: 'A1' }];
+    const mockFaqs: FAQ[] = [{ question: 'Q1', answer: 'A1', category: 'Khác' }];
     service.getFaqs().subscribe((faqs) => {
       expect(faqs.length).toBe(1);
       expect(faqs[0].question).toBe('Q1');

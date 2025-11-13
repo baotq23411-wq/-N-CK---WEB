@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { CreateTicketDto, FAQ, Ticket } from '../models/support';
+import { CreateTicketDto, FAQ, Ticket } from '../interfaces/support';
 import { SupportService } from '../services/support';
 
 @Component({
@@ -23,6 +23,10 @@ export class SupportPageComponent implements OnInit, OnDestroy {
   openFaqIndex: number | null = null;
   submitting = false;
   submitSuccess = false;
+  
+  // Carousel state
+  currentPage = 0;
+  itemsPerPage = 7;
 
   // Search + filter
   searchControl = new FormControl<string>('', { nonNullable: true });
@@ -114,6 +118,39 @@ export class SupportPageComponent implements OnInit, OnDestroy {
     return this.filteredFaqs.slice(0, 6);
   }
 
+  // ✅ FIXED: Carousel methods
+  get paginatedFaqs(): FAQ[] {
+    const start = this.currentPage * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return this.filteredFaqs.slice(start, end);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredFaqs.length / this.itemsPerPage);
+  }
+
+  get canGoPrev(): boolean {
+    return this.currentPage > 0;
+  }
+
+  get canGoNext(): boolean {
+    return this.currentPage < this.totalPages - 1;
+  }
+
+  goToPrev(): void {
+    if (this.canGoPrev) {
+      this.currentPage--;
+      this.openFaqIndex = null; // Đóng tất cả accordion khi chuyển trang
+    }
+  }
+
+  goToNext(): void {
+    if (this.canGoNext) {
+      this.currentPage++;
+      this.openFaqIndex = null; // Đóng tất cả accordion khi chuyển trang
+    }
+  }
+
   // Search submit (no navigation; just filter client-side)
   onSearchSubmit(): void {
     // no-op; filtering is reactive by getter. Keep for accessibility submit key.
@@ -121,10 +158,12 @@ export class SupportPageComponent implements OnInit, OnDestroy {
 
   clearFilter(): void {
     this.selectedCategory = null;
+    this.currentPage = 0; // Reset về trang đầu khi clear filter
   }
 
   selectCategory(cat: string): void {
     this.selectedCategory = cat;
+    this.currentPage = 0; // Reset về trang đầu khi filter
   }
 
   toggleFaq(idx: number): void {

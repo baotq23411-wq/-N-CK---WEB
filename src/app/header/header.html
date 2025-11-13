@@ -1,0 +1,143 @@
+<!-- ✅ FIXED: Scrolling Banner -->
+<div class="scrolling-banner">
+  <div class="scrolling-wrapper">
+    <div class="scrolling-text">
+      <span>Chào mừng bạn đến với PANACEA – a medicine from the starts</span>
+    </div>
+  </div>
+</div>
+
+<header [class.scrolled]="scrolled">
+  <div class="inner">
+    <!-- Logo -->
+    <a class="brand" routerLink="/" (click)="closeMenu()">
+      <img src="../../assets/images/SUBLOGO.webp" alt="Panacea" />
+      <span>Panacea</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="nav-desktop">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Trang chủ</a>
+      <a routerLink="/room-list" routerLinkActive="active">Danh sách phòng</a>
+      <a routerLink="/exchange-landing" routerLinkActive="active">Ưu đãi</a>
+      <!-- ✅ FIXED: Hỗ trợ có dropdown với 3 items -->
+      <div class="dropdown support-dropdown" [class.open]="isSupportDropdownOpen" (mouseenter)="openSupportDropdown()"
+        (mouseleave)="closeSupportDropdown()" tabindex="0" role="button" [attr.aria-haspopup]="true"
+        [attr.aria-expanded]="isSupportDropdownOpen" (keydown.enter)="toggleSupportDropdown($event)"
+        (keydown.space)="toggleSupportDropdown($event)" (keydown.escape)="closeSupportDropdown()">
+        <span>
+          Hỗ trợ
+          <i class="bi bi-chevron-down dropdown-icon"></i>
+        </span>
+        <div class="menu" role="menu" *ngIf="isSupportDropdownOpen">
+          <a routerLink="/support-page" role="menuitem" aria-label="Trung tâm hỗ trợ"
+            (click)="closeSupportDropdown()">Trung tâm hỗ trợ</a>
+          <a routerLink="/review-room" role="menuitem" aria-label="Đánh giá" (click)="closeSupportDropdown()">Đánh
+            giá</a>
+          <a routerLink="/blog" role="menuitem" aria-label="Blog" (click)="closeSupportDropdown()">Blog</a>
+        </div>
+      </div>
+      <div class="dropdown policy-dropdown" [class.open]="isPolicyDropdownOpen" (mouseenter)="openPolicyDropdown()"
+        (mouseleave)="closePolicyDropdown()" tabindex="0" role="button" [attr.aria-haspopup]="true"
+        [attr.aria-expanded]="isPolicyDropdownOpen" (keydown.enter)="togglePolicyDropdown($event)"
+        (keydown.space)="togglePolicyDropdown($event)" (keydown.escape)="closePolicyDropdown()">
+        <span>
+          Chính sách
+          <i class="bi bi-chevron-down dropdown-icon"></i>
+        </span>
+        <div class="menu" *ngIf="isPolicyDropdownOpen">
+          <a routerLink="/policy" (click)="closePolicyDropdown()">Chính sách hoạt động</a>
+          <a routerLink="/terms" (click)="closePolicyDropdown()">Điều kiện & Điều khoản</a>
+        </div>
+      </div>
+      <a routerLink="/about" routerLinkActive="active">Về chúng tôi</a>
+    </nav>
+
+    <!-- Actions -->
+    <div class="actions" *ngIf="!authService.isLoggedIn()">
+      <a class="btn ghost" routerLink="/login">Đăng nhập</a>
+      <a class="btn primary" routerLink="/register">Đăng ký</a>
+      <button class="burger" (click)="toggle()" aria-label="Mở menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <!-- Logged in -->
+    <div class="actions user" *ngIf="authService.isLoggedIn()">
+      <div class="user-info-wrapper">
+        <!-- ✅ FIXED: Tên user là link điều hướng đến trang tài khoản -->
+        <a class="user-name-link" routerLink="/customer-account/account-information"
+          [attr.aria-label]="'Tới trang thông tin tài khoản của ' + (currentAccount?.ho_ten || 'Username')">
+          <span class="name">{{ currentAccount?.ho_ten || 'Username' }}</span>
+        </a>
+        <span class="sep">|</span>
+        <i class="bi bi-coin"></i>
+        <span class="points">{{ currentAccount?.diem_kha_dung || 0 }} điểm</span>
+        <!-- ✅ FIXED: Dropdown chỉ mở khi click vào icon -->
+        <div class="user-drop" [class.open]="isDropdownOpen">
+          <button class="dropdown-toggle" (click)="toggleDropdown($event)" [attr.aria-label]="'Mở menu người dùng'"
+            [attr.aria-expanded]="isDropdownOpen">
+            <i class="bi bi-chevron-down"></i>
+          </button>
+          <div class="panel" *ngIf="isDropdownOpen">
+            <div class="member {{membershipClass}}">
+              <strong>{{ currentAccount?.ho_ten || 'Username' }}</strong>
+              <small>Bạn là thành viên <b>{{ membership }}</b></small>
+            </div>
+            <div class="white">
+              <a class="item" routerLink="/customer-star" (click)="closeDropdown()"><i class="bi bi-star-fill"></i> Sao
+                của tôi</a>
+              <a class="item" routerLink="/customer-coin" (click)="closeDropdown()"><i class="bi bi-coin"></i> Điểm của
+                tôi</a>
+              <a class="item" routerLink="/booking-history" (click)="closeDropdown()"><i class="bi bi-list"></i> Đặt chỗ
+                của tôi</a>
+              <a class="item" routerLink="/customer-booking" (click)="closeDropdown()"><i class="bi bi-calendar-x"></i>
+                Hủy lịch/ Đổi lịch</a>
+              <a class="item" routerLink="/customer-account/account-information" (click)="closeDropdown()"><i
+                  class="bi bi-person"></i> Tài khoản</a>
+              <a class="item admin-item" routerLink="/admin-dashboard" (click)="closeDropdown()" *ngIf="isAdmin"><i
+                  class="bi bi-shield-check"></i> Admin Panel</a>
+              <button class="item danger" (click)="logout()"><i class="bi bi-power"></i> Đăng xuất</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="burger" (click)="toggle()" aria-label="Mở menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile sheet -->
+  <div class="mobile" *ngIf="isOpen" (click)="closeMenu()">
+    <nav class="mobile-menu" (click)="$event.stopPropagation()">
+      <a routerLink="/" (click)="closeMenu()">Trang chủ</a>
+      <a routerLink="/room-list" (click)="closeMenu()">Danh sách phòng</a>
+      <a routerLink="/exchange-landing" (click)="closeMenu()">Ưu đãi</a>
+      <!-- ✅ FIXED: Hỗ trợ expandable trên mobile -->
+      <div class="mobile-dropdown">
+        <button class="mobile-dropdown-toggle" (click)="toggleMobileSupportDropdown()"
+          [attr.aria-expanded]="isMobileSupportDropdownOpen" aria-label="Mở menu Hỗ trợ">
+          Hỗ trợ
+          <i class="bi bi-chevron-down" [class.rotated]="isMobileSupportDropdownOpen"></i>
+        </button>
+        <div class="mobile-dropdown-menu" *ngIf="isMobileSupportDropdownOpen">
+          <a routerLink="/support-page" (click)="closeMenu()">Trung tâm hỗ trợ</a>
+          <a routerLink="/review-room" (click)="closeMenu()">Đánh giá</a>
+          <a routerLink="/blog" (click)="closeMenu()">Blog</a>
+        </div>
+      </div>
+      <a routerLink="/policy" (click)="closeMenu()">Chính sách hoạt động</a>
+      <a routerLink="/terms" (click)="closeMenu()">Điều kiện & Điều khoản</a>
+      <a routerLink="/about" (click)="closeMenu()">Về chúng tôi</a>
+      <hr />
+      <a routerLink="/login" *ngIf="!authService.isLoggedIn()">Đăng nhập</a>
+      <a routerLink="/register" *ngIf="!authService.isLoggedIn()">Đăng ký</a>
+      <a routerLink="/booking-history" *ngIf="authService.isLoggedIn()">Đặt chỗ của tôi</a>
+      <a routerLink="/customer-booking" *ngIf="authService.isLoggedIn()">Hủy lịch/ Đổi lịch</a>
+      <a routerLink="/customer-account/account-information" *ngIf="authService.isLoggedIn()">Tài khoản</a>
+      <a routerLink="/admin-dashboard" *ngIf="authService.isLoggedIn() && isAdmin">Admin Panel</a>
+      <button class="logout" *ngIf="authService.isLoggedIn()" (click)="logout()">Đăng xuất</button>
+    </nav>
+  </div>
+</header>

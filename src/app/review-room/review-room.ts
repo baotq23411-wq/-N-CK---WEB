@@ -15,17 +15,23 @@ import Swal from 'sweetalert2';
 import { ReviewService } from '../services/review';
 import { UserService } from '../services/user';
 import { AuthService } from '../services/auth';
-import { ReviewListItem } from '../models/review';
+import { ReviewListItem } from '../interfaces/review';
+import { Booking as BookingInterface } from '../interfaces/booking';
 
-// Booking interface
-export interface Booking {
+// Booking interface for UI display
+export interface BookingDisplay {
   id: string;
+  bookingId: string; // ID từ bookings.json
   hotelName: string;
   roomName: string;
   dateFrom: string; // ISO date string
   dateTo: string; // ISO date string
+  startTime: string; // Format: "12:00 10/11/2025"
+  endTime: string; // Format: "15:00 10/11/2025"
   thumbnail: string;
   bookingRef: string;
+  roomId: number;
+  status: string;
 }
 
 @Component({
@@ -40,59 +46,28 @@ export class ReviewRoom implements OnInit, OnDestroy {
   selectedFiles: File[] = [];
   imagePreviews: string[] = [];
   recentReviews: ReviewListItem[] = [];
+  displayedReviewsCount: number = 3; // Số lượng reviews hiển thị ban đầu
   isLoading = false;
   isSubmitting = false;
+  hoverRating: number = 0; // Để track hover state khi di chuột qua sao
+  
+  // Review modal properties
+  showReviewModal = false;
+  selectedReview: ReviewListItem | null = null;
+  editReviewForm!: FormGroup;
+  isEditing = false;
+  isDeleting = false;
+  currentEditRating: number = 0; // Để track rating hiện tại trong form chỉnh sửa
+  originalRating: number = 0; // Lưu giá trị rating ban đầu khi bắt đầu chỉnh sửa
 
   // Booking selector properties
-  bookings: Booking[] = [
-    {
-      id: 'BK001',
-      hotelName: '🌿 Catharsis - Vườn An Nhiên',
-      roomName: 'Phòng Yoga & Thiền Định',
-      dateFrom: '2024-11-10T14:00:00.000Z',
-      dateTo: '2024-11-10T16:00:00.000Z',
-      thumbnail: '/assets/images/catharsis_room_1.jpg',
-      bookingRef: 'CAT-2024-001'
-    },
-    {
-      id: 'BK002',
-      hotelName: '💧 Oasis - Vườn Tâm Hồn',
-      roomName: 'Phòng Tư Vấn Tâm Lý',
-      dateFrom: '2024-11-08T09:00:00.000Z',
-      dateTo: '2024-11-08T10:30:00.000Z',
-      thumbnail: '/assets/images/oasis_room_1.jpg',
-      bookingRef: 'OAS-2024-002'
-    },
-    {
-      id: 'BK003',
-      hotelName: '🎨 Genii - Vườn Cảm Hứng',
-      roomName: 'Phòng Vẽ Tranh Trị Liệu',
-      dateFrom: '2024-11-05T15:00:00.000Z',
-      dateTo: '2024-11-05T17:00:00.000Z',
-      thumbnail: '/assets/images/oasis_room_5.jpg',
-      bookingRef: 'GEN-2024-003'
-    },
-    {
-      id: 'BK004',
-      hotelName: '🔥 Mutiny - Vườn Cách Mạng',
-      roomName: 'Phòng Đập Phá An Toàn',
-      dateFrom: '2024-11-03T18:00:00.000Z',
-      dateTo: '2024-11-03T19:30:00.000Z',
-      thumbnail: '/assets/images/catharsis_room_3.jpg',
-      bookingRef: 'MUT-2024-004'
-    },
-    {
-      id: 'BK005',
-      hotelName: '🌿 Catharsis - Vườn An Nhiên',
-      roomName: 'Phòng Massage Thư Giãn',
-      dateFrom: '2024-11-01T10:00:00.000Z',
-      dateTo: '2024-11-01T11:30:00.000Z',
-      thumbnail: '/assets/images/oasis_room_8.jpg',
-      bookingRef: 'CAT-2024-005'
-    }
-  ];
-  selectedBooking: Booking | null = null;
+  bookings: BookingDisplay[] = [];
+  allBookings: BookingInterface[] = []; // Tất cả bookings từ JSON
+  allReviews: any[] = []; // Tất cả reviews từ JSON
+  roomsMap: Map<number, any> = new Map(); // Map room_id -> room data
+  selectedBooking: BookingDisplay | null = null;
   isLoadingBookings = false;
+  currentUserId: string | null = null;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -107,21 +82,22 @@ export class ReviewRoom implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // Kiểm tra đăng nhập
-    // Tạm thời comment để test UI (bỏ comment khi deploy)
-    // if (!this.authService.isLoggedIn()) {
-    //   this.router.navigate(['/login']);
-    //   return;
-    // }
-
-    this.loadReviews();
+    // Lấy user ID hiện tại
+    this.getCurrentUserId();
+    
+    // Load dữ liệu: rooms -> bookings -> reviews
+    this.loadRooms().then(() => {
+      this.loadBookings().then(() => {
+        this.loadReviews(); // loadReviews sẽ tự động gọi filterBookingsForReview()
+      });
+    });
     
     // Lấy bookingId từ query params nếu có
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       if (params['bookingId']) {
         this.reviewForm.patchValue({ bookingId: params['bookingId'] });
         // Tự động chọn booking nếu có bookingId trong query params
-        const booking = this.bookings.find(b => b.id === params['bookingId']);
+        const booking = this.bookings.find(b => b.bookingId === params['bookingId']);
         if (booking) {
           this.selectBooking(booking);
         }
@@ -130,6 +106,241 @@ export class ReviewRoom implements OnInit, OnDestroy {
 
     // Load draft từ localStorage nếu có
     this.loadDraft();
+    
+    // Subscribe để reload dữ liệu khi đăng nhập/đăng xuất
+    this.authService.getCurrentAccount()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (account) => {
+          if (account) {
+            // Reload user ID và bookings khi có thay đổi
+            this.getCurrentUserId();
+            this.loadBookings().then(() => {
+              this.loadReviews(); // Reload reviews để cập nhật danh sách
+            });
+          } else {
+            this.currentUserId = null;
+            this.bookings = [];
+            this.recentReviews = [];
+          }
+        },
+        error: () => {
+          this.currentUserId = null;
+          this.bookings = [];
+          this.recentReviews = [];
+        }
+      });
+  }
+
+  /** Lấy user_id của user hiện tại đang đăng nhập */
+  private getCurrentUserId(): void {
+    try {
+      const uid = localStorage.getItem('UID');
+      if (uid) {
+        this.currentUserId = uid;
+        return;
+      }
+      
+      const currentUserStr = localStorage.getItem('CURRENT_USER');
+      if (currentUserStr) {
+        const currentUser = JSON.parse(currentUserStr);
+        if (currentUser && currentUser.user_id) {
+          this.currentUserId = currentUser.user_id;
+          return;
+        }
+      }
+      
+      const usersStr = localStorage.getItem('USERS');
+      if (usersStr) {
+        const users = JSON.parse(usersStr);
+        if (users.length > 0 && users[0].user_id) {
+          this.currentUserId = users[0].user_id;
+        }
+      }
+    } catch (e) {
+      console.error('Error getting current user ID:', e);
+    }
+  }
+
+  /** Load rooms.json để map room_id với room data */
+  private async loadRooms(): Promise<void> {
+    try {
+      const response = await fetch('assets/data/rooms.json');
+      const rooms = await response.json();
+      rooms.forEach((room: any) => {
+        this.roomsMap.set(room.room_id, room);
+      });
+    } catch (err) {
+      console.error('Error loading rooms:', err);
+    }
+  }
+
+  /** Load bookings.json */
+  private async loadBookings(): Promise<void> {
+    this.isLoadingBookings = true;
+    try {
+      const response = await fetch('assets/data/bookings.json');
+      this.allBookings = await response.json();
+    } catch (err) {
+      console.error('Error loading bookings:', err);
+    } finally {
+      this.isLoadingBookings = false;
+    }
+  }
+
+  /** Load reviews.json */
+  private loadReviews(): void {
+    this.isLoading = true;
+    this.reviewService.getReviews()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (reviews) => {
+          // Merge reviews từ cả JSON và localStorage
+          let allReviewsFromJSON = reviews || [];
+          
+          try {
+            const localReviews = localStorage.getItem('REVIEWS');
+            if (localReviews) {
+              const parsedLocalReviews = JSON.parse(localReviews);
+              
+              // Gộp tất cả reviews, loại bỏ trùng lặp dựa trên id
+              const reviewMap = new Map();
+              
+              // Thêm reviews từ JSON trước
+              allReviewsFromJSON.forEach((r: any) => {
+                if (r.id) reviewMap.set(r.id, r);
+              });
+              
+              // Thêm/update reviews từ localStorage (ưu tiên hơn)
+              parsedLocalReviews.forEach((r: any) => {
+                if (r.id) reviewMap.set(r.id, r);
+              });
+              
+              this.allReviews = Array.from(reviewMap.values());
+            } else {
+              this.allReviews = allReviewsFromJSON;
+            }
+          } catch (e) {
+            console.warn('Could not load reviews from localStorage:', e);
+            this.allReviews = allReviewsFromJSON;
+          }
+          
+          // Chuyển đổi reviews sang ReviewListItem format và sắp xếp theo ngày mới nhất
+          const userReviews = this.allReviews
+            .filter((r: any) => r.userId === this.currentUserId)
+            .sort((a: any, b: any) => {
+              const dateA = new Date(a.createdAt || a.date || 0).getTime();
+              const dateB = new Date(b.createdAt || b.date || 0).getTime();
+              return dateB - dateA; // Mới nhất trước
+            })
+            .map((r: any) => ({
+              id: r.id,
+              userId: r.userId,
+              userName: r.userName || r.user,
+              userAvatar: r.userAvatar,
+              rating: r.rating,
+              content: r.content || r.comment,
+              images: r.images || [],
+              createdAt: new Date(r.createdAt || r.date)
+            } as ReviewListItem));
+          
+          this.recentReviews = userReviews;
+          // Reset số lượng hiển thị về 3 khi load lại reviews
+          this.displayedReviewsCount = 3;
+          this.isLoading = false;
+          
+          // Cập nhật selectedReview nếu đang mở modal
+          if (this.selectedReview) {
+            const updatedReview = this.recentReviews.find(r => r.id === this.selectedReview?.id);
+            if (updatedReview) {
+              this.selectedReview = updatedReview;
+              // Cập nhật lại form nếu đang ở chế độ chỉnh sửa
+              if (this.isEditing && this.editReviewForm) {
+                this.editReviewForm.patchValue({
+                  rating: updatedReview.rating,
+                  content: updatedReview.content,
+                  images: updatedReview.images || []
+                });
+              }
+            }
+          }
+          
+          // Sau khi load reviews xong, filter lại bookings để ẩn những booking đã có review
+          this.filterBookingsForReview();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          console.error('Error loading reviews:', error);
+          // Vẫn filter bookings ngay cả khi load reviews lỗi
+          this.filterBookingsForReview();
+        },
+      });
+  }
+
+  /** Lọc bookings: chỉ hiện những booking chưa có review */
+  private filterBookingsForReview(): void {
+    if (!this.currentUserId) {
+      this.bookings = [];
+      return;
+    }
+
+    // Lấy danh sách bookingId đã có review (từ cả JSON và localStorage)
+    const reviewedBookingIds = new Set(
+      this.allReviews
+        .filter((r: any) => r.userId === this.currentUserId && r.bookingId)
+        .map((r: any) => r.bookingId)
+    );
+
+    // Lọc bookings: chỉ lấy của user hiện tại, status completed/confirmed, và chưa có review
+    const availableBookings = this.allBookings.filter((booking: BookingInterface) => {
+      // Kiểm tra booking.id có trong danh sách đã review không
+      const isReviewed = reviewedBookingIds.has(booking.id);
+      
+      return (
+        booking.userId === this.currentUserId &&
+        (booking.status === 'completed' || booking.status === 'confirmed') &&
+        !isReviewed // Chỉ hiện booking chưa có review
+      );
+    });
+
+    // Chuyển đổi sang BookingDisplay format
+    this.bookings = availableBookings.map((booking: BookingInterface) => {
+      const room = this.roomsMap.get(typeof booking.roomId === 'string' 
+        ? parseInt(booking.roomId.replace('R', '')) 
+        : booking.roomId) || booking.room;
+      
+      // Parse dates từ format "12:00 10/11/2025"
+      const parseDate = (dateStr: string): Date => {
+        const [time, date] = dateStr.split(' ');
+        const [day, month, year] = date.split('/');
+        const [hour, minute] = time.split(':');
+        return new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hour), parseInt(minute));
+      };
+
+      const dateFrom = parseDate(booking.startTime);
+      const dateTo = parseDate(booking.endTime);
+
+      // Tìm zone name từ room data (tags[0] thường là zone name)
+      const zoneName = room?.tags?.[0] || 'Vườn An Nhiên';
+      const roomName = room?.room_name || booking.range;
+
+      return {
+        id: booking.id,
+        bookingId: booking.id,
+        hotelName: zoneName,
+        roomName: roomName,
+        dateFrom: dateFrom.toISOString(),
+        dateTo: dateTo.toISOString(),
+        startTime: booking.startTime, // Giữ nguyên format "12:00 10/11/2025"
+        endTime: booking.endTime, // Giữ nguyên format "15:00 10/11/2025"
+        thumbnail: room?.image || '/assets/default-room.webp',
+        bookingRef: booking.id,
+        roomId: typeof booking.roomId === 'string' 
+          ? parseInt(booking.roomId.replace('R', '')) 
+          : booking.roomId,
+        status: booking.status
+      } as BookingDisplay;
+    });
   }
 
   ngOnDestroy(): void {
@@ -295,7 +506,7 @@ export class ReviewRoom implements OnInit, OnDestroy {
 
   submitReview(): void {
     // Kiểm tra đăng nhập lại
-    if (!this.authService.isLoggedIn()) {
+    if (!this.currentUserId) {
       Swal.fire({
         title: 'Chưa đăng nhập',
         text: 'Vui lòng đăng nhập để gửi đánh giá.',
@@ -333,128 +544,133 @@ export class ReviewRoom implements OnInit, OnDestroy {
       return;
     }
 
+    const bookingId = this.reviewForm.get('bookingId')?.value;
+    if (!bookingId) {
+      Swal.fire({
+        title: 'Lỗi',
+        text: 'Vui lòng chọn phòng đã đặt để đánh giá.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
+    // Kiểm tra xem đã có review cho booking này chưa
+    const existingReview = this.allReviews.find((r: any) => r.bookingId === bookingId && r.userId === this.currentUserId);
+    if (existingReview) {
+      Swal.fire({
+        title: 'Đánh giá đã tồn tại',
+        text: 'Bạn đã đánh giá cho đặt phòng này rồi.',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
     this.isSubmitting = true;
-    const formData = this.formatFiles();
 
-    // Lưu draft trước khi gửi
-    this.saveDraft();
+    // Lấy tên user từ authService
+    let userName = 'Ẩn danh';
+    this.authService.getCurrentAccount().subscribe(account => {
+      if (account) {
+        userName = account.ho_ten;
+      }
+    });
 
-    this.reviewService.registerReview(formData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.isSubmitting = false;
-          
-          if (response.success) {
-            // Xóa draft
-            this.clearDraft();
+    // Tạo review object
+    const newReview = {
+      id: `RV${Date.now()}`,
+      bookingId: bookingId,
+      userId: this.currentUserId,
+      roomId: this.selectedBooking?.roomId || 0,
+      user: userName,
+      userName: userName,
+      rating: this.reviewForm.get('rating')?.value,
+      comment: this.reviewForm.get('content')?.value,
+      content: this.reviewForm.get('content')?.value,
+      images: this.imagePreviews, // Lưu base64 hoặc URL
+      date: new Date().toISOString().split('T')[0],
+      createdAt: new Date().toISOString()
+    };
 
-            // Thêm điểm nếu có
-            if (response.pointsAdded && response.pointsAdded > 0) {
-              this.userService.addPoints(response.pointsAdded)
-                .pipe(takeUntil(this.destroy$))
-                .subscribe();
-            }
+    // Lưu vào reviews.json (localStorage hoặc gọi API)
+    this.saveReviewToLocal(newReview).then(() => {
+      this.isSubmitting = false;
+      
+      // Cộng 50 Xu cho khách hàng
+      this.userService.addPoints(50).subscribe({
+        next: () => {
+          // Xóa draft
+          this.clearDraft();
 
-            // Hiển thị thông báo thành công
-            Swal.fire({
-              title: 'Thành công!',
-              text: response.pointsAdded 
-                ? `Đánh giá của bạn đã được gửi. Bạn nhận được ${response.pointsAdded} điểm thưởng!`
-                : 'Đánh giá của bạn đã được gửi thành công.',
-              icon: 'success',
-              confirmButtonText: 'OK',
-            }).then(() => {
-              // Refresh reviews
-              this.loadReviews();
-              
-              // Reset form
-              this.reviewForm.reset();
-              this.reviewForm.patchValue({ rating: 0, isPublic: true });
-              this.selectedFiles = [];
-              this.imagePreviews = [];
-              this.selectedBooking = null;
-
-              // Chuyển hướng về trang chủ
-              this.router.navigate(['/']);
-            });
-          }
-        },
-        error: (error) => {
-          this.isSubmitting = false;
-          
-          // Lưu draft khi lỗi
-          this.saveDraft();
-
-          let errorMessage = 'Có lỗi xảy ra khi gửi đánh giá. Vui lòng thử lại.';
-          let errorTitle = 'Lỗi';
-
-          if (error.error) {
-            if (error.error.message === 'Duplicate review' || error.error.message?.includes('đã đánh giá')) {
-              errorTitle = 'Đánh giá đã tồn tại';
-              errorMessage = 'Bạn đã đánh giá cho đặt phòng này rồi. Bạn có muốn sửa đánh giá không?';
-              
-              Swal.fire({
-                title: errorTitle,
-                text: errorMessage,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sửa đánh giá',
-                cancelButtonText: 'Hủy',
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  // Có thể điều hướng đến trang sửa đánh giá
-                  this.router.navigate(['/']);
-                }
-              });
-              return;
-            } else if (error.error.message === 'Unauthorized' || error.error.message === 'Chưa đăng nhập') {
-              errorTitle = 'Chưa đăng nhập';
-              errorMessage = 'Vui lòng đăng nhập để gửi đánh giá.';
-              
-              Swal.fire({
-                title: errorTitle,
-                text: errorMessage,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Đăng nhập',
-                cancelButtonText: 'Hủy',
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  this.router.navigate(['/login']);
-                }
-              });
-              return;
-            } else {
-              errorMessage = error.error.message || errorMessage;
-            }
-          }
-
+          // Hiển thị thông báo thành công với thông tin nhận Xu
           Swal.fire({
-            title: errorTitle,
-            text: errorMessage,
-            icon: 'error',
+            title: 'Thành công!',
+            html: 'Đánh giá của bạn đã được gửi thành công.<br><strong>Bạn đã nhận được 50 Xu!</strong>',
+            icon: 'success',
             confirmButtonText: 'OK',
+          }).then(() => {
+            // Refresh reviews và bookings
+            this.loadReviews();
+            this.filterBookingsForReview();
+            
+            // Reset form
+            this.reviewForm.reset();
+            this.reviewForm.patchValue({ rating: 0, isPublic: true });
+            this.selectedFiles = [];
+            this.imagePreviews = [];
+            this.selectedBooking = null;
           });
         },
+        error: (err) => {
+          console.error('Error adding points:', err);
+          // Vẫn hiển thị thành công nhưng không có thông báo Xu
+          Swal.fire({
+            title: 'Thành công!',
+            text: 'Đánh giá của bạn đã được gửi thành công.',
+            icon: 'success',
+            confirmButtonText: 'OK',
+          }).then(() => {
+            this.loadReviews();
+            this.filterBookingsForReview();
+            this.reviewForm.reset();
+            this.reviewForm.patchValue({ rating: 0, isPublic: true });
+            this.selectedFiles = [];
+            this.imagePreviews = [];
+            this.selectedBooking = null;
+          });
+        }
       });
+    }).catch((error) => {
+      this.isSubmitting = false;
+      Swal.fire({
+        title: 'Lỗi',
+        text: 'Có lỗi xảy ra khi lưu đánh giá. Vui lòng thử lại.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+    });
   }
 
-  loadReviews(): void {
-    this.isLoading = true;
-    this.reviewService.getRecentReviews(undefined, 5)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (reviews) => {
-          this.recentReviews = reviews;
-          this.isLoading = false;
-        },
-        error: (error) => {
-          this.isLoading = false;
-          // Không hiển thị lỗi nếu không load được reviews
-          console.error('Error loading reviews:', error);
-        },
-      });
+  /** Lưu review vào reviews.json (localStorage) */
+  private async saveReviewToLocal(review: any): Promise<void> {
+    try {
+      // Load reviews hiện tại
+      const response = await fetch('assets/data/reviews.json');
+      const reviews = await response.json();
+      
+      // Thêm review mới
+      reviews.push(review);
+      
+      // Lưu vào localStorage (hoặc có thể gọi API để lưu vào file)
+      localStorage.setItem('REVIEWS', JSON.stringify(reviews));
+      
+      // Cập nhật allReviews
+      this.allReviews = reviews;
+    } catch (error) {
+      console.error('Error saving review:', error);
+      throw error;
+    }
   }
 
   saveDraft(): void {
@@ -494,31 +710,226 @@ export class ReviewRoom implements OnInit, OnDestroy {
     }
   }
 
-  viewMoreReviews(): void {
-    // Có thể điều hướng đến trang danh sách đánh giá đầy đủ
-    this.router.navigate(['/']);
-  }
-
   openImage(imageUrl: string): void {
     window.open(imageUrl, '_blank');
   }
 
+  /** Mở modal để xem/chỉnh sửa/xóa review */
+  openReviewModal(review: ReviewListItem): void {
+    this.selectedReview = review;
+    this.isEditing = false;
+    this.showReviewModal = true;
+    
+    // Tìm review đầy đủ từ allReviews
+    const fullReview = this.allReviews.find((r: any) => r.id === review.id);
+    if (fullReview) {
+      // Khởi tạo form chỉnh sửa
+      this.editReviewForm = this.fb.group({
+        rating: [review.rating, [Validators.required, this.ratingValidator]],
+        content: [review.content, [Validators.required, Validators.minLength(20)]],
+        images: [review.images || []]
+      });
+      // Cập nhật currentEditRating
+      this.currentEditRating = review.rating;
+    }
+  }
 
-  selectBooking(booking: Booking): void {
+  /** Đóng modal review */
+  closeReviewModal(): void {
+    this.showReviewModal = false;
+    this.selectedReview = null;
+    this.isEditing = false;
+  }
+
+  /** Bật chế độ chỉnh sửa */
+  enableEdit(): void {
+    this.isEditing = true;
+    // Lưu giá trị rating ban đầu
+    if (this.selectedReview) {
+      this.originalRating = this.selectedReview.rating;
+    }
+    // Cập nhật currentEditRating từ form
+    if (this.editReviewForm) {
+      this.currentEditRating = this.editReviewForm.get('rating')?.value || 0;
+    }
+  }
+
+  /** Hủy chỉnh sửa */
+  cancelEdit(): void {
+    this.isEditing = false;
+    if (this.selectedReview) {
+      // Khôi phục lại giá trị ban đầu
+      this.editReviewForm.patchValue({
+        rating: this.originalRating,
+        content: this.selectedReview.content,
+        images: this.selectedReview.images || []
+      });
+      this.currentEditRating = this.originalRating;
+      // Đảm bảo selectedReview.rating không bị thay đổi (giữ nguyên giá trị ban đầu)
+    }
+  }
+
+  /** Lưu chỉnh sửa review */
+  saveEditReview(): void {
+    if (!this.selectedReview || !this.editReviewForm.valid) {
+      this.editReviewForm.markAllAsTouched();
+      return;
+    }
+
+    // Tìm và cập nhật review trong allReviews
+    const reviewIndex = this.allReviews.findIndex((r: any) => r.id === this.selectedReview?.id);
+    if (reviewIndex !== -1) {
+      const newRating = this.editReviewForm.get('rating')?.value;
+      const newContent = this.editReviewForm.get('content')?.value;
+      const newImages = this.editReviewForm.get('images')?.value || [];
+      
+      const updatedReview = {
+        ...this.allReviews[reviewIndex],
+        rating: newRating,
+        content: newContent,
+        comment: newContent,
+        images: newImages
+      };
+
+      this.allReviews[reviewIndex] = updatedReview;
+      
+      // Lưu vào localStorage
+      localStorage.setItem('REVIEWS', JSON.stringify(this.allReviews));
+      
+      // Cập nhật selectedReview ngay lập tức để UI cập nhật
+      if (this.selectedReview) {
+        this.selectedReview.rating = newRating;
+        this.selectedReview.content = newContent;
+        this.selectedReview.images = newImages;
+      }
+      
+      // Refresh danh sách
+      this.loadReviews();
+      
+      Swal.fire({
+        title: 'Thành công!',
+        text: 'Đánh giá đã được cập nhật.',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      });
+      
+      this.isEditing = false;
+    }
+  }
+
+  /** Xóa review */
+  deleteReview(): void {
+    if (!this.selectedReview) return;
+
+    Swal.fire({
+      title: 'Xác nhận xóa',
+      html: 'Bạn có chắc chắn muốn xóa đánh giá này?<br><small class="text-danger">Bạn sẽ bị trừ 50 Xu khi xóa đánh giá.</small>',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isDeleting = true;
+        
+        // Xóa review khỏi allReviews
+        const reviewIndex = this.allReviews.findIndex((r: any) => r.id === this.selectedReview?.id);
+        if (reviewIndex !== -1) {
+          this.allReviews.splice(reviewIndex, 1);
+          
+          // Lưu vào localStorage
+          localStorage.setItem('REVIEWS', JSON.stringify(this.allReviews));
+          
+          // Trừ 50 Xu cho khách hàng
+          this.userService.addPoints(-50).subscribe({
+            next: () => {
+              // Refresh danh sách
+              this.loadReviews();
+              this.filterBookingsForReview(); // Refresh lại danh sách bookings để hiện booking đã xóa review
+              
+              Swal.fire({
+                title: 'Đã xóa!',
+                html: 'Đánh giá đã được xóa thành công.<br><strong>Bạn đã bị trừ 50 Xu.</strong>',
+                icon: 'success',
+                confirmButtonText: 'OK',
+              });
+              
+              this.closeReviewModal();
+              this.isDeleting = false;
+            },
+            error: (err) => {
+              console.error('Error subtracting points:', err);
+              // Vẫn xóa review nhưng không trừ Xu
+              this.loadReviews();
+              this.filterBookingsForReview();
+              
+              Swal.fire({
+                title: 'Đã xóa!',
+                text: 'Đánh giá đã được xóa thành công.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+              });
+              
+              this.closeReviewModal();
+              this.isDeleting = false;
+            }
+          });
+        } else {
+          this.isDeleting = false;
+        }
+      }
+    });
+  }
+
+  /** Set rating cho form chỉnh sửa */
+  setEditRating(value: number): void {
+    // Cập nhật form control
+    this.editReviewForm.patchValue({ rating: value });
+    this.editReviewForm.get('rating')?.markAsTouched();
+    
+    // Cập nhật currentEditRating để UI cập nhật ngay lập tức
+    this.currentEditRating = value;
+    
+    // KHÔNG cập nhật selectedReview.rating khi đang chỉnh sửa
+    // Chỉ cập nhật khi lưu thành công
+  }
+
+  get editRating() {
+    return this.editReviewForm?.get('rating');
+  }
+
+  get editContent() {
+    return this.editReviewForm?.get('content');
+  }
+
+  /** Cập nhật selectedReview khi thay đổi nội dung trong form chỉnh sửa */
+  onEditContentChange(): void {
+    if (this.selectedReview && this.editReviewForm) {
+      const newContent = this.editReviewForm.get('content')?.value;
+      if (newContent !== undefined) {
+        this.selectedReview.content = newContent;
+      }
+    }
+  }
+
+
+  selectBooking(booking: BookingDisplay): void {
     this.selectedBooking = booking;
     // Patch form với bookingRef (hoặc bookingId nếu cần)
     this.reviewForm.patchValue({ 
-      bookingId: booking.id,
+      bookingId: booking.bookingId,
       bookingRef: booking.bookingRef 
     });
   }
 
-  isBookingSelected(booking: Booking): boolean {
-    return this.selectedBooking?.id === booking.id;
+  isBookingSelected(booking: BookingDisplay): boolean {
+    return this.selectedBooking?.bookingId === booking.bookingId;
   }
 
-  trackByBookingId(index: number, booking: Booking): string {
-    return booking.id;
+  trackByBookingId(index: number, booking: BookingDisplay): string {
+    return booking.bookingId;
   }
 
   clearSelected(): void {
@@ -538,5 +949,20 @@ export class ReviewRoom implements OnInit, OnDestroy {
         }
       }, 500);
     }
+  }
+
+  /** Getter: Lấy danh sách reviews hiển thị (giới hạn theo displayedReviewsCount) */
+  get displayedReviews(): ReviewListItem[] {
+    return this.recentReviews.slice(0, this.displayedReviewsCount);
+  }
+
+  /** Getter: Kiểm tra có còn reviews chưa hiển thị không */
+  get hasMoreReviews(): boolean {
+    return this.recentReviews.length > this.displayedReviewsCount;
+  }
+
+  /** Method: Hiển thị thêm 3 reviews */
+  loadMoreReviews(): void {
+    this.displayedReviewsCount += 3;
   }
 }

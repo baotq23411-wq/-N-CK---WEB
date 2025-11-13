@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { delay, tap } from 'rxjs/operators';
-import { CreateTicketDto, FAQ, Ticket } from '../models/support';
+import { CreateTicketDto, FAQ, Ticket } from '../interfaces/support';
 
 @Injectable({ providedIn: 'root' })
 export class SupportService {

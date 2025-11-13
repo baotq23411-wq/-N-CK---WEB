@@ -4,6 +4,7 @@ import {
   FormGroup,
   Validators,
   AbstractControl,
+  FormsModule,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -36,7 +37,7 @@ export function MustMatch(controlName: string, matchingControlName: string) {
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './register-page.html',
   styleUrls: ['./register-page.css'],
 })
@@ -51,6 +52,9 @@ export class RegisterPageComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // 🟩 ADDED: Scroll to top khi vào trang
+    window.scrollTo(0, 0);
+    
     this.registerForm = this.fb.group(
       {
         full_name: [
@@ -83,7 +87,7 @@ export class RegisterPageComponent implements OnInit {
   formatPhoneNumber() {
     let phoneControl = this.registerForm.get('phone_number');
     if (!phoneControl) return;
-    let phoneValue = phoneControl.value;
+    let phoneValue = phoneControl.value || '';
     phoneValue = phoneValue.replace(/[^0-9+]/g, '');
     if (phoneValue.startsWith('0') && phoneValue.length === 10) {
       phoneValue = '+84' + phoneValue.substring(1);
@@ -110,9 +114,12 @@ export class RegisterPageComponent implements OnInit {
       this.registerForm.markAllAsTouched();
       return;
     }
+    
+    // Đảm bảo form luôn có thể nhập
+    this.registerForm.enable();
+    
     const formData = this.registerForm.value;
-    const payload = {
-      id: 1,
+    const payload: Partial<any> = {
       full_name: formData.full_name,
       email: formData.email,
       phone_number: formData.phone_number,
@@ -123,6 +130,9 @@ export class RegisterPageComponent implements OnInit {
       .register(payload)
       .pipe(
         catchError((error) => {
+          // Đảm bảo form có thể nhập lại khi có lỗi
+          this.registerForm.enable();
+          
           let errorMessage = '';
           if (error.errors) {
             // Nếu có object errors từ backend
@@ -189,6 +199,7 @@ export class RegisterPageComponent implements OnInit {
       )
       .subscribe({
         next: (response: any) => {
+          this.registerForm.enable();
           Swal.fire({
             title: 'Đăng ký thành công!',
             text: 'Bạn sẽ được chuyển hướng để đăng nhập.',
@@ -199,6 +210,7 @@ export class RegisterPageComponent implements OnInit {
           });
         },
         error: () => {
+          this.registerForm.enable();
           // Không log lỗi ra console
         },
       });

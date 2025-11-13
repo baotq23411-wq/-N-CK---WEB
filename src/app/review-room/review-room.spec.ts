@@ -8,7 +8,7 @@ import { ReviewRoom } from './review-room';
 import { ReviewService } from '../services/review';
 import { UserService } from '../services/user';
 import { AuthService } from '../services/auth';
-import { ReviewListItem } from '../models/review';
+import { ReviewListItem } from '../interfaces/review';
 
 describe('ReviewRoom', () => {
   let component: ReviewRoom;
@@ -228,7 +228,7 @@ describe('ReviewRoom', () => {
     component.initForm();
     const files: File[] = [];
     for (let i = 0; i < 5; i++) {
-      const file = new File([''], `test${i}.jpg`, { type: 'image/jpeg' });
+      const file = new File([''], `test${i}.webp`, { type: 'image/jpeg' });
       Object.defineProperty(file, 'size', { value: 1024 * 1024 }); // 1MB
       files.push(file);
     }
@@ -242,7 +242,7 @@ describe('ReviewRoom', () => {
 
   it('should validate image file size', () => {
     component.initForm();
-    const largeFile = new File([''], 'large.jpg', { type: 'image/jpeg' });
+    const largeFile = new File([''], 'large.webp', { type: 'image/jpeg' });
     Object.defineProperty(largeFile, 'size', { value: 3 * 1024 * 1024 }); // 3MB
     
     spyOn<any>(Swal, 'fire').and.returnValue(Promise.resolve({ isConfirmed: true }));

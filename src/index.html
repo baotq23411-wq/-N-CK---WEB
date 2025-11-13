@@ -10,12 +10,20 @@
 </head>
 
 <body>
+  <script>
+    // ✅ Scroll to top ngay khi trang load/reload (trước khi Angular khởi tạo)
+    window.scrollTo(0, 0);
+    // Đảm bảo scroll về đầu ngay cả khi browser restore scroll position
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  </script>
   <app-root></app-root>
   <script src="./assets/data/universal-chat-popup.js"
     data-webhook-url="https://52836.vpsvinahost.vn/webhook/172f45a8-a690-460b-bbdc-b59ec818af6f"
-    data-theme-color="#1E40AF" data-position="bottom-right" data-title="Pana Assistant"
-    data-welcome-message="Pana có thể giúp gì cho bạn ?" data-history-enabled="true" data-history-clear-button="true"
-    defer>
+    data-theme-color="#132FBA" data-position="bottom-right" data-title="Trợ lý AI - Pana"
+    data-welcome-message="Chào bạn, mình là trợ lý AI của Panacea!<br/>Trong quá trình tư vấn, nếu chưa hài lòng với câu trả lời của Pana, bạn vui lòng chat <b>Tôi muốn gặp tư vấn viên</b> để được hỗ trợ."
+    data-history-enabled="true" data-history-clear-button="true" data-avatar="./assets/images/Avatar_Chatbot.webp" defer>
     </script>
 </body>
 
