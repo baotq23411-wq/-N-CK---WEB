@@ -1,8 +1,21 @@
+<!-- HERO -->
+<section class="review-hero text-white">
+    <img src="assets/images/BACKGROUND.webp" alt="Hình nền Panacea - Đánh giá và phản hồi dịch vụ" />
+    <div class="banner-inner container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10 text-center">
+                <h1 class="fw-bold display-5 mb-2">Đánh Giá Dịch Vụ</h1>
+                <p class="opacity-75 mb-0">Chia sẻ trải nghiệm của bạn với Panacea</p>
+            </div>
+        </div>
+    </div>
+</section>
+
 <div class="container my-5">
     <!-- Booking Selector Section -->
     <section class="booking-selector-section mb-4" *ngIf="bookings.length > 0">
         <div class="card shadow-sm">
-            <div class="card-header bg-info text-white">
+            <div class="card-header-elegant">
                 <h4 class="mb-0">
                     <i class="bi bi-calendar-check"></i> Chọn phòng đã từng đặt để feedback
                 </h4>
@@ -27,8 +40,9 @@
                                 (keydown.space)="selectBooking(booking); $event.preventDefault()">
                                 <div class="booking-item-thumb">
                                     <img [src]="booking.thumbnail || '/assets/default-room.webp'"
-                                        [alt]="booking.roomName" class="booking-thumb-img"
-                                        onerror="this.src='/assets/default-room.webp'" />
+                                        [alt]="'Hình ảnh phòng ' + booking.roomName + ' - ' + booking.hotelName"
+                                        [title]="'Hình ảnh phòng ' + booking.roomName + ' - ' + booking.hotelName"
+                                        class="booking-thumb-img" onerror="this.src='/assets/default-room.webp'" />
                                 </div>
                                 <div class="booking-item-content">
                                     <h6 class="mb-1">{{ booking.hotelName }}</h6>
@@ -51,11 +65,6 @@
                         <div *ngIf="selectedBooking" class="booking-preview-card">
                             <h5 class="mb-3">Thông tin đặt phòng</h5>
                             <div class="preview-content">
-                                <div class="preview-image mb-3">
-                                    <img [src]="selectedBooking.thumbnail || '/assets/default-room.webp'"
-                                        [alt]="selectedBooking.roomName" class="img-fluid rounded"
-                                        onerror="this.src='/assets/default-room.webp'" />
-                                </div>
                                 <div class="preview-details">
                                     <h6 class="fw-bold">{{ selectedBooking.hotelName }}</h6>
                                     <p class="text-muted mb-2">{{ selectedBooking.roomName }}</p>
@@ -83,6 +92,12 @@
                                         </button>
                                     </div>
                                 </div>
+                                <div class="preview-image mt-3">
+                                    <img [src]="selectedBooking.thumbnail || '/assets/default-room.webp'"
+                                        [alt]="'Hình ảnh chi tiết phòng ' + selectedBooking.roomName + ' - ' + selectedBooking.hotelName"
+                                        [title]="'Hình ảnh chi tiết phòng ' + selectedBooking.roomName + ' - ' + selectedBooking.hotelName + '. Mã đặt phòng: ' + selectedBooking.bookingRef"
+                                        class="img-fluid rounded" onerror="this.src='/assets/default-room.webp'" />
+                                </div>
                             </div>
                         </div>
                         <div *ngIf="!selectedBooking" class="booking-preview-placeholder text-center py-5 text-muted">
@@ -99,7 +114,7 @@
         <!-- Form đánh giá - Bên trái -->
         <div class="col-lg-6 mb-4 mb-lg-0">
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header-elegant">
                     <h3 class="mb-0">Viết đánh giá</h3>
                 </div>
                 <div class="card-body">
@@ -111,15 +126,13 @@
                                 <div class="d-flex align-items-center gap-2">
                                     <button type="button" class="btn btn-link p-0 rating-star"
                                         *ngFor="let star of [1, 2, 3, 4, 5]"
-                                        [class.filled]="star <= (rating?.value || 0)" 
-                                        (click)="setRating(star)"
-                                        (mouseenter)="hoverRating = star"
-                                        (mouseleave)="hoverRating = 0"
+                                        [class.filled]="star <= (rating?.value || 0)" (click)="setRating(star)"
+                                        (mouseenter)="hoverRating = star" (mouseleave)="hoverRating = 0"
                                         [attr.aria-label]="'Đánh giá ' + star + ' sao'"
                                         [attr.aria-pressed]="star === (rating?.value || 0)">
-                                        <i [class]="star <= (hoverRating || rating?.value || 0) ? 'bi bi-star-fill' : 'bi bi-star'" 
-                                           [style.color]="star <= (hoverRating || rating?.value || 0) ? '#ffc107' : '#dee2e6'"
-                                           style="font-size: 2rem;"></i>
+                                        <i [class]="star <= (hoverRating || rating?.value || 0) ? 'bi bi-star-fill' : 'bi bi-star'"
+                                            [style.color]="star <= (hoverRating || rating?.value || 0) ? '#ffc107' : '#dee2e6'"
+                                            style="font-size: 2rem;"></i>
                                     </button>
                                     <span class="ms-2 text-muted" *ngIf="rating?.value && rating?.value > 0">
                                         {{ rating?.value }} sao
@@ -168,8 +181,9 @@
                             <div class="d-flex flex-wrap gap-2 mt-3" *ngIf="imagePreviews.length > 0">
                                 <div *ngFor="let preview of imagePreviews; let i = index"
                                     class="img-preview position-relative" style="width: 100px; height: 100px;">
-                                    <img [src]="preview" alt="Preview {{ i + 1 }}" class="img-thumbnail w-100 h-100"
-                                        style="object-fit: cover;" />
+                                    <img [src]="preview" [alt]="'Ảnh đánh giá ' + (i + 1) + ' - Xem trước'"
+                                        [title]="'Ảnh đánh giá ' + (i + 1) + ' - Xem trước. Click để xóa ảnh này'"
+                                        class="img-thumbnail w-100 h-100" style="object-fit: cover;" />
                                     <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0"
                                         style="transform: translate(50%, -50%);" (click)="removeImage(i)"
                                         aria-label="Xóa ảnh">
@@ -215,7 +229,7 @@
         <!-- Danh sách đánh giá - Bên phải -->
         <div class="col-lg-6">
             <div class="card shadow-sm">
-                <div class="card-header bg-secondary text-white">
+                <div class="card-header-elegant">
                     <h3 class="mb-0">Đánh giá gần đây</h3>
                 </div>
                 <div class="card-body">
@@ -234,10 +248,8 @@
 
                     <!-- Review list -->
                     <div *ngIf="!isLoading && recentReviews.length > 0">
-                        <div *ngFor="let review of displayedReviews" 
-                             class="review-card mb-3 p-3 border rounded"
-                             style="cursor: pointer;"
-                             (click)="openReviewModal(review)">
+                        <div *ngFor="let review of displayedReviews" class="review-card mb-3 p-3 border rounded"
+                            style="cursor: pointer;" (click)="openReviewModal(review)">
                             <div class="d-flex align-items-start mb-2">
                                 <!-- User info và rating -->
                                 <div class="flex-grow-1">
@@ -255,10 +267,10 @@
                                         <span *ngFor="let star of [1, 2, 3, 4, 5]" class="rating-star"
                                             [class.active]="star <= review.rating"
                                             [attr.aria-label]="'Đánh giá ' + review.rating + ' sao'">
-                                            <i [class]="star <= review.rating ? 'bi bi-star-fill' : 'bi bi-star'" 
-                                               [style.color]="star <= review.rating ? '#ffc107' : 'transparent'"
-                                               [style.-webkit-text-stroke]="star <= review.rating ? 'none' : '2px #dee2e6'"
-                                               style="font-size: 0.9rem;"></i>
+                                            <i [class]="star <= review.rating ? 'bi bi-star-fill' : 'bi bi-star'"
+                                                [style.color]="star <= review.rating ? '#ffc107' : 'transparent'"
+                                                [style.-webkit-text-stroke]="star <= review.rating ? 'none' : '2px #dee2e6'"
+                                                style="font-size: 0.9rem;"></i>
                                         </span>
                                     </div>
 
@@ -300,16 +312,20 @@
                     <div class="mb-3">
                         <span *ngFor="let star of [1, 2, 3, 4, 5]" class="rating-star"
                             [class.active]="star <= selectedReview.rating">
-                            <i [class]="star <= selectedReview.rating ? 'bi bi-star-fill' : 'bi bi-star'" 
-                               [style.color]="star <= selectedReview.rating ? '#ffc107' : 'transparent'"
-                               [style.-webkit-text-stroke]="star <= selectedReview.rating ? 'none' : '2px #dee2e6'"
-                               style="font-size: 1.2rem;"></i>
+                            <i [class]="star <= selectedReview.rating ? 'bi bi-star-fill' : 'bi bi-star'"
+                                [style.color]="star <= selectedReview.rating ? '#ffc107' : 'transparent'"
+                                [style.-webkit-text-stroke]="star <= selectedReview.rating ? 'none' : '2px #dee2e6'"
+                                style="font-size: 1.2rem;"></i>
                         </span>
                     </div>
                     <p class="mb-3">{{ selectedReview.content }}</p>
-                    <div *ngIf="selectedReview.images && selectedReview.images.length > 0" class="d-flex flex-wrap gap-2 mb-3">
-                        <img *ngFor="let img of selectedReview.images" [src]="img" alt="Review image"
-                            class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover; cursor: pointer;"
+                    <div *ngIf="selectedReview.images && selectedReview.images.length > 0"
+                        class="d-flex flex-wrap gap-2 mb-3">
+                        <img *ngFor="let img of selectedReview.images; let i = index" [src]="img"
+                            [alt]="'Ảnh đánh giá ' + (i + 1) + ' của ' + selectedReview.userName"
+                            [title]="'Ảnh đánh giá ' + (i + 1) + ' của ' + selectedReview.userName + '. Click để xem ảnh lớn'"
+                            class="img-thumbnail"
+                            style="width: 100px; height: 100px; object-fit: cover; cursor: pointer;"
                             (click)="openImage(img)" />
                     </div>
                     <div class="d-flex gap-2">
@@ -329,15 +345,13 @@
                             <label class="form-label fw-bold">Đánh giá sao <span class="text-danger">*</span></label>
                             <div class="d-flex align-items-center gap-2">
                                 <button type="button" class="btn btn-link p-0 rating-star"
-                                    *ngFor="let star of [1, 2, 3, 4, 5]"
-                                    [class.filled]="star <= currentEditRating" 
-                                    (click)="setEditRating(star)"
-                                    (mouseenter)="hoverRating = star"
+                                    *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="star <= currentEditRating"
+                                    (click)="setEditRating(star)" (mouseenter)="hoverRating = star"
                                     (mouseleave)="hoverRating = 0">
-                                    <i [class]="star <= (hoverRating || currentEditRating) ? 'bi bi-star-fill' : 'bi bi-star'" 
-                                       [style.color]="star <= (hoverRating || currentEditRating) ? '#ffc107' : 'transparent'"
-                                       [style.-webkit-text-stroke]="star <= (hoverRating || currentEditRating) ? 'none' : '2px #dee2e6'"
-                                       style="font-size: 2rem;"></i>
+                                    <i [class]="star <= (hoverRating || currentEditRating) ? 'bi bi-star-fill' : 'bi bi-star'"
+                                        [style.color]="star <= (hoverRating || currentEditRating) ? '#ffc107' : 'transparent'"
+                                        [style.-webkit-text-stroke]="star <= (hoverRating || currentEditRating) ? 'none' : '2px #dee2e6'"
+                                        style="font-size: 2rem;"></i>
                                 </button>
                                 <span class="ms-2 text-muted" *ngIf="currentEditRating > 0">
                                     {{ currentEditRating }} sao
@@ -345,7 +359,8 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Nội dung đánh giá <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">Nội dung đánh giá <span
+                                    class="text-danger">*</span></label>
                             <textarea class="form-control" formControlName="content" rows="6"
                                 placeholder="Chia sẻ trải nghiệm của bạn (tối thiểu 20 ký tự)..."
                                 [class.is-invalid]="editContent?.invalid && editContent?.touched"
@@ -357,7 +372,7 @@
                             </div>
                         </div>
                         <div class="d-flex gap-2">
-                            <button type="button" class="btn btn-primary" (click)="saveEditReview()" 
+                            <button type="button" class="btn btn-primary" (click)="saveEditReview()"
                                 [disabled]="editReviewForm.invalid">
                                 <i class="bi bi-check"></i> Lưu
                             </button>

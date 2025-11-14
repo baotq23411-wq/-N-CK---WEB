@@ -1,6 +1,7 @@
-import { Component, AfterViewInit, OnDestroy, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { SEOService } from '../services/seo.service';
 
 @Component({
   selector: 'app-terms',
@@ -9,11 +10,24 @@ import { RouterModule } from '@angular/router';
   templateUrl: './terms.html',
   styleUrls: ['./terms.css'],
 })
-export class TermsComponent implements AfterViewInit, OnDestroy {
+export class TermsComponent implements OnInit, AfterViewInit, OnDestroy {
   updated = new Date().toLocaleDateString('vi-VN');
   private io?: IntersectionObserver;
 
-  constructor(private el: ElementRef<HTMLElement>) {}
+  constructor(
+    private el: ElementRef<HTMLElement>,
+    private seoService: SEOService
+  ) {}
+
+  ngOnInit(): void {
+    // SEO - Set title ngay lập tức
+    this.seoService.updateSEO({
+      title: 'Điều Khoản & Điều Kiện - Panacea',
+      description: 'Điều khoản và điều kiện sử dụng dịch vụ của Panacea - Quy định về quyền và nghĩa vụ của người dùng, đặt chỗ, thanh toán và các điều khoản pháp lý khác.',
+      keywords: 'Điều khoản Panacea, điều kiện sử dụng, quy định Panacea, pháp lý Panacea, quyền riêng tư',
+      image: '/assets/images/BACKGROUND.webp'
+    });
+  }
 
   ngAfterViewInit(): void {
     const host = this.el.nativeElement;

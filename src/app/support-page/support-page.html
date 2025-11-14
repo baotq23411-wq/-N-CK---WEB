@@ -1,6 +1,6 @@
 <!-- HERO -->
 <section class="support-hero text-white">
-    <img src="assets/images/BACKGROUND.webp" alt="Panacea Banner" />
+    <img src="assets/images/BACKGROUND.webp" alt="Hình nền Panacea - Không gian trị liệu và chữa lành tâm hồn" />
     <div class="banner-inner container">
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10 text-center">
@@ -112,29 +112,47 @@
             <div class="card-body p-3 p-lg-4">
                 <div class="row g-4 align-items-center">
                     <div class="col-12 col-md-4 d-flex justify-content-center">
-                        <div class="qr-lg rounded-4 p-3">
-                            <img alt="QR Code" width="160" height="160" src="../../assets/images/QR ZALO.webp"
-                                class="qr-image" />
+                        <div class="qr-lg rounded-4 p-4">
+                            <img alt="QR Code Zalo hỗ trợ Panacea" width="240" height="240"
+                                src="../../assets/images/QR ZALO.webp" class="qr-image" />
                         </div>
                     </div>
                     <div class="col-12 col-md-8">
-                        <h3 class="h5 fw-bold mb-2">Liên Hệ Chúng Tôi</h3>
-                        <div class="text-muted mb-2">Giờ hoạt động: 8:00 - 20:00 (Thứ 2 - Chủ nhật)</div>
-                        <div class="mb-3">
-                            <span class="me-3"><i class="bi bi-telephone text-primary"></i> <a
-                                    href="tel:+84123456789">+84 123 456
-                                    789</a></span>
-                            <span class="me-3"><i class="bi bi-envelope text-primary"></i> <a
-                                    href="mailto:support@panacea.vn"> support@panacea.vn</a></span>
-                            <span><i class="bi bi-chat-dots text-primary"></i> Hỗ trợ chat trực tuyến</span>
+                        <h3 class="contact-title">Liên Hệ Chúng Tôi</h3>
+                        <div class="contact-hours mb-3">
+                            <i class="bi bi-clock"></i>
+                            <span>Giờ hoạt động: 8:00 - 20:00 (Thứ 2 - Chủ nhật)</span>
                         </div>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button class="btn btn-outline-primary" type="button" (click)="gotoLogin()"
-                                aria-label="Đăng ký">Đăng
-                                ký</button>
-                            <button class="btn btn-primary" type="button" (click)="gotoLogin()"
-                                aria-label="Đăng nhập">Đăng
-                                nhập</button>
+                        <div class="contact-info mb-4">
+                            <a href="tel:+84123456789" class="contact-item">
+                                <i class="bi bi-telephone"></i>
+                                <span>+84 123 456 789</span>
+                            </a>
+                            <a href="mailto:support@panacea.vn" class="contact-item">
+                                <i class="bi bi-envelope"></i>
+                                <span>support@panacea.vn</span>
+                            </a>
+                            <span class="contact-item">
+                                <i class="bi bi-chat-dots"></i>
+                                <span>Hỗ trợ chat trực tuyến</span>
+                            </span>
+                        </div>
+                        <div class="contact-actions" *ngIf="!authService.isLoggedIn()">
+                            <button class="btn btn-outline-primary btn-contact" type="button" (click)="gotoRegister()"
+                                aria-label="Đăng ký">
+                                <i class="bi bi-person-plus me-2"></i>Đăng ký
+                            </button>
+                            <button class="btn btn-primary btn-contact" type="button" (click)="gotoLogin()"
+                                aria-label="Đăng nhập">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+                            </button>
+                        </div>
+                        <div class="contact-logged-in" *ngIf="authService.isLoggedIn()">
+                            <div class="alert alert-info mb-0 d-flex align-items-center">
+                                <i class="bi bi-check-circle me-2"></i>
+                                <span>Bạn đã đăng nhập. Cần hỗ trợ? Vui lòng điền form bên dưới hoặc liên hệ trực
+                                    tiếp.</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -152,13 +170,6 @@
 
                         <div *ngIf="submitSuccess" class="alert alert-success" role="alert">
                             Gửi yêu cầu thành công! Chúng tôi sẽ liên hệ sớm nhất.
-                        </div>
-
-                        <div class="alert alert-info d-flex align-items-center" role="alert" *ngIf="isLoggedIn">
-                            <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
-                            <div>Đăng nhập để nhận hỗ trợ nhanh hơn. <button class="btn btn-link p-0 ms-1"
-                                    (click)="gotoLogin()">Đăng
-                                    nhập</button></div>
                         </div>
 
                         <form *ngIf="supportForm" [formGroup]="supportForm" (ngSubmit)="submit()" novalidate>

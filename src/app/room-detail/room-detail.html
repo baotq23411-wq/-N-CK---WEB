@@ -1,12 +1,13 @@
+<h1 *ngIf="room" class="sr-only">{{ room.room_name }} - Panacea</h1>
+
 <!-- THANH TRƯỢT -->
 <nav class="room-tabs">
     <!-- 🟩 ADDED: Nút quay lại (icon trong hình tròn) -->
     <button class="back-button" (click)="navigateBack()" title="Quay lại danh sách phòng">
-      <i class="bi bi-arrow-left"></i>
+        <i class="bi bi-arrow-left"></i>
     </button>
-    
+
     <a class="tab" [class.active]="activeSection === 'overview'" (click)="scrollToSection('overview')">Tổng quan</a>
-    <a class="tab" [class.active]="activeSection === 'rooms'" (click)="scrollToSection('rooms')">Dịch vụ & Gói đi kèm</a>
     <a class="tab" [class.active]="activeSection === 'policy'" (click)="scrollToSection('policy')">Chính sách</a>
     <a class="tab" [class.active]="activeSection === 'reviews'" (click)="scrollToSection('reviews')">Đánh giá</a>
 </nav>
@@ -19,15 +20,16 @@
         <!-- ẢNH CHÍNH -->
         <div class="image-section">
             <div class="main-photo-wrapper">
-                <img [src]="room.photos[currentSlide]" alt="Ảnh chính" class="main-photo"
-                    (click)="openPopup(room.photos[currentSlide])" />
+                <img [src]="room.photos[currentSlide]" [alt]="'Hình ảnh ' + room.room_name + ' - Panacea'"
+                    class="main-photo" (click)="openPopup(room.photos[currentSlide])" />
                 <button class="prev" (click)="prevSlide()">&lt;</button>
                 <button class="next" (click)="nextSlide()">&gt;</button>
             </div>
 
             <div class="thumbs">
                 <img *ngFor="let img of room.photos; let i = index" [src]="img"
-                    [class.active-thumb]="i === currentSlide" (click)="selectSlide(i)" alt="thumb" />
+                    [class.active-thumb]="i === currentSlide" (click)="selectSlide(i)"
+                    [alt]="'Hình ảnh ' + room.room_name + ' - Ảnh ' + (i + 1) + ' - Panacea'" />
             </div>
         </div>
 
@@ -35,7 +37,7 @@
         <div class="image-popup" *ngIf="popupImage" (click)="closePopup()">
             <div class="popup-content" (click)="$event.stopPropagation()">
                 <button class="nav-btn prev" (click)="prevPopupImage($event)">&#10094;</button>
-                <img [src]="popupImage" alt="Ảnh phóng to" />
+                <img [src]="popupImage" [alt]="'Hình ảnh phóng to ' + room.room_name + ' - Panacea'" />
                 <button class="nav-btn next" (click)="nextPopupImage($event)">&#10095;</button>
                 <button class="close-btn" (click)="closePopup()">×</button>
             </div>
@@ -47,13 +49,13 @@
 
                 <!-- LEFT INFO -->
                 <div class="col-md-7 room-left">
-                    <h2 class="room-title mb-2">{{ room.room_name }}</h2>
+                    <h2 class="room-title mb-2" *ngIf="room">{{ room.room_name }}</h2>
                     <p class="room-type mb-2">{{ room.range }} · {{ room.tags[0] }} </p>
                     <div class="rating mb-2">
                         <span class="stars-display">
-                            <i *ngFor="let star of [1, 2, 3, 4, 5]" 
-                               [class]="star <= getDisplayStars() ? 'bi bi-star-fill text-warning' : 'bi bi-star text-muted'"
-                               style="font-size: 1.1rem;"></i>
+                            <i *ngFor="let star of [1, 2, 3, 4, 5]"
+                                [class]="star <= getDisplayStars() ? 'bi bi-star-fill text-warning' : 'bi bi-star text-muted'"
+                                style="font-size: 1.1rem;"></i>
                         </span>
                         <span class="fw-semibold ms-2">{{ averageRating }}</span>/5
                         <span class="text-muted ms-1">({{ totalReviews }} lượt đánh giá)</span>
@@ -76,17 +78,31 @@
                 <div class="booking-form p-3 rounded-3 shadow-sm border border-1 border-light-subtle bg-white">
                     <div class="row g-2 align-items-center mb-3">
                         <div class="col-6">
-                            <label for="date" class="form-label fw-semibold small text-secondary">Ngày</label>
-                            <input id="date" type="date" class="form-control border-primary-subtle"
-                                [(ngModel)]="selectedDate" />
+                            <label for="date" class="form-label fw-semibold small text-secondary">
+                                <i class="bi bi-calendar3 me-1"></i>Ngày
+                            </label>
+                            <input id="date" type="date" class="form-control date-input border-primary-subtle"
+                                [(ngModel)]="selectedDate" [min]="minDate" (change)="onDateChange()" />
+                            <small class="text-muted d-block mt-1" *ngIf="selectedDate && isPastDate(selectedDate)"
+                                style="color: #dc3545 !important;">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Không thể chọn ngày trong quá khứ
+                            </small>
                         </div>
 
                         <div class="col-6">
-                            <label for="time" class="form-label fw-semibold small text-secondary">Giờ</label>
-                            <select id="time" class="form-select border-primary-subtle" [(ngModel)]="selectedTime">
+                            <label for="time" class="form-label fw-semibold small text-secondary">
+                                <i class="bi bi-clock me-1"></i>Giờ
+                            </label>
+                            <select id="time" class="form-select time-select border-primary-subtle"
+                                [(ngModel)]="selectedTime" (change)="onTimeChange()">
                                 <option value="" disabled selected>-- Chọn giờ --</option>
-                                <option *ngFor="let slot of timeSlots" [value]="slot">{{ slot }}</option>
+                                <option *ngFor="let slot of availableTimeSlots" [value]="slot">{{ slot }}</option>
                             </select>
+                            <small class="text-muted d-block mt-1"
+                                *ngIf="selectedTime && isPastTime(selectedDate, selectedTime)"
+                                style="color: #dc3545 !important;">
+                                <i class="bi bi-exclamation-triangle me-1"></i>Không thể chọn giờ trong quá khứ
+                            </small>
                         </div>
                     </div>
 
@@ -105,7 +121,7 @@
 
         <!-- MÔ TẢ CHI TIẾT -->
         <div class="room-description" *ngIf="room.long_description">
-            <h3>Giới thiệu</h3>
+            <h2>Giới thiệu</h2>
             <p [class.expanded]="isExpanded"> {{ room.long_description }} </p>
             <button class="btn-toggle" (click)="toggleDescription()">
                 {{ isExpanded ? 'Thu gọn ▲' : 'Xem thêm ▼' }}
@@ -114,92 +130,11 @@
     </div>
 </section>
 
-<!-- THÔNG TIN & GIÁ PHÒNG -->
-<section id="rooms" class="room-packages">
-    <h2>Dịch vụ & Gói đi kèm</h2>
-
-    <!-- DỊCH VỤ CHUYÊN GIA -->
-    <div class="package-expert">
-        <h3>Dịch vụ chuyên gia</h3>
-        <div class="service-item d-flex align-items-start"
-            *ngFor="let ex of expertServices | slice:0:(showAllExperts ? expertServices.length : 4)">
-            <input 
-              type="checkbox" 
-              [(ngModel)]="ex.selected" 
-              (change)="updateTotal()" 
-              class="form-check-input me-2 mt-1"
-              style="width: 18px; height: 18px; cursor: pointer"
-            />
-            <div class="service-content flex-grow-1">
-                <div class="service-top">
-                    <h4 class="mb-1 fw-semibold">{{ ex.name }}</h4>
-                </div>
-                <p class="text-muted small mb-0">{{ ex.description }}</p>
-            </div>
-
-            <div class="service-right ms-3">
-                <span class="text-primary fw-semibold">{{ ex.price | number }} VND</span>
-            </div>
-        </div>
-
-        <!-- Nút xem thêm -->
-        <div class="show-more-wrapper" *ngIf="expertServices.length > 4">
-            <button class="btn-show-more" (click)="showAllExperts = !showAllExperts">
-                {{ showAllExperts ? 'Thu gọn ▲' : 'Xem thêm ▼' }}
-            </button>
-        </div>
-    </div>
-
-    <!-- DỊCH VỤ THUÊ THÊM -->
-    <div class="package-extra">
-        <h3>Dịch vụ thuê thêm</h3>
-        <div class="service-item d-flex align-items-start" *ngFor="let s of extraServices | slice:0:(showAllExtras ? extraServices.length : 4)">
-            <input 
-              type="checkbox" 
-              [(ngModel)]="s.selected" 
-              (change)="updateTotal()" 
-              class="form-check-input me-2 mt-1"
-              style="width: 18px; height: 18px; cursor: pointer"
-            />
-            <div class="service-content flex-grow-1">
-                <h4 class="mb-1 fw-semibold">{{ s.name }}</h4>
-                <p class="text-muted small mb-0">{{ s.description }}</p>
-            </div>
-
-            <div class="service-right ms-3 d-flex flex-column align-items-end">
-                <span class="text-primary fw-semibold mb-2">{{ s.price | number }} VND</span>
-                <div class="input-group quantity-control">
-                    <button class="btn btn-primary btn-sm" type="button"
-                        (click)="s.quantity = Math.max(1, s.quantity - 1); updateTotal()">−
-                    </button>
-                    <input type="number" class="form-control text-center border-primary" [(ngModel)]="s.quantity"
-                        min="1" max="10" (input)="updateTotal()" />
-                    <button class="btn btn-primary btn-sm" type="button"
-                        (click)="s.quantity = Math.min(10, s.quantity + 1); updateTotal()">+
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Nút xem thêm -->
-        <div class="show-more-wrapper" *ngIf="extraServices.length > 4">
-            <button class="btn-show-more" (click)="showAllExtras = !showAllExtras">
-                {{ showAllExtras ? 'Thu gọn ▲' : 'Xem thêm ▼' }}
-            </button>
-        </div>
-    </div>
-
-    <!-- TỔNG KẾT GIÁ -->
-    <div class="total-summary">
-        <p>Tổng cộng:</p>
-        <h3>{{ totalPrice | currency:'VND' }}</h3>
-    </div>
-</section>
 
 <!-- CHÍNH SÁCH -->
 <section id="policy" class="policy-section">
     <div class="container">
-        <h2>Quy tắc chung</h2>
+        <h2>Chính sách</h2>
         <p class="subtitle">Dịch vụ áp dụng một số quy tắc sau - bạn vui lòng kiểm tra kỹ trước khi đặt phòng.</p>
 
         <div class="policy-item">
@@ -286,7 +221,7 @@
 <!-- ĐÁNH GIÁ -->
 <section id="reviews" class="review-section">
     <div class="container">
-        <h2>Đánh giá từ khách hàng</h2>
+        <h2>Đánh giá</h2>
 
         <div class="review-summary" *ngIf="totalReviews > 0">
             <div class="avg-rating">
@@ -301,9 +236,9 @@
                 <div class="review-header">
                     <strong>{{ r.userName || r.user }}</strong>
                     <span class="stars">
-                        <i *ngFor="let star of [1, 2, 3, 4, 5]" 
-                           [class]="star <= (r.rating || 0) ? 'bi bi-star-fill text-warning' : 'bi bi-star text-muted'"
-                           style="font-size: 0.9rem;"></i>
+                        <i *ngFor="let star of [1, 2, 3, 4, 5]"
+                            [class]="star <= (r.rating || 0) ? 'bi bi-star-fill text-warning' : 'bi bi-star text-muted'"
+                            style="font-size: 0.9rem;"></i>
                         <span class="rating-number ms-1">{{ r.rating || 0 }}/5</span>
                     </span>
                 </div>

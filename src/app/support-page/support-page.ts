@@ -6,6 +6,8 @@ import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { CreateTicketDto, FAQ, Ticket } from '../interfaces/support';
 import { SupportService } from '../services/support';
+import { SEOService } from '../services/seo.service';
+import { AuthService } from '../services/auth';
 
 @Component({
   selector: 'app-support-page',
@@ -45,10 +47,10 @@ export class SupportPageComponent implements OnInit, OnDestroy {
   productCategories: { key: string; label: string; icon: string }[] = [
     { key: 'Thông tin chung', label: 'Thông tin chung', icon: 'bi bi-info-circle' },
     { key: 'Đặt phòng', label: 'Đặt phòng & Lịch', icon: 'bi bi-calendar-check' },
-    { key: 'Catharsis', label: '🌿 Catharsis - Vườn An Nhiên', icon: 'bi bi-flower1' },
-    { key: 'Oasis', label: '💧 Oasis - Vườn Tâm Hồn', icon: 'bi bi-droplet' },
-    { key: 'Genii', label: '🎨 Genii - Vườn Cảm Hứng', icon: 'bi bi-palette' },
-    { key: 'Mutiny', label: '🔥 Mutiny - Vườn Cách Mạng', icon: 'bi bi-lightning' },
+    { key: 'Catharsis', label: 'Catharsis - Vườn An Nhiên', icon: 'bi bi-flower1' },
+    { key: 'Oasis', label: 'Oasis - Vườn Tâm Hồn', icon: 'bi bi-droplet' },
+    { key: 'Genii', label: 'Genii - Vườn Cảm Hứng', icon: 'bi bi-palette' },
+    { key: 'Mutiny', label: 'Mutiny - Vườn Cách Mạng', icon: 'bi bi-lightning' },
     { key: 'Thanh toán', label: 'Thanh toán', icon: 'bi bi-credit-card' },
     { key: 'Panacea Points', label: 'Panacea Points', icon: 'bi bi-coin' },
     { key: 'Tài khoản', label: 'Tài khoản và bảo mật', icon: 'bi bi-person-circle' }
@@ -60,10 +62,20 @@ export class SupportPageComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private supportService: SupportService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private seoService: SEOService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Trung Tâm Hỗ Trợ Panacea',
+      description: 'Trung tâm hỗ trợ Panacea - Tìm câu trả lời cho các câu hỏi thường gặp, liên hệ với chúng tôi và gửi yêu cầu hỗ trợ.',
+      keywords: 'Hỗ trợ Panacea, FAQ Panacea, câu hỏi thường gặp, liên hệ Panacea, trung tâm hỗ trợ',
+      image: '/assets/images/BACKGROUND.webp'
+    });
+
     // Initialize reactive form
     this.supportForm = this.fb.group({
       name: ['', [Validators.required]],
@@ -74,12 +86,8 @@ export class SupportPageComponent implements OnInit, OnDestroy {
       attachment: this.fb.control<File | null>(null)
     });
 
-    // set logged-in flag once (read from localStorage in TS, not template)
-    try {
-      this.isLoggedIn = localStorage.getItem('loggedIn') === 'true';
-    } catch (e) {
-      this.isLoggedIn = false;
-    }
+    // set logged-in flag once (read from AuthService)
+    this.isLoggedIn = this.authService.isLoggedIn();
 
     // Load FAQs + Tickets
     this.supportService.getFaqs().pipe(takeUntil(this.destroy$)).subscribe((faqs) => (this.faqs = faqs));
@@ -185,7 +193,24 @@ export class SupportPageComponent implements OnInit, OnDestroy {
   }
 
   resetForm(): void {
+    // ✅ Lưu file attachment trước khi reset
+    const attachmentValue = this.supportForm.get('attachment')?.value;
+    
+    // ✅ Reset tất cả fields trừ attachment
+    const formValue = this.supportForm.value;
     this.supportForm.reset();
+    
+    // ✅ Giữ lại file attachment sau khi reset
+    if (attachmentValue) {
+      this.supportForm.get('attachment')?.setValue(attachmentValue);
+      // ✅ Không reset file input trong DOM để giữ file hiển thị
+    } else {
+      // ✅ Chỉ reset file input nếu không có file
+      const fileInput = document.getElementById('attachment') as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
+    }
   }
 
   submit(): void {
@@ -225,8 +250,12 @@ export class SupportPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  // CTA mocks
+  // CTA navigation
   gotoLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  gotoRegister(): void {
+    this.router.navigate(['/register']);
   }
 }

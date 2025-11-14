@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { catchError, EMPTY } from 'rxjs';
 import { UserService } from '../services/user';
+import { SEOService } from '../services/seo.service';
 
 // Custom validator để so sánh mật khẩu
 export function MustMatch(controlName: string, matchingControlName: string) {
@@ -48,10 +49,19 @@ export class RegisterPageComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private seoService: SEOService
   ) { }
 
   ngOnInit() {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Đăng Ký Tài Khoản - Panacea',
+      description: 'Đăng ký tài khoản Panacea ngay hôm nay để nhận voucher chào mừng -10% và bắt đầu hành trình chữa lành tâm hồn.',
+      keywords: 'Đăng ký Panacea, tạo tài khoản Panacea, đăng ký thành viên Panacea',
+      robots: 'noindex, nofollow'
+    });
+    
     // 🟩 ADDED: Scroll to top khi vào trang
     window.scrollTo(0, 0);
     

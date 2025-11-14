@@ -2,11 +2,8 @@
   <!-- ===== HEADER ===== -->
   <div class="d-flex align-items-center justify-content-between mb-3 header-bar">
     <div class="d-flex align-items-center">
-      <i
-        class="bi bi-box-arrow-left"
-        style="cursor: pointer; font-size: 1.05rem; margin-right: 0.75rem"
-        (click)="navigateBack()"
-      ></i>
+      <i class="bi bi-box-arrow-left" style="cursor: pointer; font-size: 1.05rem; margin-right: 0.75rem"
+        (click)="navigateBack()"></i>
       <div>
         <div class="h-100 d-flex align-items-center">
           <h2 class="m-0">Đặt phòng</h2>
@@ -51,13 +48,8 @@
             <!-- Họ tên -->
             <div class="mb-3">
               <label for="fullName" class="form-label">Họ tên*</label>
-              <input
-                id="fullName"
-                type="text"
-                formControlName="fullName"
-                class="form-control"
-                placeholder="Nhập họ tên"
-              />
+              <input id="fullName" type="text" formControlName="fullName" class="form-control"
+                placeholder="Nhập họ tên" />
             </div>
 
 
@@ -65,24 +57,15 @@
             <div class="row g-3">
               <div class="col-md-6">
                 <label for="phone" class="form-label">Số điện thoại*</label>
-                <input
-                  id="phone"
-                  type="text"
-                  formControlName="phone"
-                  class="form-control"
-                  placeholder="Nhập số điện thoại"
-                />
+                <input id="phone" type="text" formControlName="phone" class="form-control"
+                  placeholder="Nhập số điện thoại" />
               </div>
               <div class="col-md-6">
                 <label for="email" class="form-label">Email*</label>
-                <input
-                  id="email"
-                  type="text"
-                  formControlName="email"
-                  class="form-control"
-                  placeholder="Nhập email (@gmail.com)"
-                />
-                <small class="text-muted" *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
+                <input id="email" type="text" formControlName="email" class="form-control"
+                  placeholder="Nhập email (@gmail.com)" />
+                <small class="text-muted"
+                  *ngIf="contactForm.get('email')?.invalid && contactForm.get('email')?.touched">
                   Email phải có đuôi @gmail.com
                 </small>
               </div>
@@ -96,20 +79,15 @@
             <!-- Checkbox -->
             <div *ngIf="isLoggedIn; else notLoggedIn" class="form-check mt-2">
               <div class="login-check mt-3">
-  <input
-    class="form-check-input me-2"
-    type="checkbox"
-    id="selfBooking"
-    [checked]="isSelfBooking"
-    (change)="onSelfBookingToggle($event.target.checked)"
-  />
-  <label class="form-check-label fw-semibold" for="selfBooking">
-    Tôi đặt phòng cho chính mình
-  </label>
-</div>
+                <input class="form-check-input me-2" type="checkbox" id="selfBooking" [checked]="isSelfBooking"
+                  (change)="onSelfBookingToggle($event.target.checked)" />
+                <label class="form-check-label fw-semibold" for="selfBooking">
+                  Tôi đặt phòng cho chính mình
+                </label>
+              </div>
               <small *ngIf="isLoggedIn" class="text-muted">
-  Nếu bạn không đặt cho chính mình, vui lòng nhập thông tin người nhận chỗ.
-</small>
+                Nếu bạn không đặt cho chính mình, vui lòng nhập thông tin người nhận chỗ.
+              </small>
 
 
             </div>
@@ -117,12 +95,7 @@
 
             <ng-template #notLoggedIn>
               <div class="form-check mt-3">
-                <input
-                  id="saveInfo"
-                  type="checkbox"
-                  class="form-check-input"
-                  (click)="openLoginPopup($event)"
-                />
+                <input id="saveInfo" type="checkbox" class="form-check-input" (click)="openLoginPopup($event)" />
                 <label for="saveInfo" class="form-check-label">
                   Đăng nhập để lưu thông tin của bạn (không bắt buộc)
                 </label>
@@ -195,16 +168,15 @@
           </div>
         </div>
 
-        <div class="rule-agree form-check mt-3">
-          <input
-            type="checkbox"
-            id="agreeRules"
-            class="form-check-input"
-            (change)="toggleAgree($event)"
-          />
+        <div class="rule-agree form-check mt-3" id="agreeRulesContainer" [class.required-highlight]="showAgreeRequired">
+          <input type="checkbox" id="agreeRules" class="form-check-input" [class.is-invalid]="showAgreeRequired"
+            (change)="toggleAgree($event)" />
           <label for="agreeRules" class="form-check-label mt-1">
-            Tôi đã đọc và đồng ý với các quy định trên
+            Tôi đã đọc và đồng ý với các quy định trên<span class="text-danger required-asterisk">*</span>
           </label>
+          <div class="invalid-feedback d-block" *ngIf="showAgreeRequired">
+            Vui lòng đồng ý với các quy định để tiếp tục
+          </div>
         </div>
       </div>
 
@@ -220,13 +192,8 @@
           <h5 class="service-group-title">Dịch vụ chuyên gia</h5>
           <div class="service-item d-flex align-items-start mb-3"
             *ngFor="let ex of expertServices | slice:0:(showAllExperts ? expertServices.length : 4)">
-            <input 
-              type="checkbox" 
-              [checked]="ex.selected" 
-              (change)="toggleExpertService(ex)" 
-              class="form-check-input me-2 mt-1"
-              style="width: 18px; height: 18px; cursor: pointer"
-            />
+            <input type="checkbox" [checked]="ex.selected" (change)="toggleExpertService(ex)"
+              class="form-check-input me-2 mt-1" style="width: 18px; height: 18px; cursor: pointer" />
             <div class="service-content flex-grow-1">
               <h6 class="mb-1 fw-semibold">{{ ex.name }}</h6>
               <p class="text-muted small mb-0">{{ ex.description }}</p>
@@ -245,41 +212,30 @@
         </div>
 
         <!-- DỊCH VỤ THUÊ THÊM -->
-        <div class="service-group-box" *ngIf="extraServices.length > 0">
+        <div class="service-group-box" *ngIf="extraServices && extraServices.length > 0">
           <h5 class="service-group-title">Dịch vụ thuê thêm</h5>
           <div class="service-item d-flex align-items-start mb-3"
-            *ngFor="let s of extraServices | slice:0:(showAllExtras ? extraServices.length : 4)">
-            <input 
-              type="checkbox" 
-              [checked]="s.selected" 
-              (change)="toggleExtraService(s)" 
-              class="form-check-input me-2 mt-1"
-              style="width: 18px; height: 18px; cursor: pointer"
-            />
+            *ngFor="let s of extraServices | slice:0:(showAllExtras ? extraServices.length : 4); trackBy: trackByServiceId">
+            <input type="checkbox" [checked]="s.selected || false" (change)="toggleExtraService(s, $event)"
+              class="form-check-input me-2 mt-1" style="width: 18px; height: 18px; cursor: pointer"
+              [id]="'extra-' + s.name" />
             <div class="service-content flex-grow-1">
-              <h6 class="mb-1 fw-semibold">{{ s.name }}</h6>
-              <p class="text-muted small mb-0">{{ s.description }}</p>
+              <h6 class="mb-1 fw-semibold">{{ s.name || 'Dịch vụ' }}</h6>
+              <p class="text-muted small mb-0">{{ s.description || '' }}</p>
             </div>
             <div class="service-right ms-3 d-flex flex-column align-items-end">
-              <span class="text-primary fw-semibold mb-2">{{ s.price | number }} VND</span>
-              <div class="input-group">
-                <button 
-                  class="btn btn-primary btn-sm" 
-                  type="button"
-                  (click)="changeExtraQuantity(s, -1)">−
+              <span class="text-primary fw-semibold mb-2">{{ (s.price || 0) | number }} VND</span>
+              <div class="quantity-control" *ngIf="s.selected">
+                <button class="btn btn-primary btn-sm" type="button"
+                  (click)="changeExtraQuantity(s, -1, $event); $event.stopPropagation()">
+                  −
                 </button>
-                <input 
-                  type="number" 
-                  class="form-control text-center border-primary" 
-                  [value]="s.quantity || 1"
-                  min="1" 
-                  max="10" 
-                  (input)="changeExtraQuantity(s, 0, $event)"
-                />
-                <button 
-                  class="btn btn-primary btn-sm" 
-                  type="button"
-                  (click)="changeExtraQuantity(s, 1)">+
+                <input type="number" class="form-control text-center border-primary" [ngModel]="s.quantity || 1"
+                  (ngModelChange)="s.quantity = parseNumber($event); changeExtraQuantity(s, 0, $event)" min="1"
+                  max="10" />
+                <button class="btn btn-primary btn-sm" type="button" [disabled]="(s.quantity || 1) >= 10"
+                  (click)="changeExtraQuantity(s, 1, $event); $event.stopPropagation()">
+                  +
                 </button>
               </div>
             </div>
@@ -287,7 +243,7 @@
 
           <!-- Nút xem thêm -->
           <div class="text-center mb-3" *ngIf="extraServices.length > 4">
-            <button class="btn btn-link btn-sm p-0" (click)="showAllExtras = !showAllExtras">
+            <button class="btn btn-link btn-sm p-0" (click)="showAllExtras = !showAllExtras" type="button">
               {{ showAllExtras ? 'Thu gọn ▲' : 'Xem thêm ▼' }}
             </button>
           </div>
@@ -307,12 +263,12 @@
 
         <!-- 🟩 UPDATED: Hiển thị nhiều bookings trong cùng 1 khung (tách riêng) -->
         <ng-container *ngIf="bookings.length > 0; else singleBooking">
-          <div *ngFor="let bk of bookings; let i = index" 
-               [class]="bookings.length > 1 ? 'mb-3 pb-3' : ''"
-               [style.border-bottom]="bookings.length > 1 && i < bookings.length - 1 ? '1px solid #e0e0e0' : 'none'">
-            
+          <div *ngFor="let bk of bookings; let i = index" [class]="bookings.length > 1 ? 'mb-3 pb-3' : ''"
+            [style.border-bottom]="bookings.length > 1 && i < bookings.length - 1 ? '1px solid #e0e0e0' : 'none'">
+
             <div class="room-header">
-              <h3 class="room-name">{{ bk.roomName || bk.room?.room_name || roomInfo?.room_name || 'Phòng chơi bí mật' }}</h3>
+              <h3 class="room-name">{{ bk.roomName || bk.room?.room_name || roomInfo?.room_name || 'Phòng chơi bí mật'
+                }}</h3>
               <p class="room-date">
                 {{ bk.checkInDate | date: 'EEEE, dd MMMM yyyy' : undefined : 'vi' }}
               </p>
@@ -333,7 +289,8 @@
             </div>
 
             <div class="room-details">
-              <p><i class="bi bi-people-fill"></i> Số lượng: {{ bk.room?.range || bk.room?.capacity || roomInfo?.range || '2-4 người' }}</p>
+              <p><i class="bi bi-people-fill"></i> Số lượng: {{ bk.room?.range || bk.room?.capacity || roomInfo?.range
+                || '2-4 người' }}</p>
               <p class="free-cancel">
                 <i class="bi bi-check2-square"></i>
                 <span>
@@ -354,7 +311,8 @@
 
         <ng-template #singleBooking>
           <div class="room-header">
-            <h3 class="room-name">{{ roomInfo?.room_name || roomInfo?.roomName || booking?.room?.name || roomInfo?.name || 'Phòng chơi bí mật' }}</h3>
+            <h3 class="room-name">{{ roomInfo?.room_name || roomInfo?.roomName || booking?.room?.name || roomInfo?.name
+              || 'Phòng chơi bí mật' }}</h3>
             <p class="room-date">
               {{ booking?.checkInDate | date: 'EEEE, dd MMMM yyyy' : undefined : 'vi' }}
             </p>
@@ -375,7 +333,8 @@
           </div>
 
           <div class="room-details">
-            <p><i class="bi bi-people-fill"></i> Số lượng: {{ roomInfo?.range || roomInfo?.capacity || '2-4 người' }}</p>
+            <p><i class="bi bi-people-fill"></i> Số lượng: {{ roomInfo?.range || roomInfo?.capacity || '2-4 người' }}
+            </p>
             <p class="free-cancel">
               <i class="bi bi-check2-square"></i>
               <span>
@@ -400,27 +359,17 @@
         <h4 class="rules-title"><i class="bi bi-ticket-perforated"></i> Mã khuyến mãi</h4>
         <form (ngSubmit)="applyCoupon()">
           <div class="discount-box">
-            <input
-              type="text"
-              [(ngModel)]="promoCode"
-              name="promoCode"
-              placeholder="Nhập mã khuyến mãi"
-              class="form-control form-control-sm"
-            />
+            <input type="text" [(ngModel)]="promoCode" name="promoCode" placeholder="Nhập mã khuyến mãi"
+              class="form-control form-control-sm" />
             <button type="submit" class="btn btn-primary">Áp dụng</button>
           </div>
-          <small
-            *ngIf="discountMessage"
-            [ngClass]="{ 'text-success': isCouponValid, 'text-danger': !isCouponValid }"
-          >
+          <small *ngIf="discountMessage" [ngClass]="{ 'text-success': isCouponValid, 'text-danger': !isCouponValid }">
             {{ discountMessage }}
           </small>
 
           <!-- 🟨 ADD REDEEM: ĐỔI XU (chỉ hiện khi đã đăng nhập) -->
-          <div
-            *ngIf="isLoggedIn"
-            class="rewards-toggle mt-3 p-2 px-3 d-flex justify-content-between align-items-center border rounded-3"
-          >
+          <div *ngIf="isLoggedIn"
+            class="rewards-toggle mt-3 p-2 px-3 d-flex justify-content-between align-items-center border rounded-3">
             <div class="d-flex align-items-center">
               <i class="bi bi-coin text-warning me-2" style="font-size: 1.2rem"></i>
               <div>
@@ -429,14 +378,8 @@
               </div>
             </div>
             <div class="form-check form-switch m-0">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                id="usePoints"
-                name="usePoints"
-                [checked]="usePoints"
-                (change)="togglePoints($any($event.target).checked)"
-              />
+              <input class="form-check-input" type="checkbox" id="usePoints" name="usePoints" [checked]="usePoints"
+                (change)="togglePoints($any($event.target).checked)" />
             </div>
           </div>
           <small *ngIf="isLoggedIn" class="text-muted d-block mt-1">
@@ -451,19 +394,12 @@
 
       <!-- CHI TIẾT GIÁ -->
       <div class="rules-card price-card pb-3">
-        <div
-          class="d-flex justify-content-between align-items-center"
-          (click)="togglePriceDetails()"
-          style="cursor: pointer"
-        >
+        <div class="d-flex justify-content-between align-items-center" (click)="togglePriceDetails()"
+          style="cursor: pointer">
           <h4 class="m-0">
             <i class="bi bi-tag me-2 text-muted" style="font-size: 0.95rem"></i>Chi tiết giá
           </h4>
-          <i
-            class="bi"
-            [class.bi-chevron-up]="showPriceDetails"
-            [class.bi-chevron-down]="!showPriceDetails"
-          ></i>
+          <i class="bi" [class.bi-chevron-up]="showPriceDetails" [class.bi-chevron-down]="!showPriceDetails"></i>
         </div>
 
 
@@ -472,24 +408,25 @@
           <!-- Hiển thị giá từ nhiều bookings (nếu có) -->
           <ng-container *ngIf="bookings.length > 0">
             <!-- Hiển thị giá từng booking riêng -->
-            <div *ngFor="let bk of bookings; let i = index" class="mb-2" 
-                 [style.border-bottom]="bookings.length > 1 && i < bookings.length - 1 ? '1px solid #f0f0f0' : 'none'"
-                 [style.padding-bottom]="bookings.length > 1 && i < bookings.length - 1 ? '12px' : '0'">
-              
+            <div *ngFor="let bk of bookings; let i = index" class="mb-2"
+              [style.border-bottom]="bookings.length > 1 && i < bookings.length - 1 ? '1px solid #f0f0f0' : 'none'"
+              [style.padding-bottom]="bookings.length > 1 && i < bookings.length - 1 ? '12px' : '0'">
+
               <!-- Tên phòng (chỉ hiện nếu có nhiều bookings) -->
               <div *ngIf="bookings.length > 1" class="mb-2">
                 <strong class="text-primary">{{ bk.roomName || bk.room?.room_name }}</strong>
                 <small class="text-muted d-block">{{ bk.checkInTime }} - {{ bk.checkOutTime }}</small>
               </div>
-              
+
               <!-- Giá phòng của booking này -->
               <div class="price-line d-flex justify-content-between mb-2">
-                <span class="text-muted">Giá phòng{{ bookings.length > 1 ? ' (' + getBookingHours(bk) + ' giờ)' : '' }}</span>
+                <span class="text-muted">Giá phòng{{ bookings.length > 1 ? ' (' + getBookingHours(bk) + ' giờ)' : ''
+                  }}</span>
                 <span>{{ bk.basePrice | number }} VND</span>
               </div>
             </div>
           </ng-container>
-          
+
           <!-- Fallback: Hiển thị giá phòng (nếu không có bookings) -->
           <ng-container *ngIf="bookings.length === 0">
             <div class="price-line d-flex justify-content-between mb-2">
@@ -497,14 +434,11 @@
               <span>{{ basePrice | number }} VND</span>
             </div>
           </ng-container>
-          
+
           <!-- 🟩 UPDATED: Dịch vụ hiển thị SAU giá phòng -->
           <!-- Dịch vụ chuyên gia được chọn (từ UI) -->
           <ng-container *ngIf="selectedExpertServices.length > 0">
-            <div
-              class="price-line d-flex justify-content-between mb-2"
-              *ngFor="let s of selectedExpertServices"
-            >
+            <div class="price-line d-flex justify-content-between mb-2" *ngFor="let s of selectedExpertServices">
               <span class="text-muted">{{ s.name }}</span>
               <span>{{ s.price | number }} VND</span>
             </div>
@@ -512,51 +446,38 @@
 
           <!-- Dịch vụ thuê thêm được chọn (từ UI) -->
           <ng-container *ngIf="selectedExtraServices.length > 0">
-            <div
-              class="price-line d-flex justify-content-between mb-2"
-              *ngFor="let s of selectedExtraServices"
-            >
+            <div class="price-line d-flex justify-content-between mb-2" *ngFor="let s of selectedExtraServices">
               <span class="text-muted">{{ s.name }} x{{ s.quantity || 1 }}</span>
               <span>{{ (s.price * (s.quantity || 1)) | number }} VND</span>
             </div>
           </ng-container>
 
           <!-- Mã giảm giá (áp dụng cho tổng) -->
-          <div
-            class="price-line d-flex justify-content-between mb-2"
-            *ngIf="discountValue > 0"
-          >
+          <div class="price-line d-flex justify-content-between mb-2" *ngIf="discountValue > 0">
             <span class="text-muted">Mã giảm giá</span>
             <span class="text-success">-{{ discountValue | number }} VND</span>
           </div>
 
           <!-- 🟨 ADDED: Hiển thị giảm giá từ Redeem Xu -->
-          <div
-            class="price-line d-flex justify-content-between mb-2"
-            *ngIf="usePoints && pointsDiscountValue > 0"
-          >
+          <div class="price-line d-flex justify-content-between mb-2" *ngIf="usePoints && pointsDiscountValue > 0">
             <span class="text-muted">Đổi 100 Xu</span>
             <span class="text-success">-{{ pointsDiscountValue | number }} VND</span>
           </div>
         </div>
 
 
-        <div
-          class="total-price d-flex justify-content-between align-items-center mt-3 pt-2 border-top"
-        >
+        <div class="total-price d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
           <div>
             <h5 class="m-0">Tổng cộng</h5>
             <small class="text-muted">{{ bookingSummary }}</small>
           </div>
           <div class="text-end">
-            <span
-              class="old-price text-decoration-line-through text-muted small"
-              *ngIf="originalPrice && totalPrice < originalPrice"
-              >{{ originalPrice | number }} VND</span
-            >
+            <span class="old-price text-decoration-line-through text-muted small"
+              *ngIf="originalPrice && totalPrice < originalPrice">{{ originalPrice | number }} VND</span>
             <h5 class="text-primary m-0">{{ totalPrice | number }} VND</h5>
             <!-- 🟨 ADDED: Hiển thị khi Redeem áp dụng thành công -->
-            <small *ngIf="usePoints && pointsDiscountValue > 0" class="text-success d-block">Đã trừ 10.000 đ (100 Xu)</small>
+            <small *ngIf="usePoints && pointsDiscountValue > 0" class="text-success d-block">Đã trừ 10.000 đ (100
+              Xu)</small>
           </div>
         </div>
 
@@ -572,21 +493,14 @@
 
         <div class="rewards-row pt-1">
           <div class="reward-item d-flex align-items-center">
-            <span
-              class="icon rounded-circle d-inline-flex align-items-center justify-content-center me-2"
-              style="background: #fff6e6; width: 30px; height: 30px"
-            >
+            <span class="icon rounded-circle d-inline-flex align-items-center justify-content-center me-2"
+              style="background: #fff6e6; width: 30px; height: 30px">
               <i class="bi bi-coin" style="color: #f59e0b; font-size: 1.05rem"></i>
             </span>
-            <div ><strong>Kiếm {{ rewardPoints | number }} Xu</strong></div>
+            <div><strong>Kiếm {{ rewardPoints | number }} Xu</strong></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
-
-
-
-
-

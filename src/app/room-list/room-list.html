@@ -1,5 +1,9 @@
+<h1 class="sr-only">Danh Sách Phòng - Panacea</h1>
+
 <div class="header py-4">
-  <img src="assets/images/BACKGROUND.webp" alt="Panacea Banner" />
+  <img src="assets/images/BACKGROUND.webp" 
+       alt="Hình nền Panacea - Không gian trị liệu và chữa lành tâm hồn" 
+       title="Hình nền Panacea - Không gian trị liệu và chữa lành tâm hồn" />
   <div class="banner-inner container">
     <div class="search-widget shadow p-4 rounded-4">
       <form class="row g-3 align-items-center justify-content-center" (ngSubmit)="onSearchRooms()">
@@ -161,6 +165,8 @@
     <!-- Đánh dấu vị trí cuộn tới -->
     <div class="room-list-results"></div>
 
+    <h2 class="sr-only">Kết quả tìm kiếm phòng</h2>
+
     <!-- Nút xem ngang/dọc -->
     <div class="d-flex justify-content-end mb-3">
       <div class="btn-group" role="group">
@@ -185,7 +191,8 @@
         <!-- Ảnh -->
         <div class="image-wrapper">
           <img [src]="pkg.image"
-              alt="{{ pkg.room_name }}"
+              [alt]="'Hình ảnh phòng ' + pkg.room_name + ' - ' + pkg.range + ' - Panacea'"
+              [title]="'Hình ảnh phòng ' + pkg.room_name + ' - ' + pkg.range + '. Giá: ' + (pkg.price | number) + ' VND - Panacea'"
               style="width: 200px; height: 150px; object-fit: cover;">
         </div>
 
@@ -204,7 +211,7 @@
         <div class="text-end d-flex flex-column justify-content-between align-items-end" style="min-width: 180px;">
           <div>
             <div class="text-danger fw-bold fs-5">{{ pkg.price | number }} VND</div>
-            <small class="text-muted">Chưa gồm thuế & phí</small>
+            <small class="text-muted">Đã bao gồm thuế</small>
           </div>
           <button class="btn btn-warning mt-2" (click)="goToRoomDetail(pkg.room_id)">Chọn phòng</button>
         </div>
@@ -223,7 +230,8 @@
              (click)="goToRoomDetail(pkg.room_id)">
           <img [src]="pkg.image" 
                class="card-img-top" 
-               [alt]="pkg.room_name" 
+               [alt]="'Hình ảnh phòng ' + pkg.room_name + ' - ' + pkg.range + ' - Panacea'"
+               [title]="'Hình ảnh phòng ' + pkg.room_name + ' - ' + pkg.range + '. Giá: ' + (pkg.price | number) + ' VND - Panacea'"
                style="height: 150px; object-fit: cover;">
           <div class="card-body d-flex flex-column justify-content-between">
             <h5 class="card-title text-primary">{{ pkg.room_name }}</h5>
@@ -239,7 +247,7 @@
 
             <div class="mt-auto">
               <div class="fw-bold text-danger mb-1">{{ pkg.price | number }} VND</div>
-              <small class="text-muted">Chưa gồm thuế & phí</small>
+              <small class="text-muted">Đã bao gồm thuế</small>
               <button class="btn btn-warning w-100 mt-2">Chọn phòng</button>
             </div>
           </div>

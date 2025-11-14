@@ -13,7 +13,9 @@
 
     <div class="d-flex align-items-center steps">
       <ng-container *ngFor="let s of headerSteps">
-        <div class="d-flex align-items-center me-3">
+        <div class="d-flex align-items-center me-3" 
+             [class.cursor-pointer]="s.id === 1"
+             (click)="s.id === 1 ? navigateToPayment() : null">
           <div class="step-circle me-2" [ngClass]="{ active: s.id === currentStep }">
             {{ s.id }}
           </div>

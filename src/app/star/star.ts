@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SEOService } from '../services/seo.service';
 
 @Component({
   selector: 'app-star',
@@ -8,9 +9,20 @@ import { CommonModule } from '@angular/common';
   templateUrl: './star.html',
   styleUrl: './star.css',
 })
-export class Star {
-   constructor() {
+export class Star implements OnInit {
+  constructor(
+    private seoService: SEOService
+  ) {
     this.initializeAccordion();
+  }
+
+  ngOnInit(): void {
+    this.seoService.updateSEO({
+      title: 'Panacea Priority - Hệ Thống Hạng Thành Viên',
+      description: 'Tìm hiểu về hệ thống Panacea Priority - Tích điểm, lên hạng và nhận các đặc quyền độc quyền từ Bronze đến Diamond.',
+      keywords: 'Panacea Priority, hạng thành viên Panacea, Bronze Silver Gold Diamond, đặc quyền Panacea',
+      image: '/assets/images/BACKGROUND.webp'
+    });
   }
   isPopupOpen = false;
 

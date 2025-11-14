@@ -48,9 +48,14 @@ export class CartWidget implements OnInit, OnDestroy {
     // 🟩 ADDED: Polling để cập nhật cart (fallback)
     // ✅ FIXED: Tăng interval từ 500ms lên 2000ms để giảm tải CPU
     this.cartPollingInterval = setInterval(() => {
-      const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
-      if (JSON.stringify(currentCart) !== JSON.stringify(this.cart)) {
-        this.loadCart();
+      // ✅ FIXED: Thêm try-catch cho JSON.parse
+      try {
+        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (JSON.stringify(currentCart) !== JSON.stringify(this.cart)) {
+          this.loadCart();
+        }
+      } catch (e) {
+        console.error('Error parsing cart from localStorage in polling:', e);
       }
     }, 2000); // Check every 2000ms (2 seconds)
   }
@@ -82,7 +87,13 @@ export class CartWidget implements OnInit, OnDestroy {
 
   // 🛒 Load giỏ hàng
   loadCart(): void {
-    this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    // ✅ FIXED: Thêm try-catch cho JSON.parse
+    try {
+      this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    } catch (e) {
+      console.error('Error parsing cart from localStorage:', e);
+      this.cart = [];
+    }
   }
 
   // 🟩 ADDED: Xóa nhóm items khỏi giỏ (xóa tất cả items trong nhóm)

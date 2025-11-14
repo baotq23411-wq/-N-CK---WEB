@@ -13,6 +13,7 @@ import { InvoiceService } from '../services/invoice';
 import { ServiceDataService } from '../services/service';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../services/auth';
+import { SEOService } from '../services/seo.service';
 
 // DB
 import bookingData from '../../assets/data/bookings.json';
@@ -68,6 +69,7 @@ export class Payment implements OnInit {
     return Math.floor(this.totalPrice / 1000);
   }
   agreedRules = false;
+  showAgreeRequired = false;
   contactForm!: FormGroup;
 
   roomRules: any[] = [];
@@ -92,10 +94,19 @@ export class Payment implements OnInit {
     private cdr: ChangeDetectorRef,
     private serviceData: ServiceDataService,
     private http: HttpClient,
-    private authService: AuthService
+    private authService: AuthService,
+    private seoService: SEOService
   ) {}
 
   ngOnInit(): void {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Thanh Toán - Panacea',
+      description: 'Thanh toán đơn hàng Panacea an toàn và nhanh chóng với nhiều phương thức thanh toán đa dạng.',
+      keywords: 'Thanh toán Panacea, payment Panacea, checkout Panacea',
+      robots: 'noindex, nofollow'
+    });
+    
     // 🟩 ADDED: Scroll to top khi vào trang
     window.scrollTo(0, 0);
     
@@ -324,7 +335,6 @@ export class Payment implements OnInit {
       try {
         const processedBookings = JSON.parse(processedBookingsStr);
         if (Array.isArray(processedBookings) && processedBookings.length > 0) {
-          console.log('🟩 [Payment] Đã đọc processedBookings từ cart:', processedBookings); // 🟩 DEBUG
           // Chuyển đổi cart items thành booking objects
           this.loadMultipleBookings(processedBookings);
           return; // Return ngay để không chạy code phía dưới
@@ -338,7 +348,6 @@ export class Payment implements OnInit {
     if (bookingFromStorage) {
       try {
         const bookingInfo = JSON.parse(bookingFromStorage);
-        console.log('🟩 [Payment] Đã đọc selectedBooking từ "Thanh toán ngay":', bookingInfo); // 🟩 DEBUG
         
         const roomId = bookingInfo.roomId;
         
@@ -992,8 +1001,8 @@ export class Payment implements OnInit {
       }));
       this.extraServices = (data.extraServices || []).map((s: any) => ({
         ...s,
-        selected: false,
-        quantity: s.quantity || 1
+        selected: s.selected || false,
+        quantity: s.quantity && s.quantity > 0 ? Math.min(10, Math.max(1, s.quantity)) : 1
       }));
 
       // 🟩 UPDATED: Kiểm tra xem có paymentState không
@@ -1155,7 +1164,20 @@ export class Payment implements OnInit {
   }
 
   // 🟩 UPDATED: Toggle dịch vụ thuê thêm - Real-time update
-  toggleExtraService(service: any): void {
+  toggleExtraService(service: any, event?: any): void {
+    // Ngăn chặn event propagation nếu có
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    // Đảm bảo service có quantity mặc định (parse về number)
+    if (!service.quantity || service.quantity < 1) {
+      service.quantity = 1;
+    } else {
+      service.quantity = Number(service.quantity);
+    }
+
     // Toggle trạng thái selected ngay lập tức
     service.selected = !service.selected;
     
@@ -1163,7 +1185,12 @@ export class Payment implements OnInit {
     this.showPriceDetails = true;
     
     // Cập nhật danh sách đã chọn NGAY LẬP TỨC (tạo array mới với reference mới)
-    this.selectedExtraServicesList = [...this.extraServices.filter(s => s.selected)];
+    this.selectedExtraServicesList = this.extraServices
+      .filter(s => s.selected)
+      .map(s => ({
+        ...s,
+        quantity: Number(s.quantity) || 1
+      }));
     
     // Tính lại tổng giá NGAY LẬP TỨC (không gọi detectChanges bên trong)
     this.recalculateTotalImmediate();
@@ -1172,24 +1199,67 @@ export class Payment implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // 🟩 UPDATED: Thay đổi số lượng dịch vụ thuê thêm - Real-time update
+  // 🟩 UPDATED: Thay đổi số lượng dịch vụ thuê thêm - Real-time update (giống room-detail)
   changeExtraQuantity(service: any, delta: number, event?: any): void {
-    // Nếu delta = 0, lấy giá trị từ input event
-    if (delta === 0 && event && event.target) {
-      const inputValue = parseInt(event.target.value, 10);
-      if (!isNaN(inputValue)) {
-        service.quantity = Math.max(1, Math.min(10, inputValue));
-      }
-    } else {
-      // Cập nhật số lượng ngay lập tức
-      service.quantity = Math.max(1, Math.min(10, (service.quantity || 1) + delta));
+    // Ngăn chặn event propagation để không trigger checkbox
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
     }
+
+    // Đảm bảo service có quantity mặc định (parse về number để tránh string)
+    if (!service.quantity || service.quantity < 1) {
+      service.quantity = 1;
+    } else {
+      service.quantity = Number(service.quantity);
+    }
+
+    // Nếu delta = 0, đây là từ input event (ngModel đã cập nhật, chỉ cần validate)
+    if (delta === 0) {
+      // ngModel đã cập nhật service.quantity, chỉ cần đảm bảo trong khoảng hợp lệ
+      const parsed = Number(service.quantity) || 1;
+      service.quantity = Math.max(1, Math.min(10, parsed));
+    } else if (delta !== 0) {
+      // Cập nhật số lượng với delta (từ button click) - giống room-detail
+      const currentQty = Number(service.quantity) || 1;
+      if (delta < 0) {
+        // 🟩 ADDED: Nếu quantity = 1 và ấn nút giảm, tự động bỏ tick dịch vụ
+        if (currentQty === 1) {
+          // Bỏ tick checkbox và giữ quantity = 1
+          service.selected = false;
+          service.quantity = 1;
+        } else if (currentQty > 1) {
+          // Giảm quantity xuống 1
+          service.quantity = currentQty - 1;
+        }
+      } else {
+        // Tăng quantity
+        service.quantity = Math.min(10, currentQty + 1);
+      }
+    }
+    
+    // Đảm bảo quantity là number (không phải string)
+    service.quantity = Number(service.quantity);
     
     // Mở chi tiết giá nếu dịch vụ đang được chọn
     if (service.selected) {
       this.showPriceDetails = true;
-      // Cập nhật lại danh sách để reflect số lượng mới
-      this.selectedExtraServicesList = [...this.extraServices.filter(s => s.selected)];
+      // Cập nhật lại danh sách để reflect số lượng mới (tạo reference mới)
+      this.selectedExtraServicesList = this.extraServices
+        .filter(s => s.selected)
+        .map(s => ({
+          ...s,
+          quantity: Number(s.quantity) || 1
+        }));
+    } else {
+      // 🟩 ADDED: Nếu dịch vụ bị bỏ tick, cập nhật lại danh sách
+      this.selectedExtraServicesList = this.extraServices
+        .filter(s => s.selected)
+        .map(s => ({
+          ...s,
+          quantity: Number(s.quantity) || 1
+        }));
     }
     
     // Tính lại tổng giá NGAY LẬP TỨC (không gọi detectChanges bên trong)
@@ -1197,6 +1267,17 @@ export class Payment implements OnInit {
     
     // Trigger change detection một lần duy nhất
     this.cdr.detectChanges();
+  }
+
+  // Track by function để tối ưu performance
+  trackByServiceId(index: number, service: any): any {
+    return service.name || service.id || index;
+  }
+
+  // 🟩 ADDED: Helper method để parse number trong template
+  parseNumber(value: any): number {
+    const parsed = Number(value);
+    return isNaN(parsed) ? 1 : parsed;
   }
 
   // 🟩 LEGACY: Giữ lại cho tương thích
@@ -1363,6 +1444,44 @@ export class Payment implements OnInit {
 
   toggleAgree(e: any): void {
     this.agreedRules = !!e?.target?.checked;
+    // Reset error state khi user check
+    if (this.agreedRules) {
+      this.showAgreeRequired = false;
+    }
+  }
+
+  scrollToAgreeRules(): void {
+    setTimeout(() => {
+      const element = document.getElementById('agreeRulesContainer');
+      if (element) {
+        // Tính toán để checkbox nằm chính giữa màn hình
+        const elementRect = element.getBoundingClientRect();
+        const elementTop = elementRect.top + window.pageYOffset;
+        const elementHeight = elementRect.height;
+        const windowHeight = window.innerHeight;
+        
+        // Vị trí scroll để element nằm giữa màn hình
+        const scrollPosition = elementTop - (windowHeight / 2) + (elementHeight / 2);
+
+        window.scrollTo({
+          top: Math.max(0, scrollPosition), // Đảm bảo không scroll âm
+          behavior: 'smooth'
+        });
+
+        // Thêm một chút delay trước khi focus để animation scroll hoàn tất
+        setTimeout(() => {
+          const checkbox = document.getElementById('agreeRules') as HTMLInputElement;
+          if (checkbox) {
+            checkbox.focus();
+            // Thêm một highlight flash effect
+            element.classList.add('flash-highlight');
+            setTimeout(() => {
+              element.classList.remove('flash-highlight');
+            }, 2000);
+          }
+        }, 500);
+      }
+    }, 100);
   }
 
   // ===== Đăng nhập / Đăng ký Popup =====
@@ -1775,12 +1894,13 @@ export class Payment implements OnInit {
  confirmBooking(): void {
   // 1️⃣ Kiểm tra đã đồng ý quy định chưa
   if (!this.agreedRules) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Vui lòng đồng ý với quy định!',
-    });
+    this.showAgreeRequired = true;
+    this.scrollToAgreeRules();
     return;
   }
+  
+  // Reset error state khi đã đồng ý
+  this.showAgreeRequired = false;
 
   // 🟩 UPDATED: Logic validation mới - Kiểm tra trực tiếp giá trị và format
   // 2️⃣ Nếu chưa đăng nhập → bắt buộc nhập thông tin liên hệ

@@ -1,7 +1,8 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+import { SEOService } from '../services/seo.service';
 
 type Garden = {
   key: 'an-nhien' | 'tam-hon' | 'cam-hung' | 'cach-mang';
@@ -42,7 +43,7 @@ type Feedback = {
   templateUrl: './homepage.html',
   styleUrls: ['./homepage.css']
 })
-export class Homepage implements AfterViewInit, OnDestroy {
+export class Homepage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('heroVideo') heroVideoRef!: ElementRef<HTMLVideoElement>;
   @ViewChild('gardensSection') gardensSectionRef!: ElementRef<HTMLElement>;
   @ViewChild('blogSection') blogSectionRef!: ElementRef<HTMLElement>;
@@ -58,8 +59,20 @@ export class Homepage implements AfterViewInit, OnDestroy {
   private observer?: IntersectionObserver;
   private scrollRevealObserver?: IntersectionObserver;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private seoService: SEOService
+  ) {
     console.log('Homepage component đã được khởi tạo!');
+  }
+
+  ngOnInit(): void {
+    this.seoService.updateSEO({
+      title: 'Panacea - A medicine from the stars',
+      description: 'Không gian trị liệu và chữa lành tâm hồn - Panacea cung cấp các dịch vụ thiền, yoga, tư vấn tâm lý và nhiều hoạt động chữa lành khác.',
+      keywords: 'Panacea, trị liệu, chữa lành, thiền, yoga, tư vấn tâm lý, không gian thư giãn, Catharsis, Oasis, Genii, Mutiny',
+      image: '/assets/images/BACKGROUND.webp'
+    });
   }
 
   ngAfterViewInit() {
@@ -210,7 +223,7 @@ export class Homepage implements AfterViewInit, OnDestroy {
 
   // ========== HOME VIDEO ==========
   videoSrc = 'assets/video/panacea.mp4';
-  videoPoster = 'assets/images/cover-home.webp';
+  videoPoster = 'assets/images/BACKGROUND.webp';
 
   // ========== SEARCH BAR ==========
   activeTab: 'book' | 'guide' = 'book';

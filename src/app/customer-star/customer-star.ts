@@ -3,6 +3,7 @@ import { AuthService } from '../services/auth';
 import { UserToolbarComponent } from "../user-toolbar/user-toolbar";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SEOService } from '../services/seo.service';
 
 interface MembershipInfo {
   level: string;
@@ -75,9 +76,20 @@ export class CustomerStarComponent implements OnInit {
   ];
 
 
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private seoService: SEOService
+  ) { }
 
   ngOnInit(): void {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Panacea Priority - Hạng Thành Viên - Panacea',
+      description: 'Xem hạng thành viên Panacea Priority của bạn - Tích điểm, lên hạng và nhận các đặc quyền độc quyền từ Bronze đến Diamond.',
+      keywords: 'Panacea Priority, hạng thành viên, Bronze Silver Gold Platinum Diamond, đặc quyền thành viên',
+      robots: 'noindex, nofollow'
+    });
+    
     this.authService.getCurrentAccount().subscribe(account => {
       const star = account?.star ?? 0;
       this.currentAccount = account;

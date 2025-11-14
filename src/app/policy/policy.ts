@@ -1,6 +1,7 @@
-import { Component, AfterViewInit, OnDestroy, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, OnInit, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { SEOService } from '../services/seo.service';
 
 @Component({
   selector: 'app-policy',
@@ -9,11 +10,23 @@ import { RouterModule } from '@angular/router';
   templateUrl: './policy.html',
   styleUrl: './policy.css',
 })
-export class Policy implements AfterViewInit, OnDestroy {
+export class Policy implements OnInit, AfterViewInit, OnDestroy {
   updated = new Date().toLocaleDateString('vi-VN');
   private io?: IntersectionObserver;
 
-  constructor(private el: ElementRef<HTMLElement>) {}
+  constructor(
+    private el: ElementRef<HTMLElement>,
+    private seoService: SEOService
+  ) {}
+
+  ngOnInit(): void {
+    this.seoService.updateSEO({
+      title: 'Chính Sách Hoạt Động - Panacea',
+      description: 'Chính sách hoạt động của Panacea - Quy định đặt chỗ, hủy đổi lịch, thanh toán, hoàn tiền và các điều khoản khác.',
+      keywords: 'Chính sách Panacea, quy định đặt phòng, chính sách hủy đổi, thanh toán Panacea, điều khoản Panacea',
+      image: '/assets/images/BACKGROUND.webp'
+    });
+  }
 
   ngAfterViewInit(): void {
     const host = this.el.nativeElement;

@@ -18,7 +18,7 @@ type Post = {
   templateUrl: './blog-list.html',
   styleUrls: ['./blog-list.css']
 })
-export class BlogListComponent {
+export class BlogList {
   /** Nếu là trang tổng, bật dropdown sắp xếp (không bắt buộc) */
   @Input() isTravelGuidePage = false;
 

@@ -54,6 +54,11 @@
                                     (click)="$event.stopPropagation(); openModal(b)">
                                     Xem chi tiết
                                 </button>
+                                <button *ngIf="canPrintInvoice(b)" type="button"
+                                    class="btn btn-outline-success btn-sm ms-2"
+                                    (click)="$event.stopPropagation(); generateInvoice(b, $event)" title="In hóa đơn">
+                                    <i class="bi bi-file-earmark-pdf"></i> In hóa đơn
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -126,7 +131,7 @@
                     <h5>Dịch vụ đi kèm</h5>
                     <ul *ngIf="selectedBooking.services.length > 0; else noService">
                         <li *ngFor="let s of selectedBooking.services">
-                            {{ s.name }} 
+                            {{ s.name }}
                             <span *ngIf="s.quantity && s.quantity > 1">× {{ s.quantity }}</span>
                             - {{ formatCurrency(getServiceTotalPrice(s)) }}
                         </li>
@@ -165,6 +170,10 @@
             </div>
 
             <div class="modal-footer">
+                <button *ngIf="selectedBooking && canPrintInvoice(selectedBooking)" class="btn btn-success me-2"
+                    (click)="generateInvoice(selectedBooking)">
+                    <i class="bi bi-file-earmark-pdf"></i> In hóa đơn
+                </button>
                 <button class="btn btn-primary" (click)="closeModal()">Đóng</button>
             </div>
         </div>

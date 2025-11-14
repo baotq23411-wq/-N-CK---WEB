@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { UserToolbarComponent } from '../user-toolbar/user-toolbar';
 import { Booking } from '../interfaces/booking';
 import { AuthService } from '../services/auth';
+import { PdfService } from '../services/pdf.service';
+import { SEOService } from '../services/seo.service';
 
 export type BookingStatusTab = 'all' | 'pending' | 'confirmed' | 'completed' | 'cancelled' | 'no-show';
 
@@ -29,9 +31,21 @@ export class BookingHistoryComponent implements OnInit {
   roomsMap: Map<number, RoomData> = new Map();
   currentUserId: string | null = null;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private pdfService: PdfService,
+    private seoService: SEOService
+  ) {}
 
   ngOnInit(): void {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Lịch Sử Đặt Phòng - Panacea',
+      description: 'Xem lịch sử đặt phòng của bạn tại Panacea - Quản lý các đơn đặt phòng, xem chi tiết và in hóa đơn.',
+      keywords: 'Lịch sử đặt phòng Panacea, quản lý đặt phòng, đơn đặt phòng, hóa đơn Panacea',
+      robots: 'noindex, nofollow'
+    });
+    
     // 🔹 Lấy user_id của user hiện tại
     this.getCurrentUserId();
     
@@ -115,20 +129,30 @@ export class BookingHistoryComponent implements OnInit {
       // Nếu không có, thử lấy từ CURRENT_USER
       const currentUserStr = localStorage.getItem('CURRENT_USER');
       if (currentUserStr) {
-        const currentUser = JSON.parse(currentUserStr);
-        if (currentUser && currentUser.user_id) {
-          this.currentUserId = currentUser.user_id;
-          return;
+        // ✅ FIXED: Thêm try-catch cho JSON.parse
+        try {
+          const currentUser = JSON.parse(currentUserStr);
+          if (currentUser && currentUser.user_id) {
+            this.currentUserId = currentUser.user_id;
+            return;
+          }
+        } catch (e) {
+          console.error('Error parsing CURRENT_USER from localStorage:', e);
         }
       }
       
       // Nếu không có, thử lấy từ USERS list
       const usersStr = localStorage.getItem('USERS');
       if (usersStr) {
-        const users = JSON.parse(usersStr);
-        // Lấy user đầu tiên nếu có (tạm thời, nên có UID)
-        if (users.length > 0 && users[0].user_id) {
-          this.currentUserId = users[0].user_id;
+        // ✅ FIXED: Thêm try-catch cho JSON.parse
+        try {
+          const users = JSON.parse(usersStr);
+          // Lấy user đầu tiên nếu có (tạm thời, nên có UID)
+          if (users.length > 0 && users[0].user_id) {
+            this.currentUserId = users[0].user_id;
+          }
+        } catch (e) {
+          console.error('Error parsing USERS from localStorage:', e);
         }
       }
     } catch (e) {
@@ -231,5 +255,20 @@ export class BookingHistoryComponent implements OnInit {
     const basePrice = (booking as any).basePrice || 0;
     const servicesTotal = this.getTotalServicesPrice(booking);
     return basePrice + servicesTotal;
+  }
+
+  /** Tạo PDF hóa đơn */
+  generateInvoice(booking: Booking, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    
+    const roomName = this.getRoomName(booking);
+    this.pdfService.generateInvoice(booking, roomName);
+  }
+
+  /** Kiểm tra xem booking có thể in hóa đơn không (chỉ đơn đã hoàn thành) */
+  canPrintInvoice(booking: Booking): boolean {
+    return booking.status === 'completed';
   }
 }

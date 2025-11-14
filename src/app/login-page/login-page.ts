@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, 
 import { Router, ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
 import { AuthService } from '../services/auth';
+import { SEOService } from '../services/seo.service';
 import { catchError, EMPTY } from 'rxjs';
 import { CommonModule } from '@angular/common';
 
@@ -30,10 +31,19 @@ export class LoginPageComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private seoService: SEOService
   ) { }
 
   ngOnInit() {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Đăng Nhập - Panacea',
+      description: 'Đăng nhập vào tài khoản Panacea của bạn để quản lý đặt chỗ, xem ưu đãi và trải nghiệm các dịch vụ.',
+      keywords: 'Đăng nhập Panacea, tài khoản Panacea, quản lý đặt chỗ, login',
+      robots: 'noindex, nofollow'
+    });
+    
     // Scroll to top khi vào trang
     window.scrollTo(0, 0);
     

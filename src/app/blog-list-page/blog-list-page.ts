@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { SEOService } from '../services/seo.service';
 
 interface PanaceaArticle {
   icon: string; // Bootstrap Icon class (e.g., 'bi bi-calendar-check')
@@ -18,18 +19,186 @@ interface PanaceaArticle {
   templateUrl: './blog-list-page.html',
   styleUrls: ['./blog-list-page.css'],
 })
-export class BlogListPage {
+export class BlogListPage implements OnInit {
   selectedArticle: PanaceaArticle | null = null;
   showModal = false;
 
-  constructor(private sanitizer: DomSanitizer) {}
+  constructor(
+    private sanitizer: DomSanitizer,
+    private seoService: SEOService
+  ) {}
+
+  ngOnInit(): void {
+    this.seoService.updateSEO({
+      title: 'Cẩm Nang Panacea - Thông tin hay cần biết',
+      description: 'Cẩm nang đầy đủ về Panacea - Hướng dẫn đặt phòng, chính sách hủy đổi, thanh toán, ưu đãi và các thông tin hữu ích khác.',
+      keywords: 'Cẩm nang Panacea, hướng dẫn đặt phòng, chính sách Panacea, thanh toán Panacea, ưu đãi Panacea',
+      image: '/assets/images/BACKGROUND.webp'
+    });
+  }
 
   getSafeHtml(content: string | undefined): SafeHtml {
     if (!content) return '';
     return this.sanitizer.bypassSecurityTrustHtml(content);
   }
 
-  articles: PanaceaArticle[] = [
+  // Featured articles - Thông tin hay cần biết
+  featuredArticles: PanaceaArticle[] = [
+    {
+      icon: 'bi bi-question-circle',
+      title: 'Những câu hỏi thường gặp khi đặt phòng',
+      shortDescription: 'Giải đáp các thắc mắc phổ biến về quy trình đặt phòng, thanh toán, hủy đổi và các dịch vụ tại Panacea.',
+      readMoreLink: '/blog/faq',
+      fullContent: `
+        <h4 class="mb-4">Những câu hỏi thường gặp khi đặt phòng</h4>
+        <p class="lead">Chúng tôi đã tổng hợp các câu hỏi thường gặp nhất để giúp bạn có trải nghiệm đặt phòng suôn sẻ tại Panacea.</p>
+        
+        <h5 class="mt-4 mb-3">1. Tôi có thể đặt phòng trực tiếp tại cơ sở không?</h5>
+        <p>Có, bạn có thể đến trực tiếp tại Panacea để đặt phòng. Tuy nhiên, để đảm bảo có chỗ, chúng tôi khuyến khích đặt trước qua website hoặc hotline <strong>1900 123 456</strong>.</p>
+        
+        <h5 class="mt-4 mb-3">2. Có cần đặt cọc khi đặt phòng không?</h5>
+        <p>Để giữ chỗ, bạn cần thanh toán toàn bộ số tiền khi đặt phòng. Nếu hủy đúng chính sách, bạn sẽ được hoàn tiền theo quy định.</p>
+        
+        <h5 class="mt-4 mb-3">3. Tôi có thể đổi phòng sau khi đã đặt không?</h5>
+        <p>Có, bạn có thể đổi phòng miễn phí nếu thông báo trước ít nhất 12 giờ. Vui lòng liên hệ hotline hoặc vào mục "Đặt phòng của tôi" trên website.</p>
+        
+        <h5 class="mt-4 mb-3">4. Panacea có dịch vụ cho trẻ em không?</h5>
+        <p>Một số dịch vụ phù hợp với trẻ em từ 12 tuổi trở lên. Trẻ em dưới 12 tuổi cần có người lớn đi kèm. Vui lòng liên hệ để được tư vấn dịch vụ phù hợp.</p>
+        
+        <h5 class="mt-4 mb-3">5. Tôi có thể sử dụng Panacea Points để thanh toán không?</h5>
+        <p>Có, bạn có thể sử dụng Panacea Points để giảm giá hoặc thanh toán một phần. 100 điểm = 10.000 VNĐ. Bạn có thể kết hợp điểm với các phương thức thanh toán khác.</p>
+        
+        <h5 class="mt-4 mb-3">6. Có chỗ đậu xe không?</h5>
+        <p>Có, Panacea có bãi đậu xe miễn phí cho khách hàng. Bãi đậu xe nằm ngay trong khuôn viên, rất tiện lợi.</p>
+        
+        <div class="alert alert-info mt-4">
+          <i class="bi bi-telephone me-2"></i>
+          <strong>Cần hỗ trợ thêm?</strong> Liên hệ hotline <strong>1900 123 456</strong> hoặc email <strong>hello@panacea.vn</strong> để được tư vấn.
+        </div>
+      `
+    },
+    {
+      icon: 'bi bi-shield-check',
+      title: 'An toàn và bảo mật thông tin',
+      shortDescription: 'Cam kết về an toàn, bảo mật thông tin cá nhân và các biện pháp đảm bảo an toàn khi sử dụng dịch vụ tại Panacea.',
+      readMoreLink: '/blog/safety',
+      fullContent: `
+        <h4 class="mb-4">An toàn và bảo mật thông tin</h4>
+        <p class="lead">Panacea cam kết đảm bảo an toàn tuyệt đối cho khách hàng cả về thể chất và thông tin cá nhân.</p>
+        
+        <h5 class="mt-4 mb-3">Bảo mật thông tin cá nhân</h5>
+        <ul>
+          <li><strong>Mã hóa dữ liệu:</strong> Tất cả thông tin thanh toán và cá nhân được mã hóa SSL/TLS</li>
+          <li><strong>Không chia sẻ:</strong> Chúng tôi không bán hoặc chia sẻ thông tin của bạn cho bên thứ ba</li>
+          <li><strong>Tuân thủ GDPR:</strong> Tuân thủ đầy đủ các quy định về bảo vệ dữ liệu cá nhân</li>
+          <li><strong>Quyền riêng tư:</strong> Bạn có thể yêu cầu xóa hoặc chỉnh sửa thông tin bất cứ lúc nào</li>
+        </ul>
+        
+        <h5 class="mt-4 mb-3">An toàn khi sử dụng dịch vụ</h5>
+        <ul>
+          <li><strong>Thiết bị an toàn:</strong> Tất cả thiết bị và dụng cụ được kiểm tra định kỳ</li>
+          <li><strong>Đồ bảo hộ:</strong> Cung cấp đầy đủ đồ bảo hộ cho các hoạt động có rủi ro</li>
+          <li><strong>Nhân viên được đào tạo:</strong> Tất cả nhân viên được đào tạo về an toàn và sơ cứu</li>
+          <li><strong>Bảo hiểm:</strong> Panacea có bảo hiểm trách nhiệm dân sự đầy đủ</li>
+        </ul>
+        
+        <h5 class="mt-4 mb-3">An toàn vệ sinh</h5>
+        <ul>
+          <li>Vệ sinh và khử trùng phòng sau mỗi lần sử dụng</li>
+          <li>Dụng cụ được khử trùng theo tiêu chuẩn y tế</li>
+          <li>Không gian thông thoáng, đảm bảo không khí trong lành</li>
+          <li>Nhân viên tuân thủ nghiêm ngặt quy trình vệ sinh</li>
+        </ul>
+        
+        <h5 class="mt-4 mb-3">Báo cáo sự cố</h5>
+        <p>Nếu bạn gặp bất kỳ vấn đề nào về an toàn hoặc bảo mật, vui lòng:</p>
+        <ol>
+          <li>Báo ngay cho nhân viên tại cơ sở</li>
+          <li>Liên hệ hotline <strong>1900 123 456</strong></li>
+          <li>Gửi email đến <strong>safety@panacea.vn</strong></li>
+        </ol>
+        
+        <div class="alert alert-success mt-4">
+          <i class="bi bi-shield-check me-2"></i>
+          <strong>Cam kết:</strong> An toàn và bảo mật của khách hàng là ưu tiên hàng đầu của Panacea.
+        </div>
+      `
+    },
+    {
+      icon: 'bi bi-people',
+      title: 'Quy tắc ứng xử và văn hóa Panacea',
+      shortDescription: 'Hướng dẫn về quy tắc ứng xử, văn hóa và các nguyên tắc khi tham gia các hoạt động tại Panacea để có trải nghiệm tốt nhất.',
+      readMoreLink: '/blog/etiquette',
+      fullContent: `
+        <h4 class="mb-4">Quy tắc ứng xử và văn hóa Panacea</h4>
+        <p class="lead">Panacea là không gian chữa lành và thư giãn. Chúng tôi mong muốn tạo ra môi trường tôn trọng, hòa hợp cho tất cả mọi người.</p>
+        
+        <h5 class="mt-4 mb-3">Nguyên tắc cơ bản</h5>
+        <ul>
+          <li><strong>Tôn trọng:</strong> Tôn trọng không gian, thời gian và sự riêng tư của người khác</li>
+          <li><strong>Yên tĩnh:</strong> Giữ im lặng trong các khu vực thiền định và trị liệu</li>
+          <li><strong>Đúng giờ:</strong> Đến đúng giờ đã đặt, không làm ảnh hưởng đến lịch của người khác</li>
+          <li><strong>Vệ sinh:</strong> Giữ gìn vệ sinh chung, trả lại dụng cụ về đúng vị trí</li>
+        </ul>
+        
+        <h5 class="mt-4 mb-3">Quy tắc theo khu vực</h5>
+        
+        <h6 class="mt-3 mb-2"><strong>Catharsis - Vườn An Nhiên:</strong></h6>
+        <ul>
+          <li>Tắt điện thoại hoặc để chế độ im lặng</li>
+          <li>Mặc trang phục thoải mái, phù hợp với hoạt động</li>
+          <li>Không mang đồ ăn, thức uống vào phòng thiền/yoga</li>
+          <li>Tuân thủ hướng dẫn của giáo viên</li>
+        </ul>
+        
+        <h6 class="mt-3 mb-2"><strong>Oasis - Vườn Tâm Hồn:</strong></h6>
+        <ul>
+          <li>Giữ bí mật về nội dung tư vấn</li>
+          <li>Không làm phiền người khác đang trong phòng tư vấn</li>
+          <li>Đến đúng giờ hẹn, không đến sớm quá 15 phút</li>
+        </ul>
+        
+        <h6 class="mt-3 mb-2"><strong>Genii - Vườn Cảm Hứng:</strong></h6>
+        <ul>
+          <li>Chia sẻ không gian sáng tạo một cách công bằng</li>
+          <li>Bảo quản dụng cụ nghệ thuật cẩn thận</li>
+          <li>Tôn trọng tác phẩm của người khác</li>
+        </ul>
+        
+        <h6 class="mt-3 mb-2"><strong>Mutiny - Vườn Cách Mạng:</strong></h6>
+        <ul>
+          <li>Mặc đầy đủ đồ bảo hộ theo hướng dẫn</li>
+          <li>Chỉ sử dụng dụng cụ được cung cấp</li>
+          <li>Không làm ảnh hưởng đến người khác đang sử dụng</li>
+        </ul>
+        
+        <h5 class="mt-4 mb-3">Những điều không nên làm</h5>
+        <ul>
+          <li>Không hút thuốc trong toàn bộ khuôn viên</li>
+          <li>Không sử dụng chất kích thích</li>
+          <li>Không quay phim, chụp ảnh người khác mà không được phép</li>
+          <li>Không mang theo vật nuôi (trừ thú cưng hỗ trợ được chứng nhận)</li>
+          <li>Không làm ồn, nói chuyện lớn tiếng</li>
+        </ul>
+        
+        <h5 class="mt-4 mb-3">Văn hóa Panacea</h5>
+        <p>Panacea tin rằng mỗi người đều xứng đáng có không gian riêng để chữa lành và phát triển. Chúng tôi khuyến khích:</p>
+        <ul>
+          <li>Chia sẻ tích cực và hỗ trợ lẫn nhau</li>
+          <li>Giữ tinh thần cởi mở và tôn trọng sự khác biệt</li>
+          <li>Đóng góp ý kiến xây dựng để cải thiện dịch vụ</li>
+        </ul>
+        
+        <div class="alert alert-warning mt-4">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          <strong>Lưu ý:</strong> Vi phạm quy tắc ứng xử có thể dẫn đến việc từ chối phục vụ hoặc cấm vĩnh viễn.
+        </div>
+      `
+    }
+  ];
+
+  // Regular articles
+  regularArticles: PanaceaArticle[] = [
     {
       icon: 'bi bi-calendar-check',
       title: 'Hướng dẫn đặt phòng tại Panacea',

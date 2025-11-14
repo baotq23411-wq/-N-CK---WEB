@@ -14,6 +14,7 @@ import { Items } from '../interfaces/items';
 import { InvoiceService } from '../services/invoice';
 import { UserService } from '../services/user';
 import { AuthService } from '../services/auth';
+import { SEOService } from '../services/seo.service';
 
 @Component({
   selector: 'app-exchange-landing',
@@ -30,7 +31,8 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
     private http: HttpClient,
     private invoiceService: InvoiceService,
     private userService: UserService,
-    private authService: AuthService
+    private authService: AuthService,
+    private seoService: SEOService
   ) {}
 
   // ===== DỮ LIỆU NGƯỜI DÙNG =====
@@ -136,6 +138,14 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
+    // SEO - Set title ngay lập tức
+    this.seoService.updateSEO({
+      title: 'Ưu Đãi & Khuyến Mãi - Panacea',
+      description: 'Khám phá các ưu đãi và khuyến mãi đặc biệt tại Panacea - Voucher, combo tiết kiệm và nhiều ưu đãi hấp dẫn khác.',
+      keywords: 'Ưu đãi Panacea, khuyến mãi Panacea, voucher Panacea, combo Panacea',
+      image: '/assets/images/BACKGROUND.webp'
+    });
+    
     this.loadUserData();
     this.checkVoucherStatus();
     this.filteredVouchers = [...this.vouchers];
@@ -422,32 +432,65 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
 
         provinceSelect.addEventListener('change', () => {
           const selected = this.provinces.find(p => p.name === provinceSelect.value);
-          districtSelect.innerHTML =
-            '<option value="">-- Chọn Quận / Huyện --</option>' +
-            (selected?.districts || []).map(d => `<option value="${d}">${d}</option>`).join('');
+          
+          // ✅ FIXED: Sử dụng textContent và createElement thay vì innerHTML để tránh XSS
+          districtSelect.textContent = '';
+          const defaultOption = document.createElement('option');
+          defaultOption.value = '';
+          defaultOption.textContent = '-- Chọn Quận / Huyện --';
+          districtSelect.appendChild(defaultOption);
+          
+          (selected?.districts || []).forEach(d => {
+            const option = document.createElement('option');
+            option.value = d;
+            option.textContent = d;
+            districtSelect.appendChild(option);
+          });
 
           if (!provinceSelect.value) {
-            shipMsg.innerHTML = '';
+            shipMsg.textContent = '';
             return;
           }
 
+          // ✅ FIXED: Sử dụng createElement thay vì innerHTML
+          shipMsg.textContent = '';
+          const alertDiv = document.createElement('div');
+          alertDiv.className = 'alert d-flex align-items-center p-2 mb-0';
+          alertDiv.setAttribute('role', 'alert');
+          
           if (provinceSelect.value === 'TP. Hồ Chí Minh') {
-            shipMsg.innerHTML = `
-              <div class="alert alert-success d-flex align-items-center p-2 mb-0" role="alert"
-                   style="background-color:#e9fbee; border:1px solid #b8e5c5; color:#117a53; border-radius:6px; margin-top:6px;">
-                <input class="form-check-input me-2" type="checkbox" checked disabled>
-                <div><strong>Miễn phí ship trong TP.HCM.</strong></div>
-              </div>
-            `;
+            alertDiv.classList.add('alert-success');
+            alertDiv.style.cssText = 'background-color:#e9fbee; border:1px solid #b8e5c5; color:#117a53; border-radius:6px; margin-top:6px;';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'form-check-input me-2';
+            checkbox.checked = true;
+            checkbox.disabled = true;
+            alertDiv.appendChild(checkbox);
+            
+            const textDiv = document.createElement('div');
+            const strong = document.createElement('strong');
+            strong.textContent = 'Miễn phí ship trong TP.HCM.';
+            textDiv.appendChild(strong);
+            alertDiv.appendChild(textDiv);
           } else {
-            shipMsg.innerHTML = `
-              <div class="alert alert-warning d-flex align-items-center p-2 mb-0" role="alert"
-                   style="background-color:#fff9e8; border:1px solid #f2d98b; color:#946200; border-radius:6px; margin-top:6px;">
-                <div class="me-2">🚚</div>
-                <div><strong>Phí ship 30.000đ (ngoài TP.HCM).</strong></div>
-              </div>
-            `;
+            alertDiv.classList.add('alert-warning');
+            alertDiv.style.cssText = 'background-color:#fff9e8; border:1px solid #f2d98b; color:#946200; border-radius:6px; margin-top:6px;';
+            
+            const emojiDiv = document.createElement('div');
+            emojiDiv.className = 'me-2';
+            emojiDiv.textContent = '🚚';
+            alertDiv.appendChild(emojiDiv);
+            
+            const textDiv = document.createElement('div');
+            const strong = document.createElement('strong');
+            strong.textContent = 'Phí ship 30.000đ (ngoài TP.HCM).';
+            textDiv.appendChild(strong);
+            alertDiv.appendChild(textDiv);
           }
+          
+          shipMsg.appendChild(alertDiv);
         });
       },
       preConfirm: () => {

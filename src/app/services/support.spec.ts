@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { SupportService } from './support';
-import { CreateTicketDto, FAQ, Ticket } from '../models/support';
+import { CreateTicketDto, FAQ, Ticket } from '../interfaces/support';
 
 describe('SupportService', () => {
   let service: SupportService;

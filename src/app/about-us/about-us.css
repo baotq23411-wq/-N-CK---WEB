@@ -240,7 +240,7 @@ h2::after{
   overflow:hidden;
   box-shadow:var(--shadow-xl);
   border:1px solid var(--line);
-  background:#fff url('/assets/about/hero-placeholder.webp') center/cover no-repeat;
+  background:#fff url('/assets/images/SUBLOGO.webp') center/cover no-repeat;
   transition:transform 0.3s ease;
   position:relative;
 }
@@ -717,7 +717,7 @@ h2::after{
   height:200px;
   margin:0;
   border-radius:0;
-  background:#fff url('/assets/about/exp-01.webp') center/cover no-repeat;
+  background:#fff url('/assets/images/annhien.webp') center/cover no-repeat;
   border:none;
   transition:transform 0.3s ease;
 }
@@ -727,11 +727,11 @@ h2::after{
 }
 
 .exp-card:nth-child(2) .thumb{
-  background:#fff url('/assets/about/exp-02.webp') center/cover no-repeat;
+  background:#fff url('/assets/images/tamhon.webp') center/cover no-repeat;
 }
 
 .exp-card:nth-child(3) .thumb{
-  background:#fff url('/assets/about/exp-03.webp') center/cover no-repeat;
+  background:#fff url('/assets/images/camhung.webp') center/cover no-repeat;
 }
 
 .exp-card h5{
@@ -1025,6 +1025,151 @@ h2::after{
     font-size:16px;
     margin-bottom:16px;
   }
+}
+
+/* LAZY LOAD ANIMATIONS */
+.lazy-load {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.lazy-load.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger animation cho các phần tử con */
+.value.lazy-load {
+  transition-delay: 0s;
+}
+
+.value.lazy-load:nth-child(1) {
+  transition-delay: 0.1s;
+}
+
+.value.lazy-load:nth-child(2) {
+  transition-delay: 0.2s;
+}
+
+.value.lazy-load:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+.tl-item.lazy-load {
+  transition-delay: 0s;
+}
+
+.tl-item.lazy-load:nth-child(1) {
+  transition-delay: 0.1s;
+}
+
+.tl-item.lazy-load:nth-child(2) {
+  transition-delay: 0.2s;
+}
+
+.tl-item.lazy-load:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+.tl-item.lazy-load:nth-child(4) {
+  transition-delay: 0.4s;
+}
+
+.stat.lazy-load {
+  transition-delay: 0s;
+}
+
+.stat.lazy-load:nth-child(1) {
+  transition-delay: 0.1s;
+}
+
+.stat.lazy-load:nth-child(2) {
+  transition-delay: 0.2s;
+}
+
+.stat.lazy-load:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+.stat.lazy-load:nth-child(4) {
+  transition-delay: 0.4s;
+}
+
+.exp-card.lazy-load {
+  transition-delay: 0s;
+}
+
+.exp-card.lazy-load:nth-child(1) {
+  transition-delay: 0.1s;
+}
+
+.exp-card.lazy-load:nth-child(2) {
+  transition-delay: 0.2s;
+}
+
+.exp-card.lazy-load:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+.member.lazy-load {
+  transition-delay: 0s;
+}
+
+.member.lazy-load:nth-child(1) {
+  transition-delay: 0.1s;
+}
+
+.member.lazy-load:nth-child(2) {
+  transition-delay: 0.2s;
+}
+
+.member.lazy-load:nth-child(3) {
+  transition-delay: 0.3s;
+}
+
+.member.lazy-load:nth-child(4) {
+  transition-delay: 0.4s;
+}
+
+.partner-logo.lazy-load {
+  transition-delay: 0s;
+}
+
+.partner-logo.lazy-load:nth-child(1) {
+  transition-delay: 0.05s;
+}
+
+.partner-logo.lazy-load:nth-child(2) {
+  transition-delay: 0.1s;
+}
+
+.partner-logo.lazy-load:nth-child(3) {
+  transition-delay: 0.15s;
+}
+
+.partner-logo.lazy-load:nth-child(4) {
+  transition-delay: 0.2s;
+}
+
+.partner-logo.lazy-load:nth-child(5) {
+  transition-delay: 0.25s;
+}
+
+.partner-logo.lazy-load:nth-child(6) {
+  transition-delay: 0.3s;
+}
+
+.partner-logo.lazy-load:nth-child(7) {
+  transition-delay: 0.35s;
+}
+
+.partner-logo.lazy-load:nth-child(8) {
+  transition-delay: 0.4s;
+}
+
+.partner-logo.lazy-load:nth-child(9) {
+  transition-delay: 0.45s;
 }
 
 /* Smooth scroll */

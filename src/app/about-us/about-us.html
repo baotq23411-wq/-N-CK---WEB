@@ -18,7 +18,7 @@
 </section>
 
 <!-- MISSION / VALUES -->
-<section class="mission">
+<section class="mission lazy-load">
   <div class="container">
     <div class="split">
       <div>
@@ -27,12 +27,12 @@
           cân bằng cảm xúc và nuôi dưỡng lòng an yên từ bên trong.</p>
         <div class="quote" role="note">
           <i class="bi bi-quote"></i>
-          <p>“Không chỉ là vui chơi, mà là vui chơi <b>có chữa lành</b>.”</p>
+          <p>"Không chỉ là vui chơi, mà là vui chơi <b>có chữa lành</b>."</p>
         </div>
       </div>
 
       <div class="values">
-        <div class="value" *ngFor="let v of values">
+        <div class="value lazy-load" *ngFor="let v of values">
           <div class="v-icon" aria-hidden="true"><i class="bi" [ngClass]="v.icon"></i></div>
           <div class="v-body">
             <h5>{{ v.title }}</h5>
@@ -45,11 +45,11 @@
 </section>
 
 <!-- STORY TIMELINE -->
-<section class="story">
+<section class="story lazy-load">
   <div class="container">
     <h2>Câu chuyện Panacea</h2>
     <div class="timeline" aria-label="Dòng thời gian">
-      <div class="tl-item" *ngFor="let t of timeline">
+      <div class="tl-item lazy-load" *ngFor="let t of timeline">
         <div class="tl-year">{{ t.year }}</div>
         <article class="tl-card">
           <h6>{{ t.title }}</h6>
@@ -61,12 +61,12 @@
 </section>
 
 <!-- STATS -->
-<section class="stats">
+<section class="stats lazy-load">
   <div class="container">
     <div class="stat-grid">
-      <div class="stat" *ngFor="let s of stats">
+      <div class="stat lazy-load" *ngFor="let s of stats; index as i">
         <div class="badge" aria-hidden="true"></div>
-        <div class="num">{{ s.value }}</div>
+        <div class="num">{{ formatStatValue(i) }}</div>
         <div class="label">{{ s.label }}</div>
         <div class="note" *ngIf="s.note">{{ s.note }}</div>
       </div>
@@ -75,21 +75,21 @@
 </section>
 
 <!-- EXPERIENCES -->
-<section class="experiences">
+<section class="experiences lazy-load">
   <div class="container">
     <h2>Trải nghiệm tiêu biểu</h2>
     <div class="exp-grid">
-      <article class="exp-card">
+      <article class="exp-card lazy-load">
         <div class="thumb" aria-label="Thiền chuông đồng"></div>
         <h5>Thiền chuông đồng</h5>
         <p>Giải phóng căng thẳng với rung động dịu êm, phù hợp cho người mới bắt đầu.</p>
       </article>
-      <article class="exp-card">
+      <article class="exp-card lazy-load">
         <div class="thumb" aria-label="Photo Mood Space"></div>
         <h5>Photo Mood Space</h5>
         <p>Lưu lại khoảnh khắc cảm xúc tích cực trong không gian ánh sáng êm dịu.</p>
       </article>
-      <article class="exp-card">
+      <article class="exp-card lazy-load">
         <div class="thumb" aria-label="Paint Fight"></div>
         <h5>Paint Fight</h5>
         <p>Xả stress sáng tạo, kết nối đội nhóm qua nghệ thuật phóng khoáng.</p>
@@ -99,13 +99,13 @@
 </section>
 
 <!-- TEAM -->
-<section class="team">
+<section class="team lazy-load">
   <div class="container">
     <h2>Đội ngũ</h2>
     <div class="team-grid">
-      <div class="member" *ngFor="let m of team; index as i">
+      <div class="member lazy-load" *ngFor="let m of team; index as i">
         <div class="avatar" [attr.aria-label]="m.name">
-          <img [src]="m.avatar" [alt]="m.name" *ngIf="m.avatar">
+          <img [src]="m.avatar" [alt]="'Ảnh đại diện ' + m.name + ' - ' + m.role + ' tại Panacea'" *ngIf="m.avatar">
         </div>
         <h6>{{ m.name }}</h6>
         <p>{{ m.role }}</p>
@@ -115,48 +115,48 @@
 </section>
 
 <!-- PARTNERS -->
-<section class="partners">
+<section class="partners lazy-load">
   <div class="container">
     <h2>Đối tác đồng hành</h2>
     <div class="partner-grid">
-      <div class="partner-logo">
-        <img src="assets/images/MoMo_Logo.webp" alt="MoMo">
+      <div class="partner-logo lazy-load">
+        <img src="assets/images/MoMo_Logo.webp" alt="Đối tác thanh toán MoMo">
       </div>
-      <div class="partner-logo">
-        <img src="assets/images/5ACB.webp" alt="ACB">
+      <div class="partner-logo lazy-load">
+        <img src="assets/images/5ACB.webp" alt="Đối tác ngân hàng ACB">
       </div>
-      <div class="partner-logo">
-        <img src="assets/images/6HSBC.webp" alt="HSBC">
+      <div class="partner-logo lazy-load">
+        <img src="assets/images/6HSBC.webp" alt="Đối tác ngân hàng HSBC">
       </div>
-      <div class="partner-logo">
-        <img src="assets/images/7Vietcombank.webp" alt="Vietcombank">
+      <div class="partner-logo lazy-load">
+        <img src="assets/images/7Vietcombank.webp" alt="Đối tác ngân hàng Vietcombank">
       </div>
-      <div class="partner-logo">
-        <img src="assets/images/8MBbank.webp" alt="MB Bank">
+      <div class="partner-logo lazy-load">
+        <img src="assets/images/8MBbank.webp" alt="Đối tác ngân hàng MB Bank">
       </div>
-      <div class="partner-logo">
-        <img src="assets/images/9Citibank.webp" alt="Citibank">
+      <div class="partner-logo lazy-load">
+        <img src="assets/images/9Citibank.webp" alt="Đối tác ngân hàng Citibank">
       </div>
-      <div class="partner-logo">
-        <img src="assets/images/10VietinBank.webp" alt="VietinBank">
+      <div class="partner-logo lazy-load">
+        <img src="assets/images/10VietinBank.webp" alt="Đối tác ngân hàng VietinBank">
       </div>
-      <div class="partner-logo">
-        <img src="assets/images/11TPbank.webp" alt="TPBank">
+      <div class="partner-logo lazy-load">
+        <img src="assets/images/11TPbank.webp" alt="Đối tác ngân hàng TPBank">
       </div>
-      <div class="partner-logo">
-        <img src="assets/images/12BIDV.webp" alt="BIDV">
+      <div class="partner-logo lazy-load">
+        <img src="assets/images/12BIDV.webp" alt="Đối tác ngân hàng BIDV">
       </div>
     </div>
   </div>
 </section>
 
 <!-- TESTIMONIAL -->
-<section class="testimonial">
+<section class="testimonial lazy-load">
   <div class="container">
     <div class="card-quote">
       <i class="bi bi-chat-quote"></i>
-      <p>“Có những lúc mình hoang mang nhưng khi đến Panacea, mình được chậm lại để lắng nghe và chữa lành.
-         Mỗi lần về là một lần tim nhẹ hơn.”</p>
+      <p>"Có những lúc mình hoang mang nhưng khi đến Panacea, mình được chậm lại để lắng nghe và chữa lành.
+         Mỗi lần về là một lần tim nhẹ hơn."</p>
       <span>— Bạn P. chia sẻ</span>
     </div>
   </div>

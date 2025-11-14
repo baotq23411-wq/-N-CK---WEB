@@ -1,5 +1,6 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SEOService } from '../services/seo.service';
 
 interface FAQItem {
   question: string;
@@ -12,7 +13,17 @@ interface FAQItem {
   templateUrl: './coin.html',
   styleUrl: './coin.css',
 })
-export class Coin {
+export class Coin implements OnInit {
+  constructor(private seoService: SEOService) {}
+
+  ngOnInit(): void {
+    this.seoService.updateSEO({
+      title: 'Xu Panacea - Hệ Thống Tích Điểm',
+      description: 'Tìm hiểu về hệ thống Xu Panacea - Cách kiếm Xu, sử dụng Xu và đổi Xu lấy voucher, ưu đãi đặc biệt.',
+      keywords: 'Xu Panacea, tích điểm Panacea, điểm thưởng Panacea, hệ thống điểm Panacea',
+      image: '/assets/images/BACKGROUND.webp'
+    });
+  }
 faqList: FAQItem[] = [
     { question: 'Tại sao Điểm Cơ Bản và Điểm Priority của tôi biến mất?', answer: 'Điểm có thể được chuyển đổi hoặc cập nhật do thay đổi trong chương trình thưởng của Panacea.' },
     { question: 'Điểm Priority của tôi có ảnh hưởng đến tiến trình không?', answer: 'Không, điểm Priority hoạt động độc lập và không ảnh hưởng đến tiến trình của bạn.' },

@@ -11,14 +11,14 @@
   <div class="inner">
     <!-- Logo -->
     <a class="brand" routerLink="/" (click)="closeMenu()">
-      <img src="../../assets/images/SUBLOGO.webp" alt="Panacea" />
+      <img src="../../assets/images/SUBLOGO.webp" alt="Panacea - Logo không gian trị liệu và chữa lành tâm hồn" />
       <span>Panacea</span>
     </a>
 
     <!-- Desktop nav -->
     <nav class="nav-desktop">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Trang chủ</a>
-      <a routerLink="/room-list" routerLinkActive="active">Danh sách phòng</a>
+      <a routerLink="/room-list" routerLinkActive="active">Đặt phòng</a>
       <a routerLink="/exchange-landing" routerLinkActive="active">Ưu đãi</a>
       <!-- ✅ FIXED: Hỗ trợ có dropdown với 3 items -->
       <div class="dropdown support-dropdown" [class.open]="isSupportDropdownOpen" (mouseenter)="openSupportDropdown()"
@@ -112,7 +112,7 @@
   <div class="mobile" *ngIf="isOpen" (click)="closeMenu()">
     <nav class="mobile-menu" (click)="$event.stopPropagation()">
       <a routerLink="/" (click)="closeMenu()">Trang chủ</a>
-      <a routerLink="/room-list" (click)="closeMenu()">Danh sách phòng</a>
+      <a routerLink="/room-list" (click)="closeMenu()">Đặt phòng</a>
       <a routerLink="/exchange-landing" (click)="closeMenu()">Ưu đãi</a>
       <!-- ✅ FIXED: Hỗ trợ expandable trên mobile -->
       <div class="mobile-dropdown">

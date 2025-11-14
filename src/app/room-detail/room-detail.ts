@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Room } from '../interfaces/room';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -6,6 +6,7 @@ import { CommonModule, CurrencyPipe, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ServiceDataService } from '../services/service';
 import { ReviewService } from '../services/review';
+import { SEOService } from '../services/seo.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -15,7 +16,7 @@ import Swal from 'sweetalert2';
   templateUrl: './room-detail.html',
   styleUrl: './room-detail.css',
 })
-export class RoomDetail implements OnDestroy {
+export class RoomDetail implements OnInit, OnDestroy {
   Math = Math;
   room!: Room;
   currentSlide: number = 0;
@@ -25,6 +26,8 @@ export class RoomDetail implements OnDestroy {
   selectedDate: string = '';
   selectedTime: string = '';
   timeSlots: string[] = [];
+  availableTimeSlots: string[] = []; // ✅ FIXED: Chỉ hiển thị các giờ có thể chọn
+  minDate: string = ''; // ✅ FIXED: Ngày tối thiểu có thể chọn (hôm nay)
   expertServices: any[] = [];
   extraServices: any[] = [];
   totalPrice: number = 0;
@@ -43,14 +46,18 @@ export class RoomDetail implements OnDestroy {
   activeSection: string = 'overview';
   private scrollHandler?: () => void;
 
-  constructor(private route: ActivatedRoute, 
-              private http: HttpClient,
-              private router: Router,
-              private serviceData: ServiceDataService,
-              private reviewService: ReviewService
-            ) {
-                this.generateTimeSlots(); // tạo danh sách khung giờ ngay khi khởi tạo
-              }
+  constructor(
+    private route: ActivatedRoute, 
+    private http: HttpClient,
+    private router: Router,
+    private serviceData: ServiceDataService,
+    private reviewService: ReviewService,
+    private seoService: SEOService
+  ) {
+    this.generateTimeSlots(); // tạo danh sách khung giờ ngay khi khởi tạo
+    this.setMinDate(); // ✅ FIXED: Set ngày tối thiểu
+    this.updateAvailableTimeSlots(); // ✅ FIXED: Cập nhật danh sách giờ có thể chọn
+  }
 
   ngOnInit(): void {
   // 🟩 ADDED: Scroll to top khi vào trang
@@ -63,6 +70,32 @@ export class RoomDetail implements OnDestroy {
   this.http.get<Room[]>('assets/data/rooms.json').subscribe((rooms) => {
     this.room = rooms.find((r) => r.room_id === roomId)!;
     if (this.room?.photos?.length) this.startAutoSlide();
+    
+    // SEO với structured data
+    if (this.room) {
+      const roomImage = this.room.photos && this.room.photos.length > 0 
+        ? this.room.photos[0] 
+        : '/assets/images/BACKGROUND.webp';
+      const roomDescription = this.room.description || this.room.long_description || 
+        `Đặt phòng ${this.room.room_name} tại Panacea - Không gian trị liệu và chữa lành tâm hồn.`;
+      
+      this.seoService.updateSEO({
+        title: `${this.room.room_name} - Panacea`,
+        description: roomDescription,
+        keywords: `Panacea, ${this.room.room_name}, đặt phòng, spa, massage, trị liệu, ${this.room.tags?.join(', ') || ''}`,
+        image: roomImage,
+        type: 'product',
+        structuredData: this.seoService.createProductSchema({
+          name: this.room.room_name,
+          description: roomDescription,
+          image: roomImage,
+          price: this.room.price || 0,
+          currency: 'VND',
+          availability: 'https://schema.org/InStock'
+        })
+      });
+    }
+    
     // 🟩 ADDED: Scroll to top sau khi load dữ liệu (đảm bảo scroll hoạt động)
     setTimeout(() => window.scrollTo(0, 0), 100);
   });
@@ -89,7 +122,7 @@ export class RoomDetail implements OnDestroy {
 
   // 🟩 ADDED: Khởi tạo scroll spy để tự động highlight tab khi scroll đến section
   initScrollSpy(): void {
-    const sections = ['overview', 'rooms', 'policy', 'reviews'];
+    const sections = ['overview', 'policy', 'reviews'];
     const scrollOffset = 120; // Offset để trigger sớm hơn (tính cả navbar height)
     
     // Hàm update activeSection dựa trên vị trí scroll
@@ -253,26 +286,48 @@ export class RoomDetail implements OnDestroy {
   // Hàm chọn phòng (Thanh toán ngay)
 selectRoom(): void {
   if (!this.selectedDate || !this.selectedTime) {
-    alert('Vui lòng chọn đầy đủ ngày và giờ trước khi đặt phòng!');
+    Swal.fire({
+      icon: 'warning',
+      title: 'Thiếu thông tin',
+      text: 'Vui lòng chọn đầy đủ ngày và giờ trước khi đặt phòng!',
+      confirmButtonColor: '#132fba'
+    });
     return;
   }
 
-  // Lọc danh sách dịch vụ đã chọn
-  const selectedExperts = this.expertServices.filter(e => e.selected);
-  const selectedExtras = this.extraServices
-    .filter(s => s.selected)
-    .map(s => ({ ...s, total: s.price * (s.quantity || 1) }));
+  // ✅ FIXED: Kiểm tra ngày không được trong quá khứ
+  if (this.isPastDate(this.selectedDate)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Ngày không hợp lệ',
+      text: 'Không thể chọn ngày trong quá khứ. Vui lòng chọn ngày từ hôm nay trở đi.',
+      confirmButtonColor: '#132fba'
+    });
+    return;
+  }
 
+  // ✅ FIXED: Kiểm tra giờ không được trong quá khứ
+  if (this.isPastTime(this.selectedDate, this.selectedTime)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Giờ không hợp lệ',
+      text: 'Không thể chọn giờ trong quá khứ. Vui lòng chọn giờ trong tương lai.',
+      confirmButtonColor: '#132fba'
+    });
+    return;
+  }
+
+  // 🟩 UPDATED: Không chọn dịch vụ ở room-detail, dịch vụ sẽ được chọn ở trang payment
   // 🟩 UPDATED: Gói thông tin đặt phòng với đầy đủ dữ liệu từ room-detail
   const bookingInfo = {
     roomId: this.room.room_id,
     roomName: this.room.room_name,
     basePrice: this.room.price,
-    totalPrice: this.totalPrice,
+    totalPrice: this.room.price, // Chỉ tính giá phòng cơ bản
     date: this.selectedDate,
     time: this.selectedTime,
-    expertServices: selectedExperts,
-    extraServices: selectedExtras,
+    expertServices: [], // Dịch vụ sẽ được chọn ở payment
+    extraServices: [], // Dịch vụ sẽ được chọn ở payment
     photo: this.room.photos[0],
     range: this.room.range, // 🟩 ADDED: Thêm range (số lượng người)
     // 🟩 ADDED: Thêm timestamp để đảm bảo đọc đúng dữ liệu mới nhất
@@ -288,11 +343,108 @@ selectRoom(): void {
   // 🟩 UPDATED: Lưu vào localStorage để chuyển qua trang thanh toán
   localStorage.setItem('selectedBooking', JSON.stringify(bookingInfo));
   
-  console.log('🟩 [Thanh toán ngay] Đã lưu selectedBooking từ room-detail:', bookingInfo); // 🟩 DEBUG
 
   // Điều hướng sang trang thanh toán
   this.router.navigate(['/payment']);
 }
+
+  // ✅ FIXED: Set ngày tối thiểu (hôm nay)
+  setMinDate(): void {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    this.minDate = `${year}-${month}-${day}`;
+  }
+
+  // ✅ FIXED: Kiểm tra xem ngày có phải trong quá khứ không
+  isPastDate(dateStr: string): boolean {
+    if (!dateStr) return false;
+    const selectedDate = new Date(dateStr);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+    return selectedDate < today;
+  }
+
+  // ✅ FIXED: Kiểm tra xem giờ có phải trong quá khứ không
+  isPastTime(dateStr: string, timeStr: string): boolean {
+    if (!dateStr || !timeStr) return false;
+    
+    try {
+      // Parse time slot (ví dụ: "09:00 - 10:00")
+      const [startTime] = timeStr.split(' - ');
+      const [hours, minutes] = startTime.split(':').map(Number);
+      
+      // Parse date
+      const selectedDate = new Date(dateStr);
+      selectedDate.setHours(hours, minutes, 0, 0);
+      
+      // So sánh với thời điểm hiện tại
+      // ✅ FIXED: Đảm bảo không cho chọn giờ hiện tại hoặc quá khứ
+      const now = new Date();
+      now.setSeconds(0, 0); // Reset giây và milliseconds để so sánh chính xác
+      
+      // Nếu chọn hôm nay và giờ đã qua hoặc bằng giờ hiện tại → không hợp lệ
+      return selectedDate <= now;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // ✅ FIXED: Cập nhật danh sách giờ có thể chọn dựa trên ngày đã chọn
+  updateAvailableTimeSlots(): void {
+    if (!this.selectedDate) {
+      // Nếu chưa chọn ngày, hiển thị tất cả giờ
+      this.availableTimeSlots = [...this.timeSlots];
+      return;
+    }
+
+    const today = new Date();
+    const selectedDate = new Date(this.selectedDate);
+    const isToday = selectedDate.toDateString() === today.toDateString();
+
+    if (isToday) {
+      // Nếu chọn hôm nay, chỉ hiển thị các giờ trong tương lai
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      
+      // ✅ FIXED: Luôn cho đặt từ giờ tiếp theo (ví dụ: bây giờ 16:30 thì chỉ cho đặt từ 17:00)
+      // Logic: Vì các slot là giờ chẵn (8:00, 9:00, 10:00...), nên:
+      // - Nếu bây giờ là 16:00 → có thể cho chọn từ 17:00 (giờ tiếp theo)
+      // - Nếu bây giờ là 16:01-16:59 → chỉ cho chọn từ 17:00 (giờ tiếp theo)
+      // - Nếu bây giờ là 17:00 → chỉ cho chọn từ 18:00 (giờ tiếp theo)
+      const minHour = currentHour + 1;
+      
+      // Nếu đã qua 22:00, không còn giờ nào có thể chọn
+      if (minHour >= 22) {
+        this.availableTimeSlots = [];
+        return;
+      }
+      
+      this.availableTimeSlots = this.timeSlots.filter(slot => {
+        const [startTime] = slot.split(' - ');
+        const [hours] = startTime.split(':').map(Number);
+        return hours >= minHour;
+      });
+    } else {
+      // Nếu chọn ngày trong tương lai, hiển thị tất cả giờ
+      this.availableTimeSlots = [...this.timeSlots];
+    }
+  }
+
+  // ✅ FIXED: Xử lý khi ngày thay đổi
+  onDateChange(): void {
+    // Reset giờ khi đổi ngày
+    this.selectedTime = '';
+    this.updateAvailableTimeSlots();
+  }
+
+  // ✅ FIXED: Xử lý khi giờ thay đổi
+  onTimeChange(): void {
+    // Có thể thêm validation ở đây nếu cần
+  }
 
   // 🕐 Hàm tạo danh sách khung giờ (chỉ giờ chẵn, không có giờ lẻ 30 phút)
 generateTimeSlots(): void {
@@ -308,22 +460,12 @@ generateTimeSlots(): void {
   }
 
   this.timeSlots = slots;
+  this.availableTimeSlots = [...slots]; // Khởi tạo với tất cả giờ
 }
 
 updateTotal(): void {
-  let base = this.room?.price || 0;
-
-  // cộng các dịch vụ chuyên gia đã chọn
-  const expertTotal = this.expertServices
-    .filter(e => e.selected)
-    .reduce((sum, e) => sum + e.price, 0);
-
-  // cộng dịch vụ thuê thêm có số lượng
-  const extraTotal = this.extraServices
-    .filter(s => s.selected)
-    .reduce((sum, s) => sum + s.price * (s.quantity || 1), 0);
-
-  this.totalPrice = base + expertTotal + extraTotal;
+  // 🟩 UPDATED: Chỉ tính giá phòng cơ bản, dịch vụ sẽ được chọn ở trang payment
+  this.totalPrice = this.room?.price || 0;
 }
 
   // 🧮 Load reviews từ reviews.json và localStorage
@@ -336,7 +478,14 @@ updateTotal(): void {
       try {
         const localReviews = localStorage.getItem('REVIEWS');
         if (localReviews) {
-          const parsedReviews = JSON.parse(localReviews);
+          // ✅ FIXED: Thêm try-catch cho JSON.parse
+          let parsedReviews: any[] = [];
+          try {
+            parsedReviews = JSON.parse(localReviews);
+          } catch (parseError) {
+            console.error('Error parsing reviews from localStorage:', parseError);
+            parsedReviews = [];
+          }
           // Gộp tất cả reviews, loại bỏ trùng lặp dựa trên id
           const reviewMap = new Map();
           
@@ -385,7 +534,13 @@ toggleCart(): void {
 
 // 🛒 Load giỏ hàng
 loadCart(): void {
-  this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  // ✅ FIXED: Thêm try-catch cho JSON.parse
+  try {
+    this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  } catch (e) {
+    console.error('Error parsing cart from localStorage:', e);
+    this.cart = [];
+  }
   // cartCount là getter, không cần cập nhật thủ công
 }
 
@@ -397,21 +552,35 @@ addToCart() {
       title: 'Vui lòng chọn đầy đủ thông tin!',
       text: 'Bạn cần chọn ngày và giờ trước khi thêm vào giỏ hàng.',
       confirmButtonText: 'Đã hiểu',
+      confirmButtonColor: '#132fba'
     });
     return;
   }
 
-  const expertTotal = this.expertServices
-    .filter(s => s.selected)
-    .reduce((sum, s) => sum + s.price, 0);
+  // ✅ FIXED: Kiểm tra ngày không được trong quá khứ
+  if (this.isPastDate(this.selectedDate)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Ngày không hợp lệ',
+      text: 'Không thể chọn ngày trong quá khứ. Vui lòng chọn ngày từ hôm nay trở đi.',
+      confirmButtonColor: '#132fba'
+    });
+    return;
+  }
 
-  const extraTotal = this.extraServices
-    .filter(s => s.selected)
-    .reduce((sum, s) => sum + s.price * (s.quantity || 1), 0);
+  // ✅ FIXED: Kiểm tra giờ không được trong quá khứ
+  if (this.isPastTime(this.selectedDate, this.selectedTime)) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Giờ không hợp lệ',
+      text: 'Không thể chọn giờ trong quá khứ. Vui lòng chọn giờ trong tương lai.',
+      confirmButtonColor: '#132fba'
+    });
+    return;
+  }
 
+  // 🟩 UPDATED: Không chọn dịch vụ ở room-detail, dịch vụ sẽ được chọn ở trang payment
   const basePrice = this.room.price;
-
-  const total = basePrice + expertTotal + extraTotal;
 
   const newItem = {
     roomId: this.room.room_id, // 🟩 ADDED: Thêm roomId để so sánh
@@ -420,13 +589,20 @@ addToCart() {
     time: this.selectedTime,
     photo: this.room.photos[0],
     basePrice: basePrice, // 🟩 ADDED: Thêm basePrice
-    expertServices: this.expertServices.filter(s => s.selected).map(s => ({ ...s })),
-    extraServices: this.extraServices.filter(s => s.selected).map(s => ({ ...s, quantity: s.quantity || 1 })),
-    totalPrice: total,
+    expertServices: [], // Dịch vụ sẽ được chọn ở payment
+    extraServices: [], // Dịch vụ sẽ được chọn ở payment
+    totalPrice: basePrice, // Chỉ tính giá phòng cơ bản
   };
 
   // 🔹 Load giỏ hàng hiện có trong localStorage (nếu có)
-  const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+  // ✅ FIXED: Thêm try-catch cho JSON.parse
+  let currentCart: any[] = [];
+  try {
+    currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+  } catch (e) {
+    console.error('Error parsing cart from localStorage:', e);
+    currentCart = [];
+  }
   
   currentCart.push(newItem);
 
@@ -564,7 +740,6 @@ goToPaymentForGroup(group: any): void {
   // 🟩 UPDATED: Lưu vào localStorage để payment đọc (từ cart)
   localStorage.setItem('processedBookings', JSON.stringify(processedBookings));
   
-  console.log('🟩 [Cart - Thanh toán nhóm] Đã lưu processedBookings từ cart:', processedBookings); // 🟩 DEBUG
   
   // Xóa items đã thanh toán khỏi giỏ hàng
   const itemsToRemove = groupItems.map((item: any) => 
@@ -760,7 +935,14 @@ goToPayment(): void {
   this.isCartOpen = false;
   
   // 🟩 UPDATED: Xử lý cart và gộp/tách bookings
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  // ✅ FIXED: Thêm try-catch cho JSON.parse
+  let cart: any[] = [];
+  try {
+    cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  } catch (e) {
+    console.error('Error parsing cart from localStorage:', e);
+    cart = [];
+  }
   
   if (cart.length === 0) {
     alert('Giỏ hàng trống!');
@@ -778,7 +960,6 @@ goToPayment(): void {
   // 🟩 UPDATED: Lưu vào localStorage để payment đọc (từ cart)
   localStorage.setItem('processedBookings', JSON.stringify(processedBookings));
   
-  console.log('🟩 [Cart - Thanh toán tất cả] Đã lưu processedBookings từ cart:', processedBookings); // 🟩 DEBUG
   
   // Điều hướng sang trang thanh toán
   this.router.navigate(['/payment']);
@@ -788,7 +969,14 @@ goToPayment(): void {
 goToPaymentForItem(index: number): void {
   this.isCartOpen = false;
   
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  // ✅ FIXED: Thêm try-catch cho JSON.parse
+  let cart: any[] = [];
+  try {
+    cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  } catch (e) {
+    console.error('Error parsing cart from localStorage:', e);
+    cart = [];
+  }
   
   if (index < 0 || index >= cart.length) {
     alert('Item không hợp lệ!');
@@ -815,7 +1003,6 @@ goToPaymentForItem(index: number): void {
   // 🟩 UPDATED: Lưu vào localStorage để payment đọc (từ cart)
   localStorage.setItem('processedBookings', JSON.stringify(processedBookings));
   
-  console.log('🟩 [Cart - Thanh toán item] Đã lưu processedBookings từ cart:', processedBookings); // 🟩 DEBUG
   
   // Xóa items đã thanh toán khỏi giỏ hàng
   const remainingCart = cart.filter((c: any, i: number) => {

@@ -7,6 +7,7 @@ import { HeaderComponent } from './header/header';
 import { FooterComponent } from './footer/footer';
 import { CartWidget } from './cart-widget/cart-widget';
 import { AuthService } from './services/auth';
+import { PwaService } from './services/pwa.service';
 
 @Component({
   selector: 'app-root',
@@ -21,10 +22,14 @@ export class App implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private pwaService: PwaService
   ) {}
 
   ngOnInit(): void {
+    // ✅ Khởi tạo PWA
+    this.pwaService.initPwa();
+    
     // ✅ Scroll to top ngay khi component khởi tạo (khi reload trang)
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     

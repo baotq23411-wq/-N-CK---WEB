@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { User } from '../interfaces/user';
 import { AuthService } from '../services/auth';
 import { UserService } from '../services/user';
+import { SEOService } from '../services/seo.service';
 import Swal from 'sweetalert2';
 import { take } from 'rxjs/operators';
 
@@ -21,10 +22,18 @@ export class AccountInformationComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private seoService: SEOService
   ) { }
 
   ngOnInit(): void {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Thông Tin Tài Khoản - Panacea',
+      description: 'Quản lý thông tin tài khoản của bạn tại Panacea - Cập nhật thông tin cá nhân, địa chỉ và liên hệ.',
+      keywords: 'Thông tin tài khoản Panacea, quản lý tài khoản, cập nhật thông tin',
+      robots: 'noindex, nofollow'
+    });
     /** Lấy User từ localStorage thay vì Account */
     const currentUserStr = localStorage.getItem('CURRENT_USER');
     if (currentUserStr) {

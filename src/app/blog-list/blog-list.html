@@ -1,6 +1,6 @@
 <section class="bl container">
   <div class="bl-head">
-    <h3 class="bl-title">CẨM NANG PANACEA</h3>
+    <h2 class="bl-title">CẨM NANG PANACEA</h2>
 
     <select *ngIf="isTravelGuidePage" class="bl-sort form-select">
       <option value="desc" selected>Mới nhất</option>
@@ -20,7 +20,7 @@
             <span class="bl-tag">{{ p.tag }}</span>
             <time class="bl-time">{{ p.date | date:'dd/MM/yyyy' }}</time>
           </div>
-          <h2 class="bl-h2">{{ p.title }}</h2>
+          <h3 class="bl-h2">{{ p.title }}</h3>
           <p class="bl-excerpt">{{ p.excerpt }}</p>
           <span class="bl-more">Xem thêm <i class="bi bi-arrow-right-short"></i></span>
         </div>

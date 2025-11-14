@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { SEOService } from '../services/seo.service';
 
 @Component({
   selector: 'app-banking',
@@ -42,9 +43,20 @@ export class Banking implements OnInit {
   ];
   currentStep = 2;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private seoService: SEOService
+  ) {}
 
   ngOnInit(): void {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Thanh Toán Ngân Hàng - Panacea',
+      description: 'Thanh toán qua ngân hàng tại Panacea - Hỗ trợ nhiều ngân hàng trong nước và quốc tế.',
+      keywords: 'Thanh toán ngân hàng Panacea, banking Panacea, chuyển khoản Panacea',
+      robots: 'noindex, nofollow'
+    });
+    
     // 🟩 ADDED: Scroll to top khi vào trang
     window.scrollTo(0, 0);
     
@@ -224,5 +236,9 @@ export class Banking implements OnInit {
 
   navigateBack() {
     window.history.back();
+  }
+
+  navigateToPayment() {
+    this.router.navigate(['/payment']);
   }
 }

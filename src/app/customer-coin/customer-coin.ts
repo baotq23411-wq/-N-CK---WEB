@@ -4,6 +4,7 @@ import { UserToolbarComponent } from "../user-toolbar/user-toolbar";
 import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { SEOService } from '../services/seo.service';
 
 interface MembershipInfo {
   level: string;
@@ -45,20 +46,31 @@ export class CustomerCoinComponent implements OnInit, OnDestroy {
     { date: '05/09/2025', description: 'Nhận xu từ đánh giá', amount: +50, status: 'Hoàn tất', icon: 'bi bi-star-fill' }
   ];
 
-  constructor(private authService: AuthService) { }
+  constructor(
+    private authService: AuthService,
+    private seoService: SEOService
+  ) { }
 
   ngOnInit(): void {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Xu Của Tôi - Panacea',
+      description: 'Quản lý Xu Panacea của bạn - Xem số dư, lịch sử giao dịch và đổi Xu lấy voucher, ưu đãi đặc biệt.',
+      keywords: 'Xu Panacea, quản lý Xu, lịch sử Xu, đổi Xu Panacea',
+      robots: 'noindex, nofollow'
+    });
+    
     // Subscribe để cập nhật khi có thay đổi
     this.authService.getCurrentAccount()
       .pipe(takeUntil(this.destroy$))
       .subscribe(account => {
-        if (account) {
+      if (account) {
           this.loadUserData(account);
         } else {
           this.currentAccount = null;
           this.membershipInfo = this.calculateMembership(0);
-        }
-      });
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -75,10 +87,15 @@ export class CustomerCoinComponent implements OnInit, OnDestroy {
       
       // Ưu tiên lấy từ USERS list
       if (usersStr && uid) {
-        const users = JSON.parse(usersStr);
-        const user = users.find((u: any) => u.user_id === uid);
-        if (user) {
-          userCoin = user.coin || 0;
+        // ✅ FIXED: Thêm try-catch cho JSON.parse
+        try {
+          const users = JSON.parse(usersStr);
+          const user = users.find((u: any) => u.user_id === uid);
+          if (user) {
+            userCoin = user.coin || 0;
+          }
+        } catch (e) {
+          console.error('Error parsing USERS from localStorage:', e);
         }
       }
       
@@ -86,24 +103,29 @@ export class CustomerCoinComponent implements OnInit, OnDestroy {
       if (userCoin === 0) {
         const currentUserStr = localStorage.getItem('CURRENT_USER');
         if (currentUserStr) {
-          const currentUser = JSON.parse(currentUserStr);
-          userCoin = currentUser.coin || 0;
+          // ✅ FIXED: Thêm try-catch cho JSON.parse
+          try {
+            const currentUser = JSON.parse(currentUserStr);
+            userCoin = currentUser.coin || 0;
+          } catch (e) {
+            console.error('Error parsing CURRENT_USER from localStorage:', e);
+          }
         }
       }
       
       // Cập nhật currentAccount với coin từ users.json
-      this.currentAccount = {
-        ...account,
-        coin: userCoin
-      };
-      const star = account.star ?? 0;
-      this.membershipInfo = this.calculateMembership(star);
+          this.currentAccount = {
+            ...account,
+            coin: userCoin
+          };
+          const star = account.star ?? 0;
+          this.membershipInfo = this.calculateMembership(star);
     } catch (e) {
       console.error('Error loading user data:', e);
       // Fallback: sử dụng account từ authService
-      const star = account?.star ?? 0;
-      this.currentAccount = account;
-      this.membershipInfo = this.calculateMembership(star);
+        const star = account?.star ?? 0;
+        this.currentAccount = account;
+        this.membershipInfo = this.calculateMembership(star);
     }
   }
 

@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 import { ReviewService } from '../services/review';
 import { UserService } from '../services/user';
 import { AuthService } from '../services/auth';
+import { SEOService } from '../services/seo.service';
 import { ReviewListItem } from '../interfaces/review';
 import { Booking as BookingInterface } from '../interfaces/booking';
 
@@ -76,12 +77,21 @@ export class ReviewRoom implements OnInit, OnDestroy {
     private userService: UserService,
     private authService: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private seoService: SEOService
   ) {
     this.initForm();
   }
 
   ngOnInit(): void {
+    // SEO - Set title ngay lập tức
+    this.seoService.updateSEO({
+      title: 'Đánh Giá Dịch Vụ - Panacea',
+      description: 'Chia sẻ đánh giá và trải nghiệm của bạn về dịch vụ Panacea. Giúp chúng tôi cải thiện và phục vụ bạn tốt hơn.',
+      keywords: 'Đánh giá Panacea, review Panacea, phản hồi khách hàng, trải nghiệm Panacea',
+      image: '/assets/images/BACKGROUND.webp'
+    });
+    
     // Lấy user ID hiện tại
     this.getCurrentUserId();
     
@@ -143,18 +153,28 @@ export class ReviewRoom implements OnInit, OnDestroy {
       
       const currentUserStr = localStorage.getItem('CURRENT_USER');
       if (currentUserStr) {
-        const currentUser = JSON.parse(currentUserStr);
-        if (currentUser && currentUser.user_id) {
-          this.currentUserId = currentUser.user_id;
-          return;
+        // ✅ FIXED: Thêm try-catch cho JSON.parse
+        try {
+          const currentUser = JSON.parse(currentUserStr);
+          if (currentUser && currentUser.user_id) {
+            this.currentUserId = currentUser.user_id;
+            return;
+          }
+        } catch (e) {
+          console.error('Error parsing CURRENT_USER from localStorage:', e);
         }
       }
       
       const usersStr = localStorage.getItem('USERS');
       if (usersStr) {
-        const users = JSON.parse(usersStr);
-        if (users.length > 0 && users[0].user_id) {
-          this.currentUserId = users[0].user_id;
+        // ✅ FIXED: Thêm try-catch cho JSON.parse
+        try {
+          const users = JSON.parse(usersStr);
+          if (users.length > 0 && users[0].user_id) {
+            this.currentUserId = users[0].user_id;
+          }
+        } catch (e) {
+          console.error('Error parsing USERS from localStorage:', e);
         }
       }
     } catch (e) {
@@ -959,6 +979,11 @@ export class ReviewRoom implements OnInit, OnDestroy {
   /** Getter: Kiểm tra có còn reviews chưa hiển thị không */
   get hasMoreReviews(): boolean {
     return this.recentReviews.length > this.displayedReviewsCount;
+  }
+
+  /** Get current date for sample review */
+  getCurrentDate(): Date {
+    return new Date();
   }
 
   /** Method: Hiển thị thêm 3 reviews */

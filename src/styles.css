@@ -1,5 +1,18 @@
 @import "../node_modules/bootstrap-icons/font/bootstrap-icons.css";
 
+/* Screen reader only - Ẩn khỏi màn hình nhưng vẫn hiển thị cho screen reader */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* ✅ FIXED: CSS Variables cho màu sắc thống nhất */
 :root {
 	/* Màu chính - Brand Blue */

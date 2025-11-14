@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
+import { SEOService } from '../services/seo.service';
 
 
 class RoomService {
@@ -19,11 +20,12 @@ class RoomService {
   styleUrl: './room-list.css',
 })
 
-export class RoomList {
+export class RoomList implements OnInit {
   constructor(
     private http: HttpClient, 
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private seoService: SEOService
   ) {}
   rawPackages: any[] = [];
   allPackages: any[] = [];
@@ -79,6 +81,14 @@ get visibleSpaceTags(): string[] {
 
 
   ngOnInit() {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Đặt phòng - Panacea',
+      description: 'Tìm kiếm và đặt phòng tại Panacea - Không gian trị liệu và chữa lành tâm hồn với các khu vực Catharsis, Oasis, Genii, Mutiny.',
+      keywords: 'đặt phòng Panacea, phòng trị liệu, phòng thiền, phòng yoga, Catharsis, Oasis, Genii, Mutiny',
+      image: '/assets/images/BACKGROUND.webp'
+    });
+
     // 🟩 ADDED: Scroll to top khi vào trang
     window.scrollTo(0, 0);
     
