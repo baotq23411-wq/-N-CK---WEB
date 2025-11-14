@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -38,7 +38,7 @@ export interface BookingDisplay {
 @Component({
   selector: 'app-review-room',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './review-room.html',
   styleUrls: ['./review-room.css'],
 })
@@ -75,7 +75,7 @@ export class ReviewRoom implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private reviewService: ReviewService,
     private userService: UserService,
-    private authService: AuthService,
+    public authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
     private seoService: SEOService

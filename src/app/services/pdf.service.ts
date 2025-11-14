@@ -779,7 +779,7 @@ export class PdfService {
       'confirmed': 'Confirmed',
       'completed': 'Completed',
       'cancelled': 'Cancelled',
-      'no-show': 'No Show'
+      'no-show': 'Không đến'
     };
     return labels[status] || status;
   }

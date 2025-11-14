@@ -35,6 +35,7 @@ export class CustomerBookingComponent implements OnInit {
   newDate: string = '';
   newStartTime: string = '';
   showRescheduleModal: boolean = false;
+  minDate: string = ''; // Ngày tối thiểu có thể chọn (hôm nay)
   
   // Detail modal
   selectedBookingForDetail: Booking | null = null;
@@ -44,7 +45,19 @@ export class CustomerBookingComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCurrentUserId();
+    this.setMinDate();
     this.loadData();
+  }
+
+  /**
+   * Set ngày tối thiểu (hôm nay) để không cho chọn ngày trong quá khứ
+   */
+  private setMinDate(): void {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    this.minDate = `${year}-${month}-${day}`;
   }
 
   private getCurrentUserId(): void {
@@ -283,6 +296,7 @@ export class CustomerBookingComponent implements OnInit {
     this.selectedBookingForReschedule = booking;
     
     // Parse startTime để set giá trị mặc định
+    // Format: "14:00 22/11/2025" (dd/mm/yyyy)
     const [timePart, datePart] = booking.startTime.split(' ');
     const [day, month, year] = datePart.split('/').map(Number);
     
@@ -291,6 +305,24 @@ export class CustomerBookingComponent implements OnInit {
     this.newStartTime = timePart;
     
     this.showRescheduleModal = true;
+  }
+
+  /**
+   * Format ngày từ YYYY-MM-DD sang dd/mm/yyyy
+   */
+  formatDateToDDMMYYYY(dateStr: string): string {
+    if (!dateStr) return '';
+    const [year, month, day] = dateStr.split('-');
+    return `${day}/${month}/${year}`;
+  }
+
+  /**
+   * Format ngày từ dd/mm/yyyy sang YYYY-MM-DD (cho input date)
+   */
+  formatDateToYYYYMMDD(dateStr: string): string {
+    if (!dateStr) return '';
+    const [day, month, year] = dateStr.split('/');
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   }
 
   closeRescheduleModal(): void {
@@ -321,9 +353,10 @@ export class CustomerBookingComponent implements OnInit {
       const durationMs = origEnd.getTime() - origStart.getTime();
       
       // Parse new start time
+      // newDate format: YYYY-MM-DD
       const [newTimePart] = startTime.split(' ');
       const [newHours, newMinutes] = newTimePart.split(':').map(Number);
-      const [newDay, newMonth, newYear] = this.newDate.split('-').map(Number);
+      const [newYear, newMonth, newDay] = this.newDate.split('-').map(Number);
       const newStart = new Date(newYear, newMonth - 1, newDay, newHours, newMinutes);
       
       // Tính new end time
@@ -356,8 +389,38 @@ export class CustomerBookingComponent implements OnInit {
       return;
     }
 
-    // Kiểm tra lại 24h
+    // Kiểm tra ngày không được là quá khứ
     const now = new Date();
+    const selectedDate = new Date(this.newDate);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+    
+    if (selectedDate < today) {
+      Swal.fire({
+        title: 'Lỗi',
+        text: 'Ngày bắt đầu mới phải là ngày trong tương lai. Không thể chọn ngày trong quá khứ.',
+        icon: 'error'
+      });
+      return;
+    }
+
+    // Nếu chọn ngày hôm nay, kiểm tra giờ không được là quá khứ
+    if (selectedDate.getTime() === today.getTime()) {
+      const [startHours, startMinutes] = this.newStartTime.split(':').map(Number);
+      const selectedDateTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), startHours, startMinutes);
+      
+      if (selectedDateTime < now) {
+        Swal.fire({
+          title: 'Lỗi',
+          text: 'Khi chọn ngày hôm nay, giờ bắt đầu mới phải là giờ trong tương lai. Không thể chọn giờ trong quá khứ.',
+          icon: 'error'
+        });
+        return;
+      }
+    }
+
+    // Kiểm tra lại 24h
     if (!this.canModifyBooking(this.selectedBookingForReschedule, now)) {
       Swal.fire({
         title: 'Không thể đổi lịch',
@@ -378,8 +441,8 @@ export class CustomerBookingComponent implements OnInit {
       return;
     }
 
-    // Format new startTime
-    let [day, month, year] = this.newDate.split('-').map(Number);
+    // Format new startTime (dd/mm/yyyy)
+    let [year, month, day] = this.newDate.split('-').map(Number);
     let newStartTimeFormatted = `${this.newStartTime} ${String(day).padStart(2, '0')}/${String(month).padStart(2, '0')}/${year}`;
     
     // Tính duration ban đầu (milliseconds)
@@ -424,18 +487,18 @@ export class CustomerBookingComponent implements OnInit {
         return;
       }
       
-      // Format lại
+      // Format lại (dd/mm/yyyy)
       const adjustedStartHours = String(adjustedStartTime.getHours()).padStart(2, '0');
       const adjustedStartMinutes = String(adjustedStartTime.getMinutes()).padStart(2, '0');
       const adjustedStartDay = String(adjustedStartTime.getDate()).padStart(2, '0');
       const adjustedStartMonth = String(adjustedStartTime.getMonth() + 1).padStart(2, '0');
       const adjustedStartYear = adjustedStartTime.getFullYear();
       
-      // Cập nhật lại giá trị input để người dùng thấy sự thay đổi
+      // Cập nhật lại giá trị input để người dùng thấy sự thay đổi (YYYY-MM-DD cho input date)
       this.newStartTime = `${adjustedStartHours}:${adjustedStartMinutes}`;
       this.newDate = `${adjustedStartYear}-${adjustedStartMonth}-${adjustedStartDay}`;
       
-      // Cập nhật lại biến để hiển thị trong confirmation
+      // Cập nhật lại biến để hiển thị trong confirmation (dd/mm/yyyy)
       newStartTimeFormatted = `${adjustedStartHours}:${adjustedStartMinutes} ${adjustedStartDay}/${adjustedStartMonth}/${adjustedStartYear}`;
       newEndTime = `22:00 ${String(endDay).padStart(2, '0')}/${String(endMonth).padStart(2, '0')}/${endYear}`;
       

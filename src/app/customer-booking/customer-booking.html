@@ -23,7 +23,8 @@
                 <!-- Tab Content: Đổi lịch -->
                 <div *ngIf="activeTab === 'reschedule'">
                     <div class="order-list" *ngIf="reschedulableBookings.length > 0; else emptyReschedule">
-                        <div class="order-card" *ngFor="let booking of reschedulableBookings" (click)="openDetailModal(booking)">
+                        <div class="order-card" *ngFor="let booking of reschedulableBookings"
+                            (click)="openDetailModal(booking)">
                             <div class="order-head">
                                 <div class="order-id">
                                     Mã đơn: <strong>{{ booking.id }}</strong>
@@ -47,7 +48,8 @@
                                     <div class="value">{{ (booking.totalPrice || 0).toLocaleString('vi-VN') }}₫</div>
                                 </div>
                                 <div class="order-action">
-                                    <button type="button" class="btn btn-primary btn-sm" (click)="$event.stopPropagation(); openRescheduleModal(booking)">
+                                    <button type="button" class="btn btn-primary btn-sm"
+                                        (click)="$event.stopPropagation(); openRescheduleModal(booking)">
                                         <i class="bi bi-calendar-event me-1"></i>Đổi lịch
                                     </button>
                                 </div>
@@ -66,7 +68,8 @@
                 <!-- Tab Content: Hủy lịch -->
                 <div *ngIf="activeTab === 'cancel'">
                     <div class="order-list" *ngIf="cancelableBookings.length > 0; else emptyCancel">
-                        <div class="order-card" *ngFor="let booking of cancelableBookings" (click)="openDetailModal(booking)">
+                        <div class="order-card" *ngFor="let booking of cancelableBookings"
+                            (click)="openDetailModal(booking)">
                             <div class="order-head">
                                 <div class="order-id">
                                     Mã đơn: <strong>{{ booking.id }}</strong>
@@ -90,7 +93,8 @@
                                     <div class="value">{{ (booking.totalPrice || 0).toLocaleString('vi-VN') }}₫</div>
                                 </div>
                                 <div class="order-action">
-                                    <button type="button" class="btn btn-danger btn-sm" (click)="$event.stopPropagation(); cancelBooking(booking)">
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                        (click)="$event.stopPropagation(); cancelBooking(booking)">
                                         <i class="bi bi-x-circle me-1"></i>Hủy lịch
                                     </button>
                                 </div>
@@ -151,7 +155,8 @@
                 </div>
                 <div class="info-row"><span>Giờ sử dụng thực tế:</span>
                     <p>
-                        {{ selectedBookingForDetail.checkInTime || '—' }} → {{ selectedBookingForDetail.checkOutTime || '—' }}
+                        {{ selectedBookingForDetail.checkInTime || '—' }} → {{ selectedBookingForDetail.checkOutTime ||
+                        '—' }}
                     </p>
                 </div>
                 <div class="info-row"><span>Trạng thái:</span>
@@ -163,9 +168,10 @@
             <!-- 🔹 DỊCH VỤ ĐI KÈM -->
             <div class="modal-section">
                 <h5>Dịch vụ đi kèm</h5>
-                <ul *ngIf="selectedBookingForDetail.services && selectedBookingForDetail.services.length > 0; else noService">
+                <ul
+                    *ngIf="selectedBookingForDetail.services && selectedBookingForDetail.services.length > 0; else noService">
                     <li *ngFor="let s of selectedBookingForDetail.services">
-                        {{ s.name }} 
+                        {{ s.name }}
                         <span *ngIf="s.quantity && s.quantity > 1">× {{ s.quantity }}</span>
                         - {{ formatCurrency(getServiceTotalPrice(s)) }}
                     </li>
@@ -191,7 +197,8 @@
                     <p>{{ selectedBookingForDetail.voucherCode || 'Không áp dụng' }}</p>
                 </div>
                 <div class="info-row"><span>Giảm giá:</span>
-                    <p>{{ selectedBookingForDetail.discountValue ? formatCurrency(selectedBookingForDetail.discountValue) : '0 ₫' }}
+                    <p>{{ selectedBookingForDetail.discountValue ?
+                        formatCurrency(selectedBookingForDetail.discountValue) : '0 ₫' }}
                     </p>
                 </div>
                 <div class="info-row highlight"><span>Tổng thanh toán:</span>
@@ -222,13 +229,18 @@
         <div class="modal-body" *ngIf="selectedBookingForReschedule">
             <div class="info-section mb-3">
                 <p><strong>Phòng:</strong> {{ selectedBookingForReschedule.room?.room_name }}</p>
-                <p><strong>Thời gian hiện tại:</strong> {{ selectedBookingForReschedule.startTime }} - {{ selectedBookingForReschedule.endTime }}</p>
-                <p class="text-muted small">Lưu ý: Chỉ có thể đổi ngày và thời gian bắt đầu. Khoảng thời gian, phòng và dịch vụ không thể thay đổi.</p>
+                <p><strong>Thời gian hiện tại:</strong> {{ selectedBookingForReschedule.startTime }} - {{
+                    selectedBookingForReschedule.endTime }}</p>
+                <p class="text-muted small">Lưu ý: Chỉ có thể đổi ngày và thời gian bắt đầu. Khoảng thời gian, phòng và
+                    dịch vụ không thể thay đổi.</p>
             </div>
 
             <div class="form-group mb-3">
-                <label class="form-label">Ngày mới <span class="text-danger">*</span></label>
-                <input type="date" class="form-control" [(ngModel)]="newDate" required>
+                <label class="form-label">Ngày bắt đầu mới <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" [(ngModel)]="newDate" [min]="minDate" required>
+                <small class="text-muted" *ngIf="newDate">
+                    <i class="bi bi-calendar3 me-1"></i>Ngày đã chọn: {{ formatDateToDDMMYYYY(newDate) }}
+                </small>
             </div>
 
             <div class="form-group mb-3">
@@ -242,4 +254,3 @@
         </div>
     </div>
 </div>
-

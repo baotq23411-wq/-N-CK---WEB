@@ -4,13 +4,13 @@
   <div class="banner-inner container">
     <div class="hero-content">
       <h1 class="hero-title">Đổi Quà Thành Viên <span class="accent">Panacea</span></h1>
-      <p class="hero-subtitle">Tích điểm mỗi khi sử dụng dịch vụ, đổi voucher giảm giá và quà tặng độc quyền</p>
+      <p class="hero-subtitle">Tích xu mỗi khi sử dụng dịch vụ, đổi voucher giảm giá và quà tặng độc quyền</p>
       <div class="hero-cta">
         <button class="btn btn-primary" (click)="scrollToExchange()">
           <i class="bi bi-gift"></i> Xem quà ngay
         </button>
         <a *ngIf="!isLoggedIn" routerLink="/login" class="btn btn-outline">
-          <i class="bi bi-box-arrow-in-right"></i> Đăng nhập để tích điểm
+          <i class="bi bi-box-arrow-in-right"></i> Đăng nhập để tích xu
         </a>
       </div>
     </div>
@@ -49,22 +49,11 @@
 
 <!-- CTA SECTION -->
 <section class="cta-section scroll-reveal">
-  <div class="container">
-    <div class="cta-content">
-      <h2 class="cta-title">Sẵn sàng bắt đầu tích điểm?</h2>
-      <p class="cta-subtitle">Đăng nhập ngay để tích điểm và đổi quà hấp dẫn</p>
-      <div class="cta-buttons">
-        <a *ngIf="!isLoggedIn" routerLink="/login" class="btn btn-primary">
-          <i class="bi bi-box-arrow-in-right"></i> Đăng nhập ngay
-        </a>
-        <button *ngIf="isLoggedIn" class="btn btn-outline" (click)="scrollToExchange()">
-          <i class="bi bi-gift"></i> Xem quà của tôi
-        </button>
-        <a routerLink="/room-list" class="btn btn-secondary">
-          <i class="bi bi-calendar-check"></i> Đặt dịch vụ
-        </a>
-      </div>
-    </div>
+  <div class="cta-banner-wrapper">
+    <img src="assets/images/bannerpromotion.webp" 
+         alt="Banner khuyến mãi tích xu - Đăng nhập ngay để tích xu và đổi quà hấp dẫn tại Panacea" 
+         title="Banner khuyến mãi tích xu - Đăng nhập ngay để tích xu và đổi quà hấp dẫn tại Panacea"
+         class="cta-banner-image" />
   </div>
 </section>
 

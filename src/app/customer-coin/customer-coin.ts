@@ -37,12 +37,12 @@ export class CustomerCoinComponent implements OnInit, OnDestroy {
 
   // Dữ liệu mẫu
   coinHistory = [
-    { date: '01/11/2025', description: 'Đổi voucher giảm giá 10%', amount: -100, status: 'Hoàn tất', icon: 'bi bi-ticket-perforated' },
+    { date: '01/11/2025', description: 'Đổi voucher giảm giá 10%', amount: -200, status: 'Hoàn tất', icon: 'bi bi-ticket-perforated' },
     { date: '25/10/2025', description: 'Nhận thưởng sự kiện "Tri Ân Khách Hàng"', amount: +500, status: 'Hoàn tất', icon: 'bi bi-gift' },
     { date: '15/10/2025', description: 'Đổi gấu bông Panacea', amount: -200, status: 'Đang xử lý', icon: 'bi bi-bag-heart' },
     { date: '02/10/2025', description: 'Tham gia Workshop "Du lịch xanh"', amount: +300, status: 'Hoàn tất', icon: 'bi bi-calendar-event' },
     { date: '20/09/2025', description: 'Nhận xu từ đặt phòng', amount: +1000, status: 'Hoàn tất', icon: 'bi bi-cash-coin' },
-    { date: '10/09/2025', description: 'Đổi voucher giảm giá 20%', amount: -150, status: 'Hoàn tất', icon: 'bi bi-ticket-perforated' },
+    { date: '10/09/2025', description: 'Đổi voucher giảm giá 20%', amount: -350, status: 'Hoàn tất', icon: 'bi bi-ticket-perforated' },
     { date: '05/09/2025', description: 'Nhận xu từ đánh giá', amount: +50, status: 'Hoàn tất', icon: 'bi bi-star-fill' }
   ];
 

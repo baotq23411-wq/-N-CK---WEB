@@ -50,10 +50,10 @@ export class CartWidget implements OnInit, OnDestroy {
     this.cartPollingInterval = setInterval(() => {
       // ✅ FIXED: Thêm try-catch cho JSON.parse
       try {
-        const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
-        if (JSON.stringify(currentCart) !== JSON.stringify(this.cart)) {
-          this.loadCart();
-        }
+      const currentCart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (JSON.stringify(currentCart) !== JSON.stringify(this.cart)) {
+        this.loadCart();
+      }
       } catch (e) {
         console.error('Error parsing cart from localStorage in polling:', e);
       }
@@ -89,7 +89,7 @@ export class CartWidget implements OnInit, OnDestroy {
   loadCart(): void {
     // ✅ FIXED: Thêm try-catch cho JSON.parse
     try {
-      this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    this.cart = JSON.parse(localStorage.getItem('cart') || '[]');
     } catch (e) {
       console.error('Error parsing cart from localStorage:', e);
       this.cart = [];

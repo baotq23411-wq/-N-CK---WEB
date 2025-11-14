@@ -285,14 +285,14 @@ export class Payment implements OnInit {
       }
 
         // 🟩 ADDED: lấy điểm từ user (từ users.json có field "point")
-        // 🟩 UPDATED: Ưu tiên lấy từ paymentState (nếu đã trừ 100 Xu), sau đó mới lấy từ users.json
+        // 🟩 UPDATED: Ưu tiên lấy từ paymentState (nếu đã trừ 50 Xu), sau đó mới lấy từ users.json
         // (sử dụng lại biến paymentStateStr và hasPaymentState đã khai báo ở trên)
         let hasPaymentStatePoints = false;
         
         if (hasPaymentState && paymentStateStr) {
           try {
             const paymentState = JSON.parse(paymentStateStr);
-            // Nếu đã dùng 100 Xu và có lưu userPoints, dùng giá trị đó
+            // Nếu đã dùng 50 Xu và có lưu userPoints, dùng giá trị đó
             if (paymentState.usePoints === true && paymentState.userPoints !== undefined) {
               this.userPoints = paymentState.userPoints;
               hasPaymentStatePoints = true;
@@ -594,10 +594,10 @@ export class Payment implements OnInit {
         this.pointsApplied = paymentState.pointsApplied || false;
       }
       
-      // 🟩 ADDED: Khôi phục userPoints từ paymentState (nếu đã trừ 100 Xu)
+      // 🟩 ADDED: Khôi phục userPoints từ paymentState (nếu đã trừ 50 Xu)
       // Điều này đảm bảo khi quay lại từ Banking, số Xu hiển thị đúng (20 Xu thay vì 120 Xu)
       if (paymentState.userPoints !== undefined && paymentState.usePoints === true) {
-        // Nếu đã dùng 100 Xu, restore số Xu đã bị trừ
+        // Nếu đã dùng 50 Xu, restore số Xu đã bị trừ
         this.userPoints = paymentState.userPoints;
         // Cập nhật lại currentUser.point để đồng bộ
         if (this.currentUser) {
@@ -677,7 +677,7 @@ export class Payment implements OnInit {
       pointsDiscountValue: this.pointsDiscountValue,
       pointsLocked: this.pointsLocked,
       pointsApplied: this.pointsApplied,
-      userPoints: this.userPoints, // 🟩 ADDED: Lưu số Xu hiện tại (đã trừ 100 Xu nếu đã dùng)
+      userPoints: this.userPoints, // 🟩 ADDED: Lưu số Xu hiện tại (đã trừ 50 Xu nếu đã dùng)
       contactForm: this.contactForm.value,
       isSelfBooking: this.isSelfBooking,
       discountValue: this.discountValue,
@@ -2173,30 +2173,21 @@ export class Payment implements OnInit {
 
   // ====================== REDEEM XU (ADDED) ======================
   
-  // Bọc lại calculateTotal để luôn áp dụng giảm 10.000đ sau voucher/dịch vụ
+  // Bọc lại calculateTotal để luôn áp dụng giảm 20.000đ sau voucher/dịch vụ
   // Lưu ý: Logic Redeem đã được tích hợp trực tiếp vào calculateTotal() để tránh vòng lặp
   private patchRedeemRecalculation(): void {
     // Không cần wrap nữa vì đã tích hợp trực tiếp vào calculateTotal()
     // Giữ lại hàm này để tương thích với code cũ (nếu có)
   }
 
-  // Toggle dùng 100 Xu
+  // Toggle dùng 50 Xu
   async togglePoints(checked: boolean): Promise<void> {
     this.usePoints = !!checked;
 
     if (this.usePoints) {
-      // Đã khóa sau khi đổi thành công ➜ không cho bật lại luồng khác
-      if (this.pointsLocked) {
-        this.usePoints = true;
-        this.cdr.detectChanges();
-        const el = document.getElementById('usePoints') as HTMLInputElement | null;
-        if (el) el.checked = true;
-        return;
-      }
-
-      // Kiểm tra đủ 100 Xu không
-      if (this.userPoints < 100) {
-        const short = 100 - this.userPoints;
+      // Kiểm tra đủ 50 Xu không
+      if (this.userPoints < 50) {
+        const short = 50 - this.userPoints;
         // Tắt lại ngay lập tức
         this.usePoints = false;
         this.cdr.detectChanges();
@@ -2215,8 +2206,8 @@ export class Payment implements OnInit {
       // Xác nhận trước khi đổi
       const confirmResult = await Swal.fire({
         icon: 'question',
-        title: 'Xác nhận dùng 100 Xu?',
-        html: `Giảm <b>10.000đ</b> cho đơn này.<br/><small class="text-muted">Lưu ý: Đổi rồi sẽ <b>không hoàn Xu</b>.</small>`,
+        title: 'Xác nhận dùng 50 Xu?',
+        html: `Giảm <b>20.000đ</b> cho đơn này.<br/><small class="text-muted">Lưu ý: Đổi rồi sẽ <b>không hoàn Xu</b>.</small>`,
         showCancelButton: true,
         confirmButtonText: 'Xác nhận đổi',
         cancelButtonText: 'Hủy',
@@ -2231,12 +2222,11 @@ export class Payment implements OnInit {
         return;
       }
 
-      // Đủ điểm ➜ trừ 100 Xu và giảm 10.000đ NGAY LẬP TỨC
+      // Đủ điểm ➜ trừ 50 Xu và giảm 20.000đ NGAY LẬP TỨC
       if (!this.pointsApplied) {
-        const newPoints = Math.max(0, this.userPoints - 100);
+        const newPoints = Math.max(0, this.userPoints - 50);
         this.userPoints = newPoints;
         this.pointsApplied = true;
-        this.pointsLocked = true; // Khóa không cho tắt sau khi đổi thành công
         
         // 🟩 UPDATED: Cập nhật points trong users.json thông qua service
         if (this.currentUser && this.currentUser.id) {
@@ -2260,7 +2250,7 @@ export class Payment implements OnInit {
       }
       
       // Set giá trị giảm giá NGAY LẬP TỨC
-      this.pointsDiscountValue = 10000;
+      this.pointsDiscountValue = 20000;
 
       // Tính lại tổng giá NGAY LẬP TỨC để áp dụng giảm giá (trước khi show popup)
       this.calculateTotal();
@@ -2271,31 +2261,14 @@ export class Payment implements OnInit {
       // Show popup sau khi đã cập nhật giá
       await Swal.fire({
         icon: 'success',
-        title: 'Đã dùng 100 Xu để giảm 10.000đ.',
+        title: 'Đã dùng 50 Xu để giảm 20.000đ.',
         timer: 1500,
         showConfirmButton: false,
       });
     } else {
-      // Nếu đã khóa, không cho tắt
-      if (this.pointsLocked) {
-        this.usePoints = true;
-        this.cdr.detectChanges();
-        const el = document.getElementById('usePoints') as HTMLInputElement | null;
-        if (el) el.checked = true;
-
-        await Swal.fire({
-          icon: 'info',
-          title: 'Không thể tắt',
-          text: 'Bạn đã đổi 100 Xu. Lưu ý: Đổi rồi sẽ không hoàn Xu.',
-          timer: 1600,
-          showConfirmButton: false,
-        });
-        return;
-      }
-
-      // Tắt Redeem (khi chưa khóa) ➜ hoàn lại Xu và tính lại
+      // Tắt Redeem ➜ hoàn lại Xu và tính lại
       if (this.pointsApplied) {
-        const newPoints = this.userPoints + 100;
+        const newPoints = this.userPoints + 50;
         this.userPoints = newPoints;
         
         // 🟩 UPDATED: Cập nhật points trong users.json thông qua service

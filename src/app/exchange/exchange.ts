@@ -236,24 +236,32 @@ export class Exchange implements OnInit, OnDestroy {
       this.updateUserCoin(this.userPoints);
     }
     
-    const code = this.generateCode(v.code);
+    // ✅ FIXED: Chỉ hiển thị code gốc từ voucher.json, không thêm số random
+    const code = v.code;
 
     await Swal.fire({
       icon: 'success',
       title: 'Đổi voucher thành công!',
       html: `
         <p>Bạn đã đổi voucher <b>${v.type}</b>.</p>
-        <div style="margin-top:10px;">Mã voucher của bạn:</div>
+        <div style="margin-top:16px;margin-bottom:8px;font-weight:500;color:#333;">Mã voucher của bạn:</div>
         <div style="
-          margin-top:6px;display:inline-flex;align-items:center;gap:8px;
-          background:#0f89f3;color:#fff;padding:8px 12px;border-radius:8px;">
-          <span style="font-weight:700;letter-spacing:.5px;">${code}</span>
+          margin-top:8px;display:inline-flex;align-items:center;gap:10px;
+          background:linear-gradient(135deg, #132fba 0%, #4b6fff 100%);color:#fff;
+          padding:12px 20px;border-radius:12px;box-shadow:0 4px 12px rgba(19,47,186,0.3);">
+          <span style="font-weight:700;letter-spacing:1px;font-size:16px;">${code}</span>
           <button id="copyCodeBtn" style="
-            border:none;border-radius:6px;background:#fff;color:#0f89f3;
-            padding:4px 8px;cursor:pointer;">
-            <i class="bi bi-clipboard"></i>
+            border:none;border-radius:8px;background:rgba(255,255,255,0.2);color:#fff;
+            padding:6px 10px;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;">
+            <i class="bi bi-clipboard" style="font-size:16px;"></i>
           </button>
         </div>
+        <style>
+          #copyCodeBtn:hover {
+            background:rgba(255,255,255,0.3) !important;
+            transform:scale(1.05);
+          }
+        </style>
       `,
       confirmButtonText: 'OK',
       confirmButtonColor: '#132fba',
@@ -472,11 +480,7 @@ export class Exchange implements OnInit, OnDestroy {
     });
   }
 
-  /** 🔢 Sinh mã voucher ngẫu nhiên */
-  private generateCode(prefix: string): string {
-    const random = Math.floor(100000 + Math.random() * 900000);
-    return `${prefix}-${random}`;
-  }
+  // ✅ REMOVED: Không cần generate code nữa, chỉ hiển thị code gốc từ voucher.json
 
   /** 🖼️ Xử lý lỗi khi ảnh không load được */
   handleImageError(event: Event): void {

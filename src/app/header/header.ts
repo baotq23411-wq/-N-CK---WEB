@@ -1,9 +1,10 @@
-import { Component, HostListener, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, HostListener, OnInit, ChangeDetectorRef, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { AuthService } from '../services/auth';
-
 
 @Component({
   selector: 'app-header',
@@ -12,8 +13,8 @@ import { AuthService } from '../services/auth';
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
 })
-export class HeaderComponent implements OnInit {
-  isOpen = false;           // mobile menu
+export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
+  isOpen = false;           // mobile menu drawer
   scrolled = false;         // sticky shadow
   currentAccount: any = null;
   isAdmin: boolean = false;
@@ -21,14 +22,24 @@ export class HeaderComponent implements OnInit {
   isSupportDropdownOpen = false;  // support dropdown menu (desktop)
   isMobileSupportDropdownOpen = false;  // support dropdown menu (mobile)
   isPolicyDropdownOpen = false;  // policy dropdown menu (desktop)
+  isMoreDropdownOpen = false;  // more dropdown menu (tablet)
 
   membership = 'BRONZE PRIORITY';
   membershipClass = 'bronze';
 
+  private lastFocusedElement: HTMLElement | null = null;
+  private routerSubscription?: Subscription;
+  private focusableElements: HTMLElement[] = [];
+  private firstFocusableElement: HTMLElement | null = null;
+  private lastFocusableElement: HTMLElement | null = null;
+
+  @ViewChild('drawer', { static: false }) drawerRef?: ElementRef<HTMLElement>;
+
   constructor(
     public authService: AuthService, 
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit(): void {
@@ -45,13 +56,17 @@ export class HeaderComponent implements OnInit {
         this.isDropdownOpen = false;
       }
       // Đóng support dropdown khi click ra ngoài (chỉ trên mobile/touch)
-      if (window.innerWidth < 992 && !target.closest('.support-dropdown') && !target.closest('.mobile-dropdown')) {
+      if (window.innerWidth < 992 && !target.closest('.support-dropdown') && !target.closest('.drawer-dropdown')) {
         this.isSupportDropdownOpen = false;
         this.isMobileSupportDropdownOpen = false;
       }
       // Đóng policy dropdown khi click ra ngoài (chỉ trên mobile/touch)
       if (window.innerWidth < 992 && !target.closest('.policy-dropdown')) {
         this.isPolicyDropdownOpen = false;
+      }
+      // Đóng more dropdown khi click ra ngoài
+      if (!target.closest('.more-dropdown')) {
+        this.isMoreDropdownOpen = false;
       }
     });
 
@@ -60,6 +75,11 @@ export class HeaderComponent implements OnInit {
       if (window.innerWidth < 992) {
         this.isSupportDropdownOpen = false;
         this.isPolicyDropdownOpen = false;
+        this.isMoreDropdownOpen = false;
+      }
+      // Đóng drawer khi resize từ mobile sang desktop
+      if (window.innerWidth >= 768 && this.isOpen) {
+        this.closeMenu();
       }
     });
     
@@ -81,6 +101,26 @@ export class HeaderComponent implements OnInit {
         }
       }
     });
+
+    // ✅ FIXED: Đóng drawer khi navigate
+    this.routerSubscription = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        if (this.isOpen) {
+          this.closeMenu();
+        }
+      });
+  }
+
+  ngAfterViewInit(): void {
+    // Initialize focus trap elements after view init
+    this.updateFocusableElements();
+  }
+
+  ngOnDestroy(): void {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
   }
 
   loadAccount(): void {
@@ -178,22 +218,137 @@ export class HeaderComponent implements OnInit {
     this.scrolled = window.scrollY > 8;
   }
 
-  toggle() {
-    this.isOpen = !this.isOpen;
-  }
-  closeMenu() {
-    this.isOpen = false;
-    this.isMobileSupportDropdownOpen = false;
+  // ✅ FIXED: Keyboard handler for Escape key
+  @HostListener('document:keydown', ['$event'])
+  handleKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && this.isOpen) {
+      this.closeMenu();
+    }
+
+    // Focus trap trong drawer
+    if (this.isOpen && event.key === 'Tab') {
+      this.handleFocusTrap(event);
+    }
   }
 
-  // ✅ FIXED: Toggle dropdown menu (chỉ mở khi click vào icon)
+  // ✅ FIXED: Focus trap implementation
+  private handleFocusTrap(event: KeyboardEvent): void {
+    if (!this.isOpen) return;
+
+    this.updateFocusableElements();
+
+    if (this.focusableElements.length === 0) return;
+
+    const isTabPressed = event.key === 'Tab' && !event.shiftKey;
+    const isShiftTabPressed = event.key === 'Tab' && event.shiftKey;
+
+    if (isTabPressed) {
+      // Tab: nếu đang ở element cuối, chuyển về element đầu
+      if (document.activeElement === this.lastFocusableElement) {
+        event.preventDefault();
+        this.firstFocusableElement?.focus();
+      }
+    } else if (isShiftTabPressed) {
+      // Shift+Tab: nếu đang ở element đầu, chuyển về element cuối
+      if (document.activeElement === this.firstFocusableElement) {
+        event.preventDefault();
+        this.lastFocusableElement?.focus();
+      }
+    }
+  }
+
+  // ✅ FIXED: Update focusable elements trong drawer
+  private updateFocusableElements(): void {
+    const drawer = document.getElementById('site-drawer');
+    if (!drawer) {
+      this.focusableElements = [];
+      this.firstFocusableElement = null;
+      this.lastFocusableElement = null;
+      return;
+    }
+
+    // Tìm tất cả các element có thể focus được
+    const focusableSelectors = [
+      'a[href]',
+      'button:not([disabled])',
+      'textarea:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])'
+    ].join(', ');
+
+    this.focusableElements = Array.from(
+      drawer.querySelectorAll<HTMLElement>(focusableSelectors)
+    ).filter(el => {
+      // Loại bỏ các element bị ẩn
+      const style = window.getComputedStyle(el);
+      return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
+    });
+
+    this.firstFocusableElement = this.focusableElements[0] || null;
+    this.lastFocusableElement = this.focusableElements[this.focusableElements.length - 1] || null;
+  }
+
+  toggle(): void {
+    if (this.isOpen) {
+      this.closeMenu();
+    } else {
+      this.openMenu();
+    }
+  }
+
+  openMenu(): void {
+    this.isOpen = true;
+    // Lưu element đang focus
+    this.lastFocusedElement = document.activeElement as HTMLElement;
+    
+    // Prevent body scroll khi drawer mở
+    document.body.style.overflow = 'hidden';
+    
+    // Update focusable elements và focus vào close button
+    setTimeout(() => {
+      this.updateFocusableElements();
+      const closeButton = document.querySelector('.drawer-close') as HTMLElement;
+      if (closeButton) {
+        closeButton.focus();
+      } else if (this.firstFocusableElement) {
+        this.firstFocusableElement.focus();
+      }
+    }, 100);
+    
+    this.cdr.detectChanges();
+  }
+
+  closeMenu(): void {
+    this.isOpen = false;
+    this.isMobileSupportDropdownOpen = false;
+    
+    // Restore body scroll
+    document.body.style.overflow = '';
+    
+    // Return focus về element trước đó
+    if (this.lastFocusedElement) {
+      setTimeout(() => {
+        this.lastFocusedElement?.focus();
+        this.lastFocusedElement = null;
+      }, 100);
+    }
+    
+    this.cdr.detectChanges();
+  }
+
+  // ✅ FIXED: Helper method để check active route
+  isActiveRoute(route: string): boolean {
+    return this.router.url === route || this.router.url.startsWith(route + '/');
+  }
+
+  // Toggle dropdown menu khi click
   toggleDropdown(event: Event) {
-    event.preventDefault();
     event.stopPropagation();
     this.isDropdownOpen = !this.isDropdownOpen;
   }
 
-  // ✅ FIXED: Đóng dropdown menu
+  // Đóng dropdown menu
   closeDropdown() {
     this.isDropdownOpen = false;
   }
@@ -246,6 +401,25 @@ export class HeaderComponent implements OnInit {
       event.stopPropagation();
     }
     this.isPolicyDropdownOpen = !this.isPolicyDropdownOpen;
+  }
+
+  // ✅ FIXED: More dropdown methods (tablet)
+  openMoreDropdown() {
+    if (window.innerWidth >= 768 && window.innerWidth < 992) {
+      this.isMoreDropdownOpen = true;
+    }
+  }
+
+  closeMoreDropdown() {
+    this.isMoreDropdownOpen = false;
+  }
+
+  toggleMoreDropdown(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    this.isMoreDropdownOpen = !this.isMoreDropdownOpen;
   }
 
   calculateMembership(diem: number): void {

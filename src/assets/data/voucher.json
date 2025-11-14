@@ -194,5 +194,19 @@
     "userType": "Tất cả người dùng",
     "discountType": "percent",
     "discountValue": 30
+  },
+  {
+    "code": "VPBLACKFRIDAY",
+    "type": "Black Friday - Giảm 40%",
+    "img": "assets/image/voucher-blackfriday.webp",
+    "description": "Voucher đặc biệt Black Friday - Giảm giá cực lớn",
+    "minTransaction": "500.000 VND",
+    "payment": "Mọi hình thức",
+    "pointsRequired": 600,
+    "startDate": "2025-11-20",
+    "endDate": "2025-11-30",
+    "userType": "Tất cả người dùng",
+    "discountType": "percent",
+    "discountValue": 40
   }
 ]

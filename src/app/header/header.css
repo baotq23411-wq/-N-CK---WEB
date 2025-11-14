@@ -10,6 +10,17 @@
   --ink-light:#4b5675;   /* text nhạt */
 }
 
+/* ============ Reduced Motion Support ============ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* ============ Scrolling Banner ============ */
 .scrolling-banner {
   width: 100%;
@@ -42,7 +53,6 @@
   flex-shrink: 0;
 }
 
-/* ✅ FIXED: Text bắt đầu từ bên phải màn hình (100vw), chạy sang trái (-100% width của text), khi hết thì quay lại */
 @keyframes scroll-left {
   0% {
     transform: translateX(100vw);
@@ -52,7 +62,6 @@
   }
 }
 
-/* ✅ FIXED: Responsive cho scrolling banner */
 @media (max-width: 768px) {
   .scrolling-banner {
     height: 28px;
@@ -83,7 +92,7 @@
   }
 }
 
-/* ============ Header container - Full Width ============ */
+/* ============ Header container ============ */
 header{
   position: sticky; 
   top: 0; 
@@ -125,16 +134,14 @@ header.scrolled{
   justify-content: center;
 }
 
-
-
-/* ============ Logo - Modern & Elegant ============ */
+/* ============ Logo ============ */
 .brand{ 
   display:flex; 
   align-items:center; 
   gap:12px; 
   text-decoration:none;
   transition: transform 0.2s ease;
-  margin-left: 20px; /* ✅ Di chuyển logo sang phải */
+  margin-left: 20px;
 }
 
 .brand:hover {
@@ -153,18 +160,9 @@ header.scrolled{
   filter: drop-shadow(0 4px 12px rgba(19, 47, 186, 0.3));
 }
 
-.brand span{ 
-  color: var(--brand-900); 
-  font-weight: 900; 
-  font-size: 1.4rem;
-  letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--brand-900), var(--brand-500));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
+/* Logo đã có text Panacea trong hình, không cần thêm text */
 
-/* ============ Desktop nav - Modern Hover Effects ============ */
+/* ============ Desktop nav ============ */
 .nav-desktop{ 
   display:none; 
   align-items:center; 
@@ -172,6 +170,7 @@ header.scrolled{
   gap: 8px; 
   margin: 0;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .nav-desktop a, .nav-desktop span{
@@ -197,7 +196,6 @@ header.scrolled{
   font-weight: 800;
 }
 
-/* Modern underline animation */
 .nav-desktop a::after{
   content:""; 
   position:absolute; 
@@ -216,28 +214,29 @@ header.scrolled{
   width: calc(100% - 32px);
 }
 
-/* ============ Dropdown - Modern Glass Effect ============ */
+/* ============ Dropdown ============ */
 .dropdown{ 
   position:relative; 
   cursor:pointer; 
   outline:none; 
 }
 
-/* ✅ FIXED: Support và Policy dropdown - chỉ hiển thị khi có class .open */
 .support-dropdown .menu,
-.policy-dropdown .menu {
+.policy-dropdown .menu,
+.more-dropdown .menu {
   display: none;
 }
 
 .support-dropdown.open .menu,
-.policy-dropdown.open .menu {
+.policy-dropdown.open .menu,
+.more-dropdown.open .menu {
   display: block;
   animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ✅ FIXED: Tạo bridge area để giữ dropdown mở khi di chuột từ parent xuống menu */
 .support-dropdown::after,
-.policy-dropdown::after {
+.policy-dropdown::after,
+.more-dropdown::after {
   content: '';
   position: absolute;
   left: 0;
@@ -298,9 +297,9 @@ header.scrolled{
   outline-offset: -2px;
 }
 
-/* ✅ FIXED: Support dropdown specific styles */
 .support-dropdown span,
-.policy-dropdown span {
+.policy-dropdown span,
+.more-dropdown span {
   position: relative;
   color: #000000; 
   text-decoration:none; 
@@ -320,13 +319,17 @@ header.scrolled{
 .support-dropdown:focus span,
 .policy-dropdown:hover span,
 .policy-dropdown.open span,
-.policy-dropdown:focus span {
+.policy-dropdown:focus span,
+.more-dropdown:hover span,
+.more-dropdown.open span,
+.more-dropdown:focus span {
   color: var(--brand-900);
   background: rgba(19, 47, 186, 0.06);
 }
 
 .support-dropdown span::after,
-.policy-dropdown span::after {
+.policy-dropdown span::after,
+.more-dropdown span::after {
   content:""; 
   position:absolute; 
   left:50%;
@@ -344,11 +347,13 @@ header.scrolled{
 .support-dropdown:focus span::after,
 .policy-dropdown:hover span::after,
 .policy-dropdown.open span::after,
-.policy-dropdown:focus span::after {
+.policy-dropdown:focus span::after,
+.more-dropdown:hover span::after,
+.more-dropdown.open span::after,
+.more-dropdown:focus span::after {
   width: calc(100% - 32px);
 }
 
-/* ✅ FIXED: Icon mũi tên cho dropdown */
 .dropdown-icon {
   font-size: 0.75rem;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -361,28 +366,33 @@ header.scrolled{
 .support-dropdown:focus .dropdown-icon,
 .policy-dropdown:hover .dropdown-icon,
 .policy-dropdown.open .dropdown-icon,
-.policy-dropdown:focus .dropdown-icon {
+.policy-dropdown:focus .dropdown-icon,
+.more-dropdown:hover .dropdown-icon,
+.more-dropdown.open .dropdown-icon,
+.more-dropdown:focus .dropdown-icon {
   transform: rotate(180deg);
 }
 
-/* ✅ FIXED: Keyboard focus styles cho dropdown */
 .dropdown:focus {
   outline: 2px solid var(--brand-900);
   outline-offset: 2px;
   border-radius: 12px;
 }
 
-.support-dropdown:focus span {
+.support-dropdown:focus span,
+.policy-dropdown:focus span,
+.more-dropdown:focus span {
   outline: none;
 }
 
-/* ============ Actions (buttons) - Modern Design ============ */
+/* ============ Actions ============ */
 .actions{ 
-  display:flex; 
-  align-items:center; 
-  justify-content:center;
-  gap:10px; 
+  display: flex !important; 
+  align-items: center; 
+  justify-content: flex-end;
+  gap: 10px; 
   flex-shrink: 0;
+  margin-left: auto;
 }
 
 .btn{
@@ -412,13 +422,11 @@ header.scrolled{
   margin: 0;
   vertical-align: middle;
   z-index: 1;
-  /* ✅ FIXED: Đảm bảo không có gradient text effect */
   -webkit-text-fill-color: #000000 !important;
   background-clip: border-box !important;
   -webkit-background-clip: border-box !important;
 }
 
-/* ✅ FIXED: Đảm bảo text không bị ảnh hưởng bởi pseudo-elements */
 .btn > * {
   position: relative;
   z-index: 1;
@@ -437,11 +445,8 @@ header.scrolled{
   transition: left 0.5s ease;
   pointer-events: none;
   z-index: 0;
-  /* ✅ FIXED: Đảm bảo pseudo-element không ảnh hưởng đến text color */
   mix-blend-mode: normal;
-  /* ✅ FIXED: Đảm bảo không blend với text */
   isolation: isolate;
-  /* ✅ FIXED: Giới hạn shine effect trong border-radius của button */
   border-radius: inherit;
 }
 
@@ -457,14 +462,12 @@ header.scrolled{
   padding:10px 22px;
 }
 
-/* Đảm bảo cả ghost và primary đều giống nhau */
 .btn.ghost,
 .btn.primary {
   background: transparent !important;
   color: #000000 !important;
   border-color: var(--brand-900);
   border-width: 2px;
-  /* ✅ FIXED: Đảm bảo không có gradient text effect */
   -webkit-text-fill-color: #000000 !important;
   background-clip: border-box !important;
   -webkit-background-clip: border-box !important;
@@ -479,38 +482,58 @@ header.scrolled{
   padding:10px 22px;
 }
 
-/* Burger - Modern Animation */
+/* ============ Burger Button ============ */
 .burger{ 
-  display:inline-flex; 
-  flex-direction:column; 
-  gap:5px; 
-  background:transparent; 
-  border:0; 
-  padding:10px;
+  display: inline-flex !important; 
+  flex-direction: column; 
+  gap: 5px; 
+  background: transparent; 
+  border: 0; 
+  padding: 10px;
   border-radius: 8px;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
+  z-index: 100;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-left: auto;
 }
 
 .burger:hover {
-  background: rgba(19, 47, 186, 0.08);
+  background: rgba(19, 47, 186, 0.08) !important;
+  transform: scale(1.05);
+}
+
+.burger:active {
+  background: rgba(19, 47, 186, 0.15) !important;
+  transform: scale(0.95);
+}
+
+.burger:focus {
+  outline: 2px solid var(--brand-900);
+  outline-offset: 2px;
 }
 
 .burger span{ 
-  width:24px; 
-  height:3px; 
-  background: var(--brand-900);
-  display:block;
+  width: 24px; 
+  height: 3px; 
+  background: #132FBA;
+  display: block !important;
   border-radius: 2px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
 }
 
 .burger:hover span {
-  background: var(--brand-500);
+  background: #0c1f8f;
 }
 
-/* ============ User dropdown - Premium Design ============ */
-/* ✅ FIXED: Layout mới - tên user là link riêng, dropdown chỉ mở khi click icon */
+/* ============ User dropdown ============ */
 .actions.user {
   display: flex;
   align-items: center;
@@ -520,34 +543,42 @@ header.scrolled{
 .user-info-wrapper {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: linear-gradient(135deg, rgba(19, 47, 186, 0.08), rgba(121, 156, 240, 0.05));
-  border: 1px solid rgba(19, 47, 186, 0.15);
+  gap: 8px;
+  background: linear-gradient(135deg, #d7b279 0%, #9a7b52 100%);
+  border: 1px solid rgba(215, 178, 121, 0.3);
   border-radius: 12px;
   padding: 10px 16px;
   transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(215, 178, 121, 0.2);
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .user-info-wrapper:hover {
-  background: linear-gradient(135deg, rgba(19, 47, 186, 0.12), rgba(121, 156, 240, 0.08));
-  border-color: rgba(19, 47, 186, 0.25);
-  box-shadow: 0 4px 12px rgba(19, 47, 186, 0.15);
+  background: linear-gradient(135deg, #e0c089 0%, #a8885f 100%);
+  border-color: rgba(215, 178, 121, 0.5);
+  box-shadow: 0 4px 16px rgba(215, 178, 121, 0.3);
+  transform: translateY(-1px);
 }
 
-/* ✅ FIXED: Tên user là link điều hướng */
 .user-name-link {
   text-decoration: none;
-  color: #000000;
+  color: #ffffff;
   font-weight: 800;
   cursor: pointer;
   transition: all 0.2s ease;
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+  line-height: 1;
 }
 
 .user-name-link:hover {
-  color: var(--brand-900);
+  color: #ffffff;
   text-decoration: underline;
+  opacity: 0.9;
 }
 
 .user-name-link .name {
@@ -555,52 +586,57 @@ header.scrolled{
 }
 
 .user-info-wrapper .sep {
-  color: rgba(19, 47, 186, 0.3);
+  color: rgba(255, 255, 255, 0.6);
   font-weight: 400;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
-.user-info-wrapper .points {
-  color: var(--brand-900);
-  font-weight: 800;
-}
-
-.user-info-wrapper .bi-coin {
-  color: var(--brand-900);
-}
-
-/* ✅ FIXED: Dropdown chỉ mở khi click vào icon, không còn hover */
-.actions.user .user-drop {
-  position: relative;
-  z-index: 1000;
-  display: inline-flex;
-  align-items: center;
-}
-
-.dropdown-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.dropdown-arrow {
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 0;
   border-radius: 6px;
   transition: all 0.2s ease;
-  color: #000000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  line-height: 1;
 }
 
-.dropdown-toggle:hover {
-  background: rgba(19, 47, 186, 0.1);
-  color: var(--brand-900);
+.dropdown-arrow:hover {
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.dropdown-toggle i {
-  font-size: 0.9rem;
+.dropdown-arrow:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.dropdown-arrow i {
+  font-size: 0.85rem;
   transition: transform 0.3s ease;
+  color: #ffffff;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.user-drop.open .dropdown-toggle i {
+.dropdown-arrow i.rotated {
   transform: rotate(180deg);
+}
+
+.actions.user .user-drop {
+  position: relative;
+  z-index: 1000;
+  display: inline-block;
 }
 
 .user-drop .panel {
@@ -620,6 +656,18 @@ header.scrolled{
   animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1001;
   pointer-events: auto;
+}
+
+/* Đảm bảo panel vẫn hiển thị khi hover vào nó */
+.user-drop .panel {
+  pointer-events: auto;
+}
+
+/* Đảm bảo user-info-wrapper giữ dropdown mở khi hover vào panel */
+.user-info-wrapper:hover .user-drop .panel,
+.user-drop:hover .panel {
+  pointer-events: auto;
+  display: block;
 }
 
 .member{ 
@@ -700,10 +748,13 @@ header.scrolled{
   text-decoration: none;
 }
 
-.panel .item:hover{ 
+.panel .item:hover,
+.panel .item:focus{ 
   background: linear-gradient(90deg, rgba(19, 47, 186, 0.08), transparent);
   padding-left: 22px;
   color: #132FBA !important;
+  outline: 2px solid var(--brand-900);
+  outline-offset: -2px;
 }
 
 .panel .item:visited,
@@ -723,7 +774,8 @@ header.scrolled{
   color: #dc3545 !important;
 }
 
-.panel .item.danger:hover {
+.panel .item.danger:hover,
+.panel .item.danger:focus {
   background: linear-gradient(90deg, rgba(220, 53, 69, 0.1), transparent);
   color: #dc3545 !important;
 }
@@ -739,7 +791,8 @@ header.scrolled{
   border-left: 3px solid #132fba;
 }
 
-.panel .item.admin-item:hover {
+.panel .item.admin-item:hover,
+.panel .item.admin-item:focus {
   background: rgba(19, 47, 186, 0.15);
   color: #132fba !important;
 }
@@ -748,15 +801,16 @@ header.scrolled{
   color: #132fba !important;
 }
 
-/* ============ Mobile menu - Modern Slide ============ */
-.mobile{ 
-  position:fixed; 
-  inset:0; 
-  background: rgba(0, 0, 0, 0.5);
+/* ============ Drawer Overlay ============ */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: 999;
   animation: fadeIn 0.3s ease;
+  will-change: opacity;
 }
 
 @keyframes fadeIn {
@@ -764,100 +818,206 @@ header.scrolled{
   to { opacity: 1; }
 }
 
-.mobile-menu{
-  position:absolute; 
-  top:0; 
-  right:0; 
-  width:min(86vw, 380px); 
-  height:100%;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  padding:24px; 
-  display:flex; 
-  flex-direction:column; 
-  gap:8px;
+/* ============ Drawer ============ */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(86vw, 380px);
+  height: 100vh;
+  background: #ffffff;
   box-shadow: -12px 0 40px rgba(0, 0, 0, 0.2);
-  animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
+.drawer.drawer-open {
+  transform: translateX(0);
 }
 
-.mobile-menu a, 
-.mobile-menu button.logout{
-  text-decoration:none; 
-  color:#000000; 
-  font-weight:700; 
-  padding:14px 16px; 
-  border-radius:12px; 
-  border:0; 
-  background:transparent; 
-  text-align:left;
-  transition: all 0.2s ease;
-  font-size: 1rem;
-}
-
-.mobile-menu a:hover, 
-.mobile-menu button:hover{ 
-  background: linear-gradient(90deg, rgba(19, 47, 186, 0.1), transparent);
-  color: var(--brand-900);
-}
-
-.mobile-menu hr {
-  border: none;
-  border-top: 1px solid rgba(19, 47, 186, 0.1);
-  margin: 12px 0;
-}
-
-/* ✅ FIXED: Mobile dropdown cho Hỗ trợ */
-.mobile-dropdown {
-  width: 100%;
-}
-
-.mobile-dropdown-toggle {
-  width: 100%;
+/* ============ Drawer Header ============ */
+.drawer-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(19, 47, 186, 0.1);
+  background: rgba(255, 254, 250, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.drawer-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.drawer-logo:hover {
+  opacity: 0.8;
+}
+
+.drawer-logo img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+
+.drawer-logo span {
+  color: var(--brand-900);
+  font-weight: 900;
+  font-size: 1.3rem;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--brand-900), var(--brand-500));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.drawer-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #000000;
+  padding: 0;
+}
+
+.drawer-close:hover {
+  background: rgba(19, 47, 186, 0.1);
+  color: var(--brand-900);
+}
+
+.drawer-close:focus {
+  outline: 2px solid var(--brand-900);
+  outline-offset: 2px;
+}
+
+.drawer-close i {
+  font-size: 1.25rem;
+}
+
+/* ============ Drawer Navigation ============ */
+.drawer-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0;
+  flex: 1;
+}
+
+.drawer-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
   text-decoration: none;
   color: #000000;
   font-weight: 700;
-  padding: 14px 16px;
-  border-radius: 12px;
-  border: 0;
-  background: transparent;
-  text-align: left;
-  transition: all 0.2s ease;
   font-size: 1rem;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
   cursor: pointer;
+}
+
+.drawer-link:hover,
+.drawer-link:focus {
+  background: linear-gradient(90deg, rgba(19, 47, 186, 0.1), transparent);
+  color: var(--brand-900);
+  padding-left: 28px;
   outline: none;
 }
 
-.mobile-dropdown-toggle:hover,
-.mobile-dropdown-toggle:focus {
+.drawer-link.active {
+  background: linear-gradient(90deg, rgba(19, 47, 186, 0.08), transparent);
+  color: var(--brand-900);
+  border-left: 3px solid var(--brand-900);
+  padding-left: 21px;
+}
+
+.drawer-link i {
+  font-size: 0.75rem;
+  color: var(--brand-900);
+  opacity: 0.6;
+  transition: transform 0.2s ease;
+}
+
+.drawer-link:hover i,
+.drawer-link:focus i {
+  transform: translateX(4px);
+  opacity: 1;
+}
+
+.drawer-link-sub {
+  padding-left: 40px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.drawer-link-sub.active {
+  padding-left: 37px;
+}
+
+/* ============ Drawer Dropdown ============ */
+.drawer-dropdown {
+  width: 100%;
+}
+
+.drawer-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 24px;
+  text-decoration: none;
+  color: #000000;
+  font-weight: 700;
+  font-size: 1rem;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.drawer-dropdown-toggle:hover,
+.drawer-dropdown-toggle:focus {
   background: linear-gradient(90deg, rgba(19, 47, 186, 0.1), transparent);
   color: var(--brand-900);
   outline: 2px solid var(--brand-900);
   outline-offset: -2px;
 }
 
-.mobile-dropdown-toggle i {
-  transition: transform 0.3s ease;
+.drawer-dropdown-toggle i {
   font-size: 0.8rem;
+  transition: transform 0.3s ease;
+  color: var(--brand-900);
 }
 
-.mobile-dropdown-toggle i.rotated {
+.drawer-dropdown-toggle i.rotated {
   transform: rotate(180deg);
 }
 
-.mobile-dropdown-menu {
+.drawer-dropdown-menu {
   padding-left: 24px;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -867,30 +1027,198 @@ header.scrolled{
   animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.mobile-dropdown-menu a {
+/* ============ Drawer Contact Block ============ */
+.drawer-contact {
+  padding: 24px;
+  border-top: 1px solid rgba(19, 47, 186, 0.1);
+  background: rgba(19, 47, 186, 0.02);
+}
+
+.drawer-contact-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--brand-900);
+  margin-bottom: 16px;
+}
+
+.drawer-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.drawer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   text-decoration: none;
   color: #000000;
   font-weight: 600;
-  padding: 10px 16px;
+  font-size: 0.95rem;
+  padding: 10px 12px;
   border-radius: 8px;
   transition: all 0.2s ease;
-  font-size: 0.95rem;
-  outline: none;
 }
 
-.mobile-dropdown-menu a:hover,
-.mobile-dropdown-menu a:focus {
-  background: linear-gradient(90deg, rgba(19, 47, 186, 0.08), transparent);
+.drawer-contact-item:hover,
+.drawer-contact-item:focus {
+  background: rgba(19, 47, 186, 0.08);
   color: var(--brand-900);
-  padding-left: 20px;
   outline: 2px solid var(--brand-900);
   outline-offset: -2px;
 }
 
+.drawer-contact-item i {
+  color: var(--brand-900);
+  font-size: 1.1rem;
+}
+
+.drawer-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid rgba(19, 47, 186, 0.1);
+}
+
+.drawer-qr-image {
+  width: 160px;
+  height: 160px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.drawer-qr-text {
+  font-size: 0.85rem;
+  color: var(--ink-light);
+  font-weight: 600;
+  margin: 0;
+}
+
+/* ============ Drawer Actions ============ */
+.drawer-actions {
+  padding: 24px;
+  border-top: 1px solid rgba(19, 47, 186, 0.1);
+  background: rgba(255, 254, 250, 0.98);
+}
+
+.drawer-auth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.drawer-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  border: 2px solid var(--brand-900);
+  cursor: pointer;
+}
+
+.drawer-btn-primary {
+  background: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+.drawer-btn-primary:hover,
+.drawer-btn-primary:focus {
+  background: #333333;
+  border-color: #333333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  outline: none;
+}
+
+.drawer-btn-secondary {
+  background: transparent;
+  color: var(--brand-900);
+  border-color: var(--brand-900);
+}
+
+.drawer-btn-secondary:hover,
+.drawer-btn-secondary:focus {
+  background: rgba(19, 47, 186, 0.08);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(19, 47, 186, 0.15);
+  outline: none;
+}
+
+.drawer-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.drawer-user-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(19, 47, 186, 0.1);
+}
+
+.drawer-user-header strong {
+  font-size: 1.1rem;
+  color: var(--brand-900);
+}
+
+.drawer-user-points {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-light);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.drawer-user-points i {
+  color: var(--brand-900);
+}
+
+.drawer-user-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawer-link-danger {
+  color: #dc3545 !important;
+}
+
+.drawer-link-danger:hover,
+.drawer-link-danger:focus {
+  background: rgba(220, 53, 69, 0.1) !important;
+  color: #dc3545 !important;
+}
+
+.drawer-link-danger i {
+  color: #dc3545 !important;
+}
+
 /* ============ Responsive ============ */
 @media (min-width: 992px){
-  .nav-desktop{ display:flex; }
-  .burger{ display:none; }
+  .nav-desktop{ 
+    display:flex; 
+  }
+  .burger{ 
+    display: none !important; 
+  }
+  .drawer,
+  .drawer-overlay {
+    display: none !important;
+  }
 }
 
 @media (max-width: 991.98px){
@@ -904,8 +1232,13 @@ header.scrolled{
     border-bottom: 1px solid rgba(19, 47, 186, 0.1);
   }
   
-  .brand span {
-    font-size: 1.2rem;
+  /* Ẩn nav-desktop trên tablet/mobile */
+  .nav-desktop {
+    display: none !important;
+  }
+  
+  .actions {
+    display: flex !important;
   }
   
   .btn {
@@ -913,12 +1246,20 @@ header.scrolled{
     padding: 9px 18px;
     font-size: 0.85rem;
   }
+  
+  /* Đảm bảo burger button hiển thị trên tablet/mobile */
+  .burger {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767.98px) {
   .inner {
     padding: 0 16px;
     gap: 12px;
+    height: 65px;
   }
   
   .btn {
@@ -928,7 +1269,39 @@ header.scrolled{
   }
   
   .actions {
+    display: flex !important;
     gap: 8px;
+  }
+  
+  .brand img {
+    height: 32px;
+  }
+  
+  /* Đảm bảo burger button hiển thị trên mobile */
+  .burger {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: transparent !important;
+    margin-left: auto;
+  }
+  
+  .burger span {
+    background: #132FBA !important;
+  }
+  
+  /* Mobile: Ẩn hoàn toàn nav-desktop */
+  .nav-desktop {
+    display: none !important;
+  }
+  
+  .drawer {
+    width: min(90vw, 360px);
+  }
+  
+  .drawer-qr-image {
+    width: 140px;
+    height: 140px;
   }
 }
 
@@ -936,7 +1309,7 @@ header.scrolled{
   .inner {
     padding: 0 12px;
     gap: 8px;
-    height: 65px;
+    height: 60px;
   }
   
   .btn {
@@ -946,14 +1319,45 @@ header.scrolled{
   }
   
   .brand img {
-    height: 32px;
-  }
-  
-  .brand span {
-    font-size: 1rem;
+    height: 28px;
   }
   
   .actions {
+    display: flex !important;
     gap: 6px;
+  }
+  
+  /* Đảm bảo burger button hiển thị trên mobile nhỏ */
+  .burger {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: transparent !important;
+    margin-left: auto;
+  }
+  
+  .burger span {
+    width: 22px !important;
+    height: 3px !important;
+    background: #132FBA !important;
+  }
+  
+  .drawer {
+    width: 100vw;
+  }
+  
+  .drawer-header {
+    padding: 16px 20px;
+  }
+  
+  .drawer-nav,
+  .drawer-contact,
+  .drawer-actions {
+    padding: 20px;
+  }
+  
+  .drawer-qr-image {
+    width: 120px;
+    height: 120px;
   }
 }

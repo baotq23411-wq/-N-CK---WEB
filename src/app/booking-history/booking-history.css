@@ -108,18 +108,18 @@
 .order-body {
     display: grid;
     grid-template-columns: 1.2fr 1fr 0.8fr auto;
-    column-gap: 0.5rem;
-    /* Giảm khoảng cách ngang */
-    row-gap: 0.25rem;
-    /* Giảm khoảng cách dọc */
+    column-gap: 1.5rem;
+    row-gap: 0;
     align-items: center;
-    padding: 0.6rem 1rem;
+    padding: 1rem 1.2rem;
 }
 
 .order-action {
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .order-action .btn {
@@ -130,39 +130,73 @@
     white-space: nowrap;
 }
 
+.order-room {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    justify-content: center;
+}
+
 .order-room .room-title {
     font-weight: 700;
     color: #132fba;
     font-size: 1rem;
+    line-height: 1.3;
+    margin: 0;
 }
 
 .order-room .room-sub {
     color: #6c757d;
     font-size: 0.9rem;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.order-time {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    justify-content: center;
 }
 
 .order-time .label {
     color: #5a6bbd;
     font-weight: 600;
     font-size: 0.9rem;
+    line-height: 1.3;
+    margin: 0;
 }
 
 .order-time .value {
     color: #1c1c1c;
     font-weight: 600;
-    margin-top: -2px;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    margin: 0;
+}
+
+.order-price {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    justify-content: center;
+    text-align: right;
 }
 
 .order-price .label {
     color: #5a6bbd;
     font-weight: 600;
     font-size: 0.9rem;
+    line-height: 1.3;
+    margin: 0;
 }
 
 .order-price .value {
     color: #f7941d;
     font-weight: 800;
     font-size: 1rem;
+    line-height: 1.3;
+    margin: 0;
 }
 
 .order-foot {
@@ -478,19 +512,10 @@
     color: #2b2f3a;
 }
 
-/* ==== TINH CHỈNH ĐỂ “THỜI GIAN ĐẶT PHÒNG” GẦN PHẦN TÊN PHÒNG ==== */
-.order-room {
+/* Đảm bảo các cột có cùng chiều cao và căn chỉnh */
+.order-body > * {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
-}
-
-.order-room .room-sub {
-    margin-top: -2px;
-}
-
-.order-time {
-    margin-top: -4px;
 }
 
 /* ==== RESPONSIVE ==== */
@@ -506,22 +531,26 @@
 
     .order-body {
         grid-template-columns: 1fr;
-        gap: 0.75rem;
+        gap: 1rem;
+        padding: 1rem;
     }
 
     .order-room,
     .order-time,
     .order-price {
-        margin-bottom: 0.5rem;
+        min-height: auto;
+        margin-bottom: 0;
     }
 
     .order-action {
         justify-content: flex-start;
-        margin-top: 0.5rem;
+        margin-top: 0;
+        flex-wrap: wrap;
     }
 
     .order-action .btn {
-        width: 100%;
+        width: auto;
+        min-width: 120px;
     }
 }
 

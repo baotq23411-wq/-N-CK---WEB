@@ -427,53 +427,29 @@
 
 /* ===== CTA SECTION ===== */
 .cta-section {
-  padding: 80px 20px;
-  background: linear-gradient(135deg, #132fba 0%, #4b6fff 100%);
-  color: #fff;
-  text-align: center;
+  padding: 0;
+  margin: 0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  width: 100%;
 }
 
-.cta-section::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -10%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: float 8s ease-in-out infinite;
-}
-
-.cta-content {
+.cta-banner-wrapper {
   position: relative;
-  z-index: 1;
-  max-width: 700px;
-  margin: 0 auto;
+  width: 100%;
+  display: block;
+  overflow: visible;
 }
 
-.cta-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
-  animation: fadeInUp 0.8s ease-out;
-}
-
-.cta-subtitle {
-  font-size: 1.25rem;
-  margin-bottom: 2.5rem;
-  opacity: 0.95;
-  animation: fadeInUp 1s ease-out;
-}
-
-.cta-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  animation: fadeInUp 1.2s ease-out;
+.cta-banner-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  object-position: center;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  image-rendering: high-quality;
 }
 
 /* ===== FAQ SECTION ===== */
@@ -1026,13 +1002,14 @@ h1 {
 .voucher-card,
 .item-card {
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(19, 47, 186, 0.1);
   animation: fadeInScale 0.4s ease-out;
   animation-fill-mode: both;
+  position: relative;
 }
 
 @keyframes fadeInScale {
@@ -1048,8 +1025,9 @@ h1 {
 
 .voucher-card:hover,
 .item-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 16px 40px rgba(19, 47, 186, 0.2);
+  border-color: rgba(19, 47, 186, 0.3);
 }
 
 /* ===== IMAGE WRAPPER ===== */
@@ -1138,35 +1116,47 @@ h1 {
 /* ===== CARD BODY ===== */
 .voucher-body,
 .item-info {
-  padding: 20px;
+  padding: 24px;
   color: #333;
+  background: linear-gradient(to bottom, #fff 0%, #f8f9ff 100%);
 }
 
 #exchange-section .card-title {
   color: #132fba;
-  font-weight: 600;
-  font-size: 18px;
-  margin: 0 0 12px 0;
-}
-
-.points-required {
-  color: #666;
-  font-size: 15px;
+  font-weight: 700;
+  font-size: 19px;
   margin: 0 0 16px 0;
+  line-height: 1.4;
+  min-height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  text-align: center;
+}
+
+.points-required {
+  color: #555;
+  font-size: 16px;
+  margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  background: rgba(19, 47, 186, 0.05);
+  border-radius: 10px;
 }
 
 .points-required i {
   color: #ffa500;
-  font-size: 16px;
+  font-size: 18px;
+  filter: drop-shadow(0 2px 4px rgba(255, 165, 0, 0.3));
 }
 
 .points-required b {
   color: #132fba;
   font-weight: 700;
+  font-size: 17px;
 }
 
 /* ===== BUTTONS ===== */

@@ -41,6 +41,7 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
   isLoggedIn: boolean = false;
 
   // ===== DỮ LIỆU VOUCHER & ITEM =====
+  // ✅ FIXED: Chỉ load voucher từ voucher.json, không tự tạo thêm
   vouchers: Voucher[] = (vouchersData as any[]).map(v => ({ ...v, status: v.status || 'Còn hiệu lực' }));
   items: Items[] = itemsData as Items[];
   
@@ -66,13 +67,13 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
   features = [
     {
       icon: 'bi-coin',
-      title: 'Tích điểm dễ dàng',
-      description: '1.000 VNĐ = 1 điểm. Tích điểm mỗi khi sử dụng dịch vụ tại Panacea.'
+      title: 'Tích xu dễ dàng',
+      description: '1.000 VNĐ = 1 Xu. Tích xu mỗi khi sử dụng dịch vụ tại Panacea.'
     },
     {
       icon: 'bi-ticket-perforated',
       title: 'Voucher hấp dẫn',
-      description: 'Đổi voucher giảm giá với mức điểm phù hợp. Từ 10% đến 30% cho các dịch vụ.'
+      description: 'Đổi voucher giảm giá với mức xu phù hợp. Từ 10% đến 30% cho các dịch vụ.'
     },
     {
       icon: 'bi-gift',
@@ -86,37 +87,37 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
       step: 1,
       icon: 'bi-calendar-check',
       title: 'Đặt dịch vụ',
-      description: 'Đặt phòng hoặc dịch vụ tại Panacea và tích điểm tự động.'
+      description: 'Đặt phòng hoặc dịch vụ tại Panacea và tích xu tự động.'
     },
     {
       step: 2,
       icon: 'bi-coin',
-      title: 'Tích lũy điểm',
-      description: 'Mỗi 1.000 VNĐ chi tiêu = 1 điểm Xu. Điểm sẽ được cộng vào tài khoản của bạn.'
+      title: 'Tích lũy xu',
+      description: 'Mỗi 1.000 VNĐ chi tiêu = 1 Xu. Xu sẽ được cộng vào tài khoản của bạn.'
     },
     {
       step: 3,
       icon: 'bi-ticket-perforated',
       title: 'Đổi quà',
-      description: 'Sử dụng điểm Xu để đổi voucher giảm giá hoặc vật phẩm độc quyền.'
+      description: 'Sử dụng Xu để đổi voucher giảm giá hoặc vật phẩm độc quyền.'
     }
   ];
 
 
   faqs = [
     {
-      question: 'Làm thế nào để tích điểm?',
-      answer: 'Bạn tích điểm tự động khi đặt phòng hoặc sử dụng dịch vụ tại Panacea. Mỗi 1.000 VNĐ chi tiêu = 1 điểm Xu.',
+      question: 'Làm thế nào để tích xu?',
+      answer: 'Bạn tích xu tự động khi đặt phòng hoặc sử dụng dịch vụ tại Panacea. Mỗi 1.000 VNĐ chi tiêu = 1 Xu.',
       isOpen: false
     },
     {
-      question: 'Điểm Xu có hết hạn không?',
-      answer: 'Điểm Xu không hết hạn. Bạn có thể tích lũy và sử dụng bất cứ lúc nào.',
+      question: 'Xu có hết hạn không?',
+      answer: 'Xu không hết hạn. Bạn có thể tích lũy và sử dụng bất cứ lúc nào.',
       isOpen: false
     },
     {
-      question: 'Có thể chuyển điểm cho người khác không?',
-      answer: 'Điểm Xu không thể chuyển nhượng. Chỉ có thể sử dụng trong tài khoản của bạn.',
+      question: 'Có thể chuyển xu cho người khác không?',
+      answer: 'Xu không thể chuyển nhượng. Chỉ có thể sử dụng trong tài khoản của bạn.',
       isOpen: false
     },
     {
@@ -148,6 +149,7 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
     
     this.loadUserData();
     this.checkVoucherStatus();
+    // ✅ FIXED: Chỉ hiển thị voucher từ voucher.json, không tự tạo thêm
     this.filteredVouchers = [...this.vouchers];
     this.filteredItems = [...this.items];
     this.applyFilters();
@@ -305,8 +307,8 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
     if (this.userPoints < v.pointsRequired) {
       await Swal.fire({
         icon: 'error',
-        title: 'Không đủ điểm!',
-        text: `Bạn cần thêm ${v.pointsRequired - this.userPoints} điểm để đổi voucher này.`,
+        title: 'Không đủ xu!',
+        text: `Bạn cần thêm ${v.pointsRequired - this.userPoints} xu để đổi voucher này.`,
         confirmButtonColor: '#132fba'
       });
       return;
@@ -317,7 +319,7 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
       title: 'Xác nhận đổi voucher?',
       html: `
         <p>Voucher: <b>${v.type}</b></p>
-        <p>Điểm cần đổi: <b>${v.pointsRequired.toLocaleString()}</b></p>
+        <p>Xu cần đổi: <b>${v.pointsRequired.toLocaleString()}</b></p>
       `,
       showCancelButton: true,
       confirmButtonText: 'Xác nhận',
@@ -334,24 +336,32 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
       this.updateUserCoin(this.userPoints);
     }
     
-    const code = this.generateCode(v.code);
+    // ✅ FIXED: Chỉ hiển thị code gốc từ voucher.json, không thêm số random
+    const code = v.code;
 
     await Swal.fire({
       icon: 'success',
       title: 'Đổi voucher thành công!',
       html: `
         <p>Bạn đã đổi voucher <b>${v.type}</b>.</p>
-        <div style="margin-top:10px;">Mã voucher của bạn:</div>
+        <div style="margin-top:16px;margin-bottom:8px;font-weight:500;color:#333;">Mã voucher của bạn:</div>
         <div style="
-          margin-top:6px;display:inline-flex;align-items:center;gap:8px;
-          background:#0f89f3;color:#fff;padding:8px 12px;border-radius:8px;">
-          <span style="font-weight:700;letter-spacing:.5px;">${code}</span>
+          margin-top:8px;display:inline-flex;align-items:center;gap:10px;
+          background:linear-gradient(135deg, #132fba 0%, #4b6fff 100%);color:#fff;
+          padding:12px 20px;border-radius:12px;box-shadow:0 4px 12px rgba(19,47,186,0.3);">
+          <span style="font-weight:700;letter-spacing:1px;font-size:16px;">${code}</span>
           <button id="copyCodeBtn" style="
-            border:none;border-radius:6px;background:#fff;color:#0f89f3;
-            padding:4px 8px;cursor:pointer;">
-            <i class="bi bi-clipboard"></i>
+            border:none;border-radius:8px;background:rgba(255,255,255,0.2);color:#fff;
+            padding:6px 10px;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;">
+            <i class="bi bi-clipboard" style="font-size:16px;"></i>
           </button>
         </div>
+        <style>
+          #copyCodeBtn:hover {
+            background:rgba(255,255,255,0.3) !important;
+            transform:scale(1.05);
+          }
+        </style>
       `,
       confirmButtonText: 'OK',
       confirmButtonColor: '#132fba',
@@ -376,8 +386,8 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
     if (this.userPoints < item.pointsRequired) {
       await Swal.fire({
         icon: 'error',
-        title: 'Không đủ điểm!',
-        text: `Bạn cần thêm ${item.pointsRequired - this.userPoints} điểm để đổi vật phẩm này.`,
+        title: 'Không đủ xu!',
+        text: `Bạn cần thêm ${item.pointsRequired - this.userPoints} xu để đổi vật phẩm này.`,
         confirmButtonColor: '#132fba'
       });
       return;
@@ -518,7 +528,7 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
       icon: 'question',
       title: 'Xác nhận đổi vật phẩm?',
       html: `<p>Bạn chắc chắn muốn đổi <b>${item.name}</b>?</p>
-       <p>Điểm cần đổi: <b>${item.pointsRequired.toLocaleString()}</b></p>`,
+       <p>Xu cần đổi: <b>${item.pointsRequired.toLocaleString()}</b></p>`,
       showCancelButton: true,
       confirmButtonText: 'Xác nhận',
       cancelButtonText: 'Huỷ',
@@ -553,10 +563,7 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  private generateCode(prefix: string): string {
-    const random = Math.floor(100000 + Math.random() * 900000);
-    return `${prefix}-${random}`;
-  }
+  // ✅ REMOVED: Không cần generate code nữa, chỉ hiển thị code gốc từ voucher.json
 
   handleImageError(event: Event): void {
     const img = event.target as HTMLImageElement;
@@ -668,6 +675,7 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
   }
 
   applyFilters(): void {
+    // ✅ FIXED: Chỉ filter từ voucher có sẵn trong voucher.json, không tự tạo thêm
     let vFiltered = [...this.vouchers];
     
     if (this.searchQuery.trim()) {
@@ -683,6 +691,7 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
     }
     
     vFiltered = this.sortItems(vFiltered, 'voucher');
+    // ✅ FIXED: Chỉ gán filteredVouchers từ voucher có sẵn, không thêm voucher mới
     this.filteredVouchers = vFiltered;
     
     let iFiltered = [...this.items];
