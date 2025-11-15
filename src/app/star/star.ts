@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SEOService } from '../services/seo.service';
 
@@ -9,12 +9,10 @@ import { SEOService } from '../services/seo.service';
   templateUrl: './star.html',
   styleUrl: './star.css',
 })
-export class Star implements OnInit {
+export class Star implements OnInit, AfterViewInit {
   constructor(
     private seoService: SEOService
-  ) {
-    this.initializeAccordion();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.seoService.updateSEO({
@@ -24,6 +22,15 @@ export class Star implements OnInit {
       image: '/assets/images/BACKGROUND.webp'
     });
   }
+
+  ngAfterViewInit(): void {
+    // Sử dụng setTimeout để đảm bảo DOM đã render xong
+    setTimeout(() => {
+      this.setupTabs();
+      this.setupAccordion();
+    }, 100);
+  }
+
   isPopupOpen = false;
 
   openPopup(): void {
@@ -34,34 +41,48 @@ export class Star implements OnInit {
     this.isPopupOpen = false;
   }
 
-  private initializeAccordion() {
-    document.addEventListener('DOMContentLoaded', () => {
-      // Accordion logic: mở nhiều mục, bấm lại để đóng
-      const headers = document.querySelectorAll<HTMLButtonElement>('.accordion-header');
-      headers.forEach(header => {
-        header.addEventListener('click', () => {
-          const item = header.parentElement as HTMLElement;
+  private setupTabs(): void {
+    const tabs = document.querySelectorAll<HTMLButtonElement>('.tab');
+    const panels = document.querySelectorAll<HTMLElement>('.tab-panel');
+
+    tabs.forEach(tab => {
+      tab.onclick = () => {
+        // Xóa active từ tất cả tabs
+        tabs.forEach(t => t.classList.remove('active'));
+        // Thêm active cho tab được click
+        tab.classList.add('active');
+
+        // Ẩn/hiện panels
+        const targetTabId = tab.getAttribute('data-tab');
+        panels.forEach(panel => {
+          if (panel.id === targetTabId) {
+            panel.classList.remove('hidden');
+          } else {
+            panel.classList.add('hidden');
+          }
+        });
+      };
+    });
+  }
+
+  private setupAccordion(): void {
+    // Sử dụng event delegation để xử lý tất cả accordion headers
+    const faqSection = document.querySelector('.faq');
+    if (!faqSection) return;
+
+    faqSection.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const header = target.closest('.accordion-header') as HTMLButtonElement;
+      
+      if (header) {
+        e.preventDefault();
+        e.stopPropagation();
+        const item = header.parentElement as HTMLElement;
+        if (item && item.classList.contains('accordion-item')) {
           item.classList.toggle('active');
-        });
-      });
-
-      // Tabs logic: chuyển đổi giữa các tab
-      const tabs = document.querySelectorAll<HTMLButtonElement>('.tab');
-      const panels = document.querySelectorAll<HTMLElement>('.tab-panel');
-
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          tabs.forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-
-          panels.forEach(panel => {
-            panel.classList.toggle('hidden', panel.id !== tab.dataset['tab']);
-          });
-        });
-      });
+        }
+      }
     });
   }
 
 }
-
-

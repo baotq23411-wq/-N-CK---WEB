@@ -17,6 +17,7 @@ import { Coin } from './coin/coin';
 import { Policy } from './policy/policy';
 import { AboutUsComponent } from './about-us/about-us';
 import { TermsComponent } from './terms/terms';
+import { StoryComponent } from './story/story';
 import { Exchange } from './exchange/exchange';
 import { ExchangeLanding } from './exchange-landing/exchange-landing';
 import { SupportPageComponent } from './support-page/support-page';
@@ -64,7 +65,8 @@ export const routes: Routes = [
   { path: 'support-page', component: SupportPageComponent },
   { path: 'review-room', component: ReviewRoom },
   { path: 'policy', component: Policy },
-  { path: 'about', component: AboutUsComponent },
+  { path: 'about-us', component: AboutUsComponent },
+  { path: 'story', component: StoryComponent },
   { path: 'terms', component: TermsComponent },
   { path: 'admin-dashboard', component: AdminDashboard, canActivate: [adminGuard] },
   { path: 'admin-users', component: AdminUsers, canActivate: [adminGuard] },

@@ -157,29 +157,25 @@
   </div>
 
   <!-- 🔹 Khu vực voucher -->
-  <h2 class="section-title" *ngIf="selectedCategory === 'all' || selectedCategory === 'voucher'">
+  <h2 class="section-title scroll-reveal" *ngIf="selectedCategory === 'all' || selectedCategory === 'voucher'">
     Danh sách Voucher
     <span class="count-badge" *ngIf="filteredVouchers.length !== vouchers.length">
       ({{ filteredVouchers.length }}/{{ vouchers.length }})
     </span>
   </h2>
-  <div class="no-results"
+  <div class="no-results scroll-reveal"
     *ngIf="(selectedCategory === 'all' || selectedCategory === 'voucher') && filteredVouchers.length === 0">
     <i class="bi bi-inbox"></i>
     <p>Không tìm thấy voucher nào</p>
   </div>
   <div class="voucher-grid"
     *ngIf="(selectedCategory === 'all' || selectedCategory === 'voucher') && filteredVouchers.length > 0">
-    <div class="voucher-card" *ngFor="let v of filteredVouchers; let i = index">
+    <div class="voucher-card scroll-reveal" [class.delay-100]="i % 3 === 1" [class.delay-200]="i % 3 === 2"
+      *ngFor="let v of filteredVouchers; let i = index">
       <div class="voucher-image-wrapper">
-        <img [src]="v.img" alt="Voucher" class="voucher-img" (error)="handleImageError($event)" />
-        <div class="image-overlay">
-          <button class="btn-change-image" (click)="changeVoucherImage(getVoucherIndex(v))" title="Thay đổi hình ảnh">
-            <i class="bi bi-image"></i>
-          </button>
-        </div>
-        <input type="file" [id]="'voucher-image-' + getVoucherIndex(v)" accept="image/*" style="display: none;"
-          (change)="onVoucherImageChange($event, getVoucherIndex(v))" />
+        <img [src]="v.img" [alt]="'Hình ảnh ' + v.type + ' - Panacea'" [title]="'Xem ảnh lớn ' + v.type"
+          class="voucher-img" (error)="handleImageError($event)" (click)="openLightbox(v.img, v.type)"
+          style="cursor: pointer;" />
       </div>
       <div class="voucher-body text-center">
         <h4 class="card-title">{{ v.type }}</h4>
@@ -194,29 +190,25 @@
   </div>
 
   <!-- 🔹 Khu vực vật phẩm -->
-  <h2 class="section-title" *ngIf="selectedCategory === 'all' || selectedCategory === 'item'">
+  <h2 class="section-title scroll-reveal" *ngIf="selectedCategory === 'all' || selectedCategory === 'item'">
     Danh sách Vật phẩm
     <span class="count-badge" *ngIf="filteredItems.length !== items.length">
       ({{ filteredItems.length }}/{{ items.length }})
     </span>
   </h2>
-  <div class="no-results"
+  <div class="no-results scroll-reveal"
     *ngIf="(selectedCategory === 'all' || selectedCategory === 'item') && filteredItems.length === 0">
     <i class="bi bi-inbox"></i>
     <p>Không tìm thấy vật phẩm nào</p>
   </div>
   <div class="item-grid"
     *ngIf="(selectedCategory === 'all' || selectedCategory === 'item') && filteredItems.length > 0">
-    <div class="item-card" *ngFor="let i of filteredItems; let idx = index">
+    <div class="item-card scroll-reveal" [class.delay-100]="idx % 3 === 1" [class.delay-200]="idx % 3 === 2"
+      *ngFor="let i of filteredItems; let idx = index">
       <div class="item-image-wrapper">
-        <img [src]="i.img" alt="Item" class="item-img" (error)="handleImageError($event)" />
-        <div class="image-overlay">
-          <button class="btn-change-image" (click)="changeItemImage(getItemIndex(i))" title="Thay đổi hình ảnh">
-            <i class="bi bi-image"></i>
-          </button>
-        </div>
-        <input type="file" [id]="'item-image-' + getItemIndex(i)" accept="image/*" style="display: none;"
-          (change)="onItemImageChange($event, getItemIndex(i))" />
+        <img [src]="i.img" [alt]="'Hình ảnh ' + i.name + ' - Panacea'" [title]="'Xem ảnh lớn ' + i.name"
+          class="item-img" (error)="handleImageError($event)" (click)="openLightbox(i.img, i.name)"
+          style="cursor: pointer;" />
       </div>
       <div class="item-info text-center">
         <h4 class="card-title">{{ i.name }}</h4>
@@ -230,6 +222,17 @@
     </div>
   </div>
 
+</div>
+
+<!-- LIGHTBOX (Xem ảnh phóng to) -->
+<div class="lightbox" *ngIf="lightboxImage" (click)="onLightboxOverlayClick($event)">
+  <div class="lightbox-content" (click)="$event.stopPropagation()">
+    <button class="lightbox-close" (click)="closeLightbox()" title="Đóng (ESC)">
+      <i class="bi bi-x-lg"></i>
+    </button>
+    <img [src]="lightboxImage" [alt]="lightboxTitle" class="lightbox-image" />
+    <div class="lightbox-title" *ngIf="lightboxTitle">{{ lightboxTitle }}</div>
+  </div>
 </div>
 
 <!-- FAQ SECTION -->

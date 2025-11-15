@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, LOCALE_ID } from '@angular/core';
 import { Room } from '../interfaces/room';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { CommonModule, CurrencyPipe, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ServiceDataService } from '../services/service';
 import { ReviewService } from '../services/review';
@@ -12,9 +12,10 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-room-detail',
   standalone: true,
-  imports: [CurrencyPipe, NgIf, NgFor, CommonModule, RouterModule, FormsModule],
+  imports: [NgIf, NgFor, CommonModule, RouterModule, FormsModule],
   templateUrl: './room-detail.html',
   styleUrl: './room-detail.css',
+  providers: [{ provide: LOCALE_ID, useValue: 'vi-VN' }]
 })
 export class RoomDetail implements OnInit, OnDestroy {
   Math = Math;
@@ -127,6 +128,11 @@ export class RoomDetail implements OnInit, OnDestroy {
       const correctSlug = this.slugify(this.room.room_name);
       this.router.navigate(['/room-detail', correctSlug], { replaceUrl: true });
     }
+    
+    // 5️⃣ Gọi dữ liệu đánh giá từ file JSON và localStorage (sau khi room đã được load)
+    if (this.room) {
+      this.loadReviews(this.room.room_id);
+    }
   });
 
   // 3️⃣ Gọi dữ liệu dịch vụ (chuyên gia + thuê thêm)
@@ -137,11 +143,6 @@ export class RoomDetail implements OnInit, OnDestroy {
 
   // 4️⃣ Bắt sự kiện phím tắt (ESC, mũi tên)
   window.addEventListener('keydown', this.handleKeyEvents.bind(this));
-
-  // 5️⃣ Gọi dữ liệu đánh giá từ file JSON và localStorage
-  if (this.room) {
-    this.loadReviews(this.room.room_id);
-  }
 
   this.loadCart(); // 🔹 load giỏ hàng khi mở trang
   

@@ -41,6 +41,7 @@ export class Homepage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('gardensSection') gardensSectionRef!: ElementRef<HTMLElement>;
   @ViewChild('prioritySection') prioritySectionRef!: ElementRef<HTMLElement>;
   @ViewChild('feedbackSection') feedbackSectionRef!: ElementRef<HTMLElement>;
+  @ViewChild('dateInput') dateInputRef!: ElementRef<HTMLInputElement>;
 
   // Flags để track sections đã load
   gardensLoaded = false;
@@ -376,6 +377,23 @@ export class Homepage implements OnInit, AfterViewInit, OnDestroy {
   
   isAllGardensSelected(): boolean {
     return this.selectedGardens.length === this.gardenTags.length;
+  }
+
+  openDatePicker() {
+    // Mở date picker khi click vào icon calendar
+    if (this.dateInputRef?.nativeElement) {
+      const input = this.dateInputRef.nativeElement;
+      // Thử dùng showPicker() nếu có, nếu không thì dùng click()
+      if (input.showPicker) {
+        try {
+          input.showPicker();
+        } catch (error) {
+          input.click();
+        }
+      } else {
+        input.click();
+      }
+    }
   }
 
   onSearch() {

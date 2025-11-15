@@ -76,7 +76,7 @@
                 <div class="col-md-5 room-right">
                     <div class="price-box text-md-end text-center mb-3">
                         <p class="price-label mb-1 fw-semibold text-muted">Giá/phòng/giờ</p>
-                        <p class="room-price mb-0">{{ room.price | currency:'VND' }}</p>
+                        <p class="room-price mb-0">{{ room.price | number:'1.0-0' }} VND</p>
                     </div>
                 </div>
 
@@ -88,9 +88,6 @@
                             </label>
                             <input id="date" type="date" class="form-control date-input border-primary-subtle"
                                 [(ngModel)]="selectedDate" [min]="minDate" (change)="onDateChange()" />
-                            <small class="text-muted d-block mt-1" *ngIf="selectedDate">
-                                <i class="bi bi-calendar3 me-1"></i>{{ formatDateToDDMMYYYY(selectedDate) }}
-                            </small>
                             <small class="text-muted d-block mt-1" *ngIf="selectedDate && isPastDate(selectedDate)"
                                 style="color: #dc3545 !important;">
                                 <i class="bi bi-exclamation-triangle me-1"></i>Không thể chọn ngày trong quá khứ

@@ -22,6 +22,8 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   isSupportDropdownOpen = false;  // support dropdown menu (desktop)
   isMobileSupportDropdownOpen = false;  // support dropdown menu (mobile)
   isPolicyDropdownOpen = false;  // policy dropdown menu (desktop)
+  isAboutDropdownOpen = false;  // about dropdown menu (desktop)
+  isMobileAboutDropdownOpen = false;  // about dropdown menu (mobile)
   isMoreDropdownOpen = false;  // more dropdown menu (tablet)
 
   membership = 'BRONZE PRIORITY';
@@ -97,6 +99,11 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       if (window.innerWidth < 992 && !target.closest('.policy-dropdown')) {
         this.isPolicyDropdownOpen = false;
       }
+      // Đóng about dropdown khi click ra ngoài (chỉ trên mobile/touch)
+      if (window.innerWidth < 992 && !target.closest('.about-dropdown') && !target.closest('.drawer-dropdown-about')) {
+        this.isAboutDropdownOpen = false;
+        this.isMobileAboutDropdownOpen = false;
+      }
       // Đóng more dropdown khi click ra ngoài
       if (!target.closest('.more-dropdown')) {
         this.isMoreDropdownOpen = false;
@@ -108,6 +115,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       if (window.innerWidth < 992) {
         this.isSupportDropdownOpen = false;
         this.isPolicyDropdownOpen = false;
+        this.isAboutDropdownOpen = false;
         this.isMoreDropdownOpen = false;
       }
       // Đóng drawer khi resize từ mobile sang desktop
@@ -355,6 +363,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
   closeMenu(): void {
     this.isOpen = false;
     this.isMobileSupportDropdownOpen = false;
+    this.isMobileAboutDropdownOpen = false;
     
     // Restore body scroll
     document.body.style.overflow = '';
@@ -489,6 +498,31 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
       event.stopPropagation();
     }
     this.isPolicyDropdownOpen = !this.isPolicyDropdownOpen;
+  }
+
+  // ✅ FIXED: About dropdown methods (desktop - hover)
+  openAboutDropdown() {
+    // Chỉ mở trên desktop (màn hình >= 992px)
+    if (window.innerWidth >= 992) {
+      this.isAboutDropdownOpen = true;
+    }
+  }
+
+  closeAboutDropdown() {
+    this.isAboutDropdownOpen = false;
+  }
+
+  toggleAboutDropdown(event?: Event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    this.isAboutDropdownOpen = !this.isAboutDropdownOpen;
+  }
+
+  // ✅ FIXED: About dropdown methods (mobile - tap)
+  toggleMobileAboutDropdown() {
+    this.isMobileAboutDropdownOpen = !this.isMobileAboutDropdownOpen;
   }
 
   // ✅ FIXED: More dropdown methods (tablet)

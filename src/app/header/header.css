@@ -223,12 +223,14 @@ header.scrolled{
 
 .support-dropdown .menu,
 .policy-dropdown .menu,
+.about-dropdown .menu,
 .more-dropdown .menu {
   display: none;
 }
 
 .support-dropdown.open .menu,
 .policy-dropdown.open .menu,
+.about-dropdown.open .menu,
 .more-dropdown.open .menu {
   display: block;
   animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -236,6 +238,7 @@ header.scrolled{
 
 .support-dropdown::after,
 .policy-dropdown::after,
+.about-dropdown::after,
 .more-dropdown::after {
   content: '';
   position: absolute;
@@ -299,6 +302,7 @@ header.scrolled{
 
 .support-dropdown span,
 .policy-dropdown span,
+.about-dropdown span,
 .more-dropdown span {
   position: relative;
   color: #000000; 
@@ -320,6 +324,9 @@ header.scrolled{
 .policy-dropdown:hover span,
 .policy-dropdown.open span,
 .policy-dropdown:focus span,
+.about-dropdown:hover span,
+.about-dropdown.open span,
+.about-dropdown:focus span,
 .more-dropdown:hover span,
 .more-dropdown.open span,
 .more-dropdown:focus span {
@@ -329,6 +336,7 @@ header.scrolled{
 
 .support-dropdown span::after,
 .policy-dropdown span::after,
+.about-dropdown span::after,
 .more-dropdown span::after {
   content:""; 
   position:absolute; 
@@ -348,6 +356,9 @@ header.scrolled{
 .policy-dropdown:hover span::after,
 .policy-dropdown.open span::after,
 .policy-dropdown:focus span::after,
+.about-dropdown:hover span::after,
+.about-dropdown.open span::after,
+.about-dropdown:focus span::after,
 .more-dropdown:hover span::after,
 .more-dropdown.open span::after,
 .more-dropdown:focus span::after {
@@ -367,6 +378,9 @@ header.scrolled{
 .policy-dropdown:hover .dropdown-icon,
 .policy-dropdown.open .dropdown-icon,
 .policy-dropdown:focus .dropdown-icon,
+.about-dropdown:hover .dropdown-icon,
+.about-dropdown.open .dropdown-icon,
+.about-dropdown:focus .dropdown-icon,
 .more-dropdown:hover .dropdown-icon,
 .more-dropdown.open .dropdown-icon,
 .more-dropdown:focus .dropdown-icon {
@@ -381,6 +395,7 @@ header.scrolled{
 
 .support-dropdown:focus span,
 .policy-dropdown:focus span,
+.about-dropdown:focus span,
 .more-dropdown:focus span {
   outline: none;
 }

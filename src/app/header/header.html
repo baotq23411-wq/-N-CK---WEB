@@ -53,14 +53,29 @@
           Chính sách
           <i class="bi bi-chevron-down dropdown-icon" aria-hidden="true"></i>
         </span>
-        <div class="menu" *ngIf="isPolicyDropdownOpen">
-          <a routerLink="/policy" (click)="closePolicyDropdown()">Chính sách hoạt động</a>
-          <a routerLink="/terms" (click)="closePolicyDropdown()">Điều kiện & Điều khoản</a>
+        <div class="menu" role="menu" *ngIf="isPolicyDropdownOpen">
+          <a routerLink="/policy" role="menuitem" aria-label="Chính sách hoạt động"
+            (click)="closePolicyDropdown()">Chính sách hoạt động</a>
+          <a routerLink="/terms" role="menuitem" aria-label="Điều kiện & Điều khoản"
+            (click)="closePolicyDropdown()">Điều kiện & Điều khoản</a>
         </div>
       </div>
 
-      <a routerLink="/about" routerLinkActive="active" [attr.aria-current]="isActiveRoute('/about') ? 'page' : null">Về
-        chúng tôi</a>
+      <div class="dropdown about-dropdown" [class.open]="isAboutDropdownOpen" (mouseenter)="openAboutDropdown()"
+        (mouseleave)="closeAboutDropdown()" tabindex="0" role="button" [attr.aria-haspopup]="true"
+        [attr.aria-expanded]="isAboutDropdownOpen" (keydown.enter)="toggleAboutDropdown($event)"
+        (keydown.space)="toggleAboutDropdown($event)" (keydown.escape)="closeAboutDropdown()">
+        <span>
+          Về chúng tôi
+          <i class="bi bi-chevron-down dropdown-icon" aria-hidden="true"></i>
+        </span>
+        <div class="menu" role="menu" *ngIf="isAboutDropdownOpen">
+          <a routerLink="/about-us" role="menuitem" aria-label="Về Panacea" (click)="closeAboutDropdown()">Về
+            Panacea</a>
+          <a routerLink="/story" role="menuitem" aria-label="Cốt truyện Panacea" (click)="closeAboutDropdown()">Cốt
+            truyện Panacea</a>
+        </div>
+      </div>
 
       <!-- Tablet: More menu (ẩn một vài link khi màn hình nhỏ) -->
       <div class="dropdown more-dropdown d-none d-md-block d-lg-none" [class.open]="isMoreDropdownOpen"
@@ -73,7 +88,8 @@
           <i class="bi bi-chevron-down dropdown-icon" aria-hidden="true"></i>
         </span>
         <div class="menu" role="menu" *ngIf="isMoreDropdownOpen">
-          <a routerLink="/about" role="menuitem" (click)="closeMoreDropdown()">Về chúng tôi</a>
+          <a routerLink="/about-us" role="menuitem" aria-label="Về chúng tôi" (click)="closeMoreDropdown()">Về chúng
+            tôi</a>
         </div>
       </div>
     </nav>
@@ -113,27 +129,12 @@
         <div class="user-drop" [class.open]="isDropdownOpen" (mouseenter)="openDropdown()"
           (mouseleave)="closeDropdownOnLeave($event)">
           <div class="panel">
-            <!-- Profile section với background nâu -->
-            <div class="member-profile {{membershipClass}}">
-              <div class="profile-content">
-                <strong class="profile-name">{{ currentAccount?.ho_ten || 'Username' }}</strong>
-                <div class="membership-info">
-                  <i class="bi bi-award membership-icon" aria-hidden="true"></i>
-                  <small>Bạn là thành viên <b>{{ membership }}</b></small>
-                  <i class="bi bi-chevron-right membership-arrow" aria-hidden="true"></i>
-                </div>
-              </div>
-            </div>
             <!-- Menu items -->
             <div class="menu-items" (click)="$event.stopPropagation()">
               <a class="menu-item" routerLink="/customer-account/account-information"
                 (click)="closeDropdown(); $event.stopPropagation()">
                 <i class="bi bi-person menu-icon" aria-hidden="true"></i>
                 <span>Tài khoản</span>
-              </a>
-              <a class="menu-item" routerLink="/customer-coin" (click)="closeDropdown(); $event.stopPropagation()">
-                <i class="bi bi-coin menu-icon" aria-hidden="true"></i>
-                <span>{{ currentAccount?.diem_kha_dung || 0 }} Xu</span>
               </a>
               <a class="menu-item" routerLink="/customer-star" (click)="closeDropdown(); $event.stopPropagation()">
                 <i class="bi bi-star-fill menu-icon" aria-hidden="true"></i>
@@ -244,11 +245,25 @@
         <span>Điều kiện & Điều khoản</span>
         <i class="bi bi-chevron-right" aria-hidden="true"></i>
       </a>
-      <a routerLink="/about" routerLinkActive="active" [attr.aria-current]="isActiveRoute('/about') ? 'page' : null"
-        (click)="closeMenu()" class="drawer-link">
-        <span>Về chúng tôi</span>
-        <i class="bi bi-chevron-right" aria-hidden="true"></i>
-      </a>
+
+      <!-- ✅ FIXED: Về chúng tôi expandable trên mobile -->
+      <div class="drawer-dropdown drawer-dropdown-about">
+        <button class="drawer-dropdown-toggle" (click)="toggleMobileAboutDropdown()"
+          [attr.aria-expanded]="isMobileAboutDropdownOpen" aria-label="Mở menu Về chúng tôi" type="button">
+          <span>Về chúng tôi</span>
+          <i class="bi bi-chevron-down" [class.rotated]="isMobileAboutDropdownOpen" aria-hidden="true"></i>
+        </button>
+        <div class="drawer-dropdown-menu" *ngIf="isMobileAboutDropdownOpen">
+          <a routerLink="/about-us" (click)="closeMenu()" class="drawer-link drawer-link-sub">
+            <span>Về Panacea</span>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          </a>
+          <a routerLink="/story" (click)="closeMenu()" class="drawer-link drawer-link-sub">
+            <span>Cốt truyện Panacea</span>
+            <i class="bi bi-chevron-right" aria-hidden="true"></i>
+          </a>
+        </div>
+      </div>
     </nav>
 
     <!-- Contact Block -->

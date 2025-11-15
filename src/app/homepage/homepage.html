@@ -64,8 +64,8 @@
           <label class="sb-search-label">Ngày</label>
           <div class="sb-search-field">
             <div class="sb-control">
-              <i class="bi bi-calendar3"></i>
-              <input type="date" class="sb-input" [(ngModel)]="date" />
+              <i class="bi bi-calendar3 calendar-icon" (click)="openDatePicker()" title="Chọn ngày"></i>
+              <input type="date" #dateInput class="sb-input" [(ngModel)]="date" id="date-input" />
             </div>
           </div>
         </div>
@@ -76,7 +76,7 @@
           <div class="sb-search-field">
             <div class="sb-control">
               <i class="bi bi-people"></i>
-              <select class="form-select sb-input" [(ngModel)]="guestCountFilter">
+              <select class="sb-select" [(ngModel)]="guestCountFilter">
                 <option value="">Tất cả</option>
                 <option value="2">1-2 người</option>
                 <option value="5">3-5 người</option>
@@ -397,7 +397,7 @@
 
       <!-- CTA -->
       <div class="priority-button-container">
-        <a routerLink="/priority" class="btn btn-lg rounded-4 btn-join">
+        <a routerLink="/star" class="btn btn-lg rounded-4 btn-join">
           <i class="bi bi-stars"></i> THAM GIA PANACEA PRIORITY
         </a>
       </div>

@@ -5,7 +5,7 @@ import { SEOService } from '../services/seo.service';
 
 type Stat = { label: string; value: string; note?: string };
 type ValueItem = { icon: string; title: string; desc: string };
-type TimelineItem = { year: string; title: string; desc: string };
+type TimelineItem = { month: string; title: string; desc: string };
 
 @Component({
   selector: 'app-about-us',
@@ -21,14 +21,14 @@ export class AboutUsComponent implements OnInit, AfterViewInit, OnDestroy {
   private statsAnimated = false;
 
   stats: Stat[] = [
-    { value: '2,000+', label: 'Khách đã trải nghiệm', note: 'trong năm 2024' },
-    { value: '500+',  label: 'Đánh giá 5★',           note: 'từ cộng đồng' },
-    { value: '30+',   label: 'Hoạt động trị liệu',     note: 'đa dạng & an toàn' },
+    { value: '2.000+', label: 'Khách đã trải nghiệm', note: 'trong năm 2024' },
+    { value: '500+',  label: 'Đánh giá 5 Sao',           note: 'từ cộng đồng' },
+    { value: '20+',   label: 'Hoạt động trị liệu',     note: 'đa dạng & an toàn' },
     { value: '10+',   label: 'Đối tác chuyên gia',     note: 'tâm lý & thiền' },
   ];
 
   // Giá trị số thực tế để đếm
-  statNumbers: number[] = [2000, 500, 30, 10];
+  statNumbers: number[] = [2000, 500, 20, 10];
   // Giá trị hiện tại đang đếm
   currentStatValues: number[] = [0, 0, 0, 0];
 
@@ -38,20 +38,54 @@ export class AboutUsComponent implements OnInit, AfterViewInit, OnDestroy {
     { icon: 'bi-shield-check', title: 'Bảo mật & tôn trọng',   desc: 'Tôn trọng quyền riêng tư và đa dạng sắc thái cảm xúc.' },
   ];
 
+  coreValues: ValueItem[] = [
+    { icon: 'bi-sun', title: 'Khách hàng là tâm điểm', desc: 'Chúng tôi luôn tận tâm, chu đáo và xây dựng niềm tin lâu dài.' },
+    { icon: 'bi-sun', title: 'Uy tín – Rõ ràng', desc: 'Chúng tôi cam kết dịch vụ chất lượng, an toàn và minh bạch trong mọi quy trình.' },
+    { icon: 'bi-sun', title: 'Đa dạng dịch vụ', desc: 'Chúng tôi đáp ứng nhu cầu đa dạng và luôn lắng nghe phản hồi để nâng cao chất lượng.' },
+    { icon: 'bi-sun', title: 'Giá cả hợp lý', desc: 'Cung cấp mức giá phù hợp với nhiều phân khúc khách hàng' },
+  ];
+
   timeline: TimelineItem[] = [
-    { year: '2022', title: 'Khởi nguồn ý tưởng',   desc: 'Cân bằng giữa giải trí và chữa lành.' },
-    { year: '2023', title: 'Mở rộng hoạt động',    desc: 'Thử nghiệm các hoạt động mindful, nhận phản hồi tích cực.' },
-    { year: '2024', title: 'Chuẩn hoá trải nghiệm',desc: 'Đo lường hiệu quả cho từng nhóm khách.' },
-    { year: '2025', title: 'Hệ sinh thái Panacea', desc: 'Kết nối chuyên gia & cộng đồng, dịch vụ cá nhân hoá.' },
+    { 
+      month: 'Tháng 10/2024', 
+      title: 'Hạt mầm ý tưởng', 
+      desc: 'Panacea ra đời từ sự thấu cảm với áp lực và kiệt sức mà người trẻ đang đối mặt. Chúng tôi nhận thấy nhu cầu về một nền tảng công nghệ đáng tin cậy, giúp kết nối các dịch vụ "chữa lành" vốn đang rời rạc tại Việt Nam.' 
+    },
+    { 
+      month: 'Tháng 11/2024', 
+      title: 'Tìm thấy Panacea', 
+      desc: 'Cái tên "Panacea" (Người chữa lành tất cả) được chọn để thể hiện sứ mệnh của dự án. Slogan "a medicine from the stars" cũng ra đời, định vị Panacea là một liều thuốc tinh thần đến từ vũ trụ.' 
+    },
+    { 
+      month: 'Tháng 01/2025', 
+      title: 'Kiến tạo Bốn Khu Vườn', 
+      desc: 'Từ câu chuyện của Linh, chúng tôi hệ thống hóa trải nghiệm thành "Bốn Khu vườn" (An Nhiên, Tâm Hồn, Cảm Hứng, Cách Mạng). Đây là bước ngoặt biến một ý tưởng trừu tượng thành một mô hình dịch vụ rõ ràng, đáp ứng đa dạng nhu cầu cảm xúc.' 
+    },
+    { 
+      month: 'Tháng 02/2025', 
+      title: 'Định hình nhận diện', 
+      desc: 'Bộ nhận diện thương hiệu được hoàn thiện với logo tối giản, hiện đại và hình ảnh ngôi sao cách điệu. Bảng màu chủ đạo (Xanh, Be, Trắng) được lựa chọn kỹ lưỡng để xoa dịu tâm hồn và giảm gánh nặng thị lực cho người dùng.' 
+    },
+    { 
+      month: 'Tháng 03/2025', 
+      title: 'Phác thảo bản vẽ công nghệ', 
+      desc: 'Chúng tôi bắt đầu biến ý tưởng thành trải nghiệm số bằng cách vạch ra chi tiết Hành trình khách hàng (Customer Journey) và các Quy trình nghiệp vụ (BPMN). Những bản thiết kế (prototype) đầu tiên trên Figma ra đời, đặt nền móng kỹ thuật cho website.' 
+    },
+    { 
+      month: 'Hiện tại', 
+      title: 'Sẵn sàng cho hành trình mới', 
+      desc: 'Sau nhiều tháng tinh chỉnh chiến lược và thiết kế, nền tảng Panacea đang trong giai đoạn hoàn thiện. Chúng tôi tự hào về hành trình đã qua và sẵn sàng mang "vũ trụ chữa lành" này đến gần hơn với cộng đồng.' 
+    },
   ];
 
   partners = ['MoMo','ACB','HSBC','Vietcombank','MB','Citibank','VietinBank','TPBank','BIDV'];
 
   team = [
-    { name: 'Member 01', role: 'Founder / Facilitator', avatar: 'assets/images/SUBLOGO.webp' },
-    { name: 'Member 02', role: 'Experience Designer', avatar: 'assets/images/SUBLOGO.webp' },
-    { name: 'Member 03', role: 'Therapy Coordinator', avatar: 'assets/images/SUBLOGO.webp' },
-    { name: 'Member 04', role: 'Community Lead', avatar: 'assets/images/SUBLOGO.webp' },
+    { name: 'Phan Hồng Ngọc', role: 'Project Lead & Strategist', avatar: 'assets/images/hongngoc.webp' },
+    { name: 'Trương Quốc Bảo', role: 'Business Analyst', avatar: 'assets/images/quocbao.webp' },
+    { name: 'Lương Hoàng Thái', role: 'UI/UX & Concept Designer', avatar: 'assets/images/SUBLOGO.webp' },
+    { name: 'Huỳnh Văn Vũ', role: 'Front-end Developer - Angular', avatar: 'assets/images/vanvu.webp' },
+    { name: 'Lâm Thùy Dung', role: 'Database & Integration Developer', avatar: 'assets/images/SUBLOGO.webp' },
   ];
 
   constructor(
@@ -182,10 +216,10 @@ export class AboutUsComponent implements OnInit, AfterViewInit, OnDestroy {
     requestAnimationFrame(animate);
   }
 
-  // Hàm format số để hiển thị (thêm dấu phẩy và dấu +)
+  // Hàm format số để hiển thị (thêm dấu chấm và dấu +)
   formatStatValue(index: number): string {
     const value = this.currentStatValues[index];
-    const formatted = value.toLocaleString('vi-VN');
+    const formatted = value.toLocaleString('vi-VN', { useGrouping: true }).replace(/,/g, '.');
     return formatted + '+';
   }
 }

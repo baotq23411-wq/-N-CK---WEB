@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -53,6 +53,10 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
   pointsFilter: string = 'all';
   filteredVouchers: Voucher[] = [];
   filteredItems: Items[] = [];
+  
+  // ===== LIGHTBOX (Xem ảnh phóng to) =====
+  lightboxImage: string | null = null;
+  lightboxTitle: string = '';
 
   // ===== DANH SÁCH TỈNH & HUYỆN =====
   provinces = [
@@ -190,6 +194,10 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private setupScrollReveal(): void {
+    // Xóa các observer cũ trước khi tạo mới (tránh duplicate)
+    this.observers.forEach(observer => observer.disconnect());
+    this.observers = [];
+    
     const options = {
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px'
@@ -205,8 +213,8 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
       });
     }, options);
 
-    // Tìm tất cả các elements cần animate
-    const elementsToReveal = document.querySelectorAll('.scroll-reveal');
+    // Tìm tất cả các elements cần animate (chỉ observe những element chưa được revealed)
+    const elementsToReveal = document.querySelectorAll('.scroll-reveal:not(.revealed)');
     elementsToReveal.forEach(el => {
       observer.observe(el);
     });
@@ -570,108 +578,32 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
     img.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2YwZjBmMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
   }
 
-  changeVoucherImage(index: number): void {
-    const fileInput = document.getElementById(`voucher-image-${index}`) as HTMLInputElement;
-    if (fileInput) {
-      fileInput.click();
+  // ===== LIGHTBOX (Xem ảnh phóng to) =====
+  openLightbox(imageSrc: string, title: string): void {
+    this.lightboxImage = imageSrc;
+    this.lightboxTitle = title;
+    document.body.style.overflow = 'hidden'; // Ngăn scroll khi lightbox mở
+  }
+
+  closeLightbox(): void {
+    this.lightboxImage = null;
+    this.lightboxTitle = '';
+    document.body.style.overflow = ''; // Khôi phục scroll
+  }
+
+  // Đóng lightbox khi click vào overlay (ngoài ảnh)
+  onLightboxOverlayClick(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.closeLightbox();
     }
   }
 
-  changeItemImage(index: number): void {
-    const fileInput = document.getElementById(`item-image-${index}`) as HTMLInputElement;
-    if (fileInput) {
-      fileInput.click();
+  // Đóng lightbox khi nhấn phím ESC
+  @HostListener('document:keydown', ['$event'])
+  onEscapeKey(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && this.lightboxImage) {
+      this.closeLightbox();
     }
-  }
-
-  onVoucherImageChange(event: Event, index: number): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi',
-        text: 'Vui lòng chọn file ảnh hợp lệ!',
-        confirmButtonColor: '#132fba'
-      });
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi',
-        text: 'Kích thước ảnh không được vượt quá 5MB!',
-        confirmButtonColor: '#132fba'
-      });
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      if (result && this.vouchers[index]) {
-        this.vouchers[index].img = result;
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'Thành công!',
-          text: 'Đã thay đổi hình ảnh voucher',
-          confirmButtonColor: '#132fba',
-          timer: 1500,
-          showConfirmButton: false
-        });
-      }
-    };
-    reader.readAsDataURL(file);
-  }
-
-  onItemImageChange(event: Event, index: number): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi',
-        text: 'Vui lòng chọn file ảnh hợp lệ!',
-        confirmButtonColor: '#132fba'
-      });
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi',
-        text: 'Kích thước ảnh không được vượt quá 5MB!',
-        confirmButtonColor: '#132fba'
-      });
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      if (result && this.items[index]) {
-        this.items[index].img = result;
-        
-        Swal.fire({
-          icon: 'success',
-          title: 'Thành công!',
-          text: 'Đã thay đổi hình ảnh vật phẩm',
-          confirmButtonColor: '#132fba',
-          timer: 1500,
-          showConfirmButton: false
-        });
-      }
-    };
-    reader.readAsDataURL(file);
   }
 
   applyFilters(): void {
@@ -709,6 +641,11 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
     
     iFiltered = this.sortItems(iFiltered, 'item');
     this.filteredItems = iFiltered;
+    
+    // ✅ Setup lại scroll reveal cho các card mới sau khi filter
+    setTimeout(() => {
+      this.setupScrollReveal();
+    }, 100);
   }
 
   private matchesPointsFilter(points: number): boolean {
@@ -787,14 +724,6 @@ export class ExchangeLanding implements OnInit, OnDestroy, AfterViewInit {
     this.nameSort = 'none';
     this.pointsFilter = 'all';
     this.applyFilters();
-  }
-
-  getVoucherIndex(voucher: Voucher): number {
-    return this.vouchers.findIndex(v => v.code === voucher.code);
-  }
-
-  getItemIndex(item: Items): number {
-    return this.items.findIndex(i => i.id === item.id);
   }
 }
 

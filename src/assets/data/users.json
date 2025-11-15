@@ -7,8 +7,21 @@
     "gender": "male",
     "birthdate": "01-01-1990",
     "city": "Hà Nội",
-    "coin": 120,
-    "star": 58,
+    "coin": null,
+    "star": null,
+    "password": "123456",
+    "role": "admin"
+  },
+  {
+    "user_id": "US07",
+    "email": "vanvuhuynh@gmail.com",
+    "phone_number": "0123456789",
+    "full_name": "Huỳnh Văn Vũ",
+    "gender": "male",
+    "birthdate": "01-01-1990",
+    "city": "Hà Nội",
+    "coin": null,
+    "star": null,
     "password": "123456",
     "role": "admin"
   },
