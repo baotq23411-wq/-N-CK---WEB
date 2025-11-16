@@ -1,7 +1,8 @@
 <section>
     <div class="p-3">
         <a href="">
-            <img src="../../assets/images/title.png" alt="Panacea Logo" height="100" />
+            <img src="../../assets/images/TITLE.webp" alt="Logo Panacea - A medicine from the stars" 
+              title="Logo Panacea - A medicine from the stars - Không gian trị liệu và chữa lành tâm hồn" height="100" />
         </a>
     </div>
     <div class="container">
@@ -18,7 +19,7 @@
                         <div class="mb-3 form-group">
                             <label for="phone" class="form-label">Số điện thoại</label>
                             <input type="text" id="phone" name="phone" class="form-control" placeholder="+84123456789"
-                                formControlName="phone_number" (input)="formatPhoneNumber()" />
+                                formControlName="phone_number" (blur)="formatPhoneNumber()" />
                             <small
                                 *ngIf="registerForm.get('phone_number')?.touched && registerForm.get('phone_number')?.errors?.['required']">
                                 Vui lòng nhập số điện thoại.
@@ -94,8 +95,8 @@
                     </form>
                     <div class="bottom text-center">
                         Bằng cách đăng ký, bạn đồng ý với
-                        <a href="#">Điều khoản &amp; Điều kiện</a> của chúng tôi và bạn đã
-                        đọc <a href="#">Chính Sách Quyền Riêng Tư</a> của chúng tôi.
+                        <a routerLink="/policy/termsofuse">Điều khoản &amp; Điều kiện</a> của chúng tôi và bạn đã
+                        đọc <a routerLink="/policy/privacy">Chính Sách Quyền Riêng Tư</a> của chúng tôi.
                     </div>
                 </div>
             </div>

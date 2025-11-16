@@ -24,6 +24,24 @@
   color: #fff;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.cursor-pointer:hover {
+  opacity: 0.8;
+}
+
+.cursor-pointer:hover .step-circle {
+  background: #132fba;
+  color: #fff;
+}
+
+.cursor-pointer:hover .small {
+  color: #132fba !important;
+}
+
 /* ================== QR CONTAINER ================== */
 .qr-container {
   background-color: transparent; /* bỏ nền để 2 box nổi bật */

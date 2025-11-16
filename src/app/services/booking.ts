@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { Room } from '../interfaces/room';
-import { AddServiceGroup, AddServiceItem } from '../interfaces/addservice';
+import { ServiceGroup, ServiceItem } from '../interfaces/service';
 import { Voucher } from '../interfaces/voucher';
 import { Booking } from '../interfaces/booking';
 
@@ -11,20 +11,19 @@ export class BookingService {
   private ROOM_URL = 'assets/data/room.json';
   private ADD_SERVICE_URL = 'assets/data/addservice.json';
   private VOUCHER_URL = 'assets/data/voucher.json';
-  private BOOKINGS_URL = 'assets/data/bookings.json'; // ✅ đúng tên file
+  private BOOKINGS_URL = 'assets/data/bookings.json';
 
   constructor(private http: HttpClient) { }
 
-  // ======= LẤY DỮ LIỆU JSON =======
   getRooms(): Observable<Room[]> {
     return this.http.get<Room[]>(this.ROOM_URL);
   }
 
-  getAddServiceGroups(): Observable<AddServiceGroup[]> {
-    return this.http.get<AddServiceGroup[]>(this.ADD_SERVICE_URL);
+  getAddServiceGroups(): Observable<ServiceGroup[]> {
+    return this.http.get<ServiceGroup[]>(this.ADD_SERVICE_URL);
   }
 
-  getServicesByRoom(roomId: string): Observable<AddServiceItem[]> {
+  getServicesByRoom(roomId: string): Observable<ServiceItem[]> {
     return this.getAddServiceGroups().pipe(
       map(groups => groups.find(g => g.roomId.toString() === roomId)?.services ?? [])
     );
@@ -38,10 +37,9 @@ export class BookingService {
     return this.http.get<Booking[]>(this.BOOKINGS_URL);
   }
 
-  // ======= TÍNH GIÁ & TÍNH ĐIỂM =======
   calculateTotal(
     roomPrice: number,
-    selectedServices: AddServiceItem[],
+    selectedServices: ServiceItem[],
     discountValue = 0
   ): { originalPrice: number; totalPrice: number; rewardPoints: number } {
     const servicesTotal = selectedServices.reduce(
@@ -54,7 +52,6 @@ export class BookingService {
     return { originalPrice, totalPrice: total, rewardPoints };
   }
 
-  // ======= ÁP DỤNG MÃ GIẢM GIÁ =======
   applyVoucher(
     voucherCode: string | undefined,
     originalPrice: number,
@@ -84,15 +81,14 @@ export class BookingService {
     return { discountValue: discount, message: `✅ Giảm ${discount.toLocaleString()}đ` };
   }
 
-  // ======= TẠO ĐƠN ĐẶT PHÒNG =======
   buildBooking(d: {
     room: Room;
-    services: AddServiceItem[];
+    services: ServiceItem[];
     range: string;
-    startTime: string;       // mm:hh dd/MM/yyyy
-    endTime: string;         // mm:hh dd/MM/yyyy
-    checkInTime: string;     // mm:hh dd/MM/yyyy
-    checkOutTime: string;    // mm:hh dd/MM/yyyy
+    startTime: string;
+    endTime: string;
+    checkInTime: string;
+    checkOutTime: string;
     customerName: string;
     customerPhone: string;
     customerEmail: string;
@@ -109,7 +105,7 @@ export class BookingService {
 
     const booking: Booking = {
       id: this.generateBookingId(),
-      roomId: d.room.roomId,
+      roomId: String((d.room as any).room_id ?? ''),
       room: d.room,
       range: d.range,
       services: d.services,
@@ -130,7 +126,6 @@ export class BookingService {
     return booking;
   }
 
-  // ======= LOCAL STORAGE =======
   saveBookingLocal(b: Booking): void {
     const key = 'bookings';
     const curr = this.getLocalBookings();

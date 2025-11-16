@@ -8,13 +8,50 @@
 .room-tabs {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 2rem;
   border-bottom: 1px solid #ddd;
   background: white;
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 2rem;
+}
+
+/* 🟩 ADDED: Nút quay lại (icon trong hình tròn) */
+.room-tabs .back-button {
+  position: absolute;
+  left: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #132fba;
+  background-color: #fff;
+  color: #132fba;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(19, 47, 186, 0.15);
+}
+
+.room-tabs .back-button:hover {
+  background-color: #132fba;
+  color: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(19, 47, 186, 0.3);
+}
+
+.room-tabs .back-button:active {
+  transform: scale(0.95);
+}
+
+.room-tabs .back-button i {
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 .room-tabs .tab {
@@ -237,19 +274,162 @@
   color: #0039a6;
   font-weight: 600;
   font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.booking-form label i {
+  color: #132fba;
+  font-size: 0.9rem;
 }
 .booking-form input,
 .booking-form select {
   border: 1.5px solid #d4dcf7;
   border-radius: 8px;
   font-size: 0.95rem;
-  padding: 0.45rem 0.6rem;
+  padding: 0.6rem 0.75rem;
   transition: all 0.25s ease;
+  background-color: #fff;
+  color: #333;
+  font-weight: 500;
 }
 .booking-form input:focus,
 .booking-form select:focus {
   border-color: #132fba;
-  box-shadow: 0 0 6px rgba(19, 47, 186, 0.25);
+  box-shadow: 0 0 8px rgba(19, 47, 186, 0.3);
+  outline: none;
+  background-color: #f9fbff;
+}
+.booking-form input:hover,
+.booking-form select:hover {
+  border-color: #a5b8ff;
+  background-color: #f9fbff;
+}
+
+/* ✅ FIXED: CSS đẹp hơn cho date input */
+.booking-form .date-input {
+  position: relative;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23132fba' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 18px;
+  padding-right: 2.5rem;
+}
+
+.booking-form .date-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+  position: absolute;
+  right: 0.75rem;
+  width: 20px;
+  height: 20px;
+}
+
+/* ✅ FIXED: CSS đẹp hơn cho calendar popup/dropdown */
+.booking-form .date-input::-webkit-datetime-edit {
+  color: #333;
+  font-weight: 500;
+  padding: 0;
+}
+
+.booking-form .date-input::-webkit-datetime-edit-fields-wrapper {
+  padding: 0;
+}
+
+.booking-form .date-input::-webkit-datetime-edit-text {
+  color: #666;
+  padding: 0 2px;
+}
+
+.booking-form .date-input::-webkit-datetime-edit-month-field,
+.booking-form .date-input::-webkit-datetime-edit-day-field,
+.booking-form .date-input::-webkit-datetime-edit-year-field {
+  color: #333;
+  padding: 0 2px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.booking-form .date-input::-webkit-datetime-edit-month-field:focus,
+.booking-form .date-input::-webkit-datetime-edit-day-field:focus,
+.booking-form .date-input::-webkit-datetime-edit-year-field:focus {
+  background-color: #eaf1ff;
+  color: #132fba;
+  outline: none;
+}
+
+/* ✅ FIXED: Style cho calendar popup khi mở (Chrome/Edge) */
+.booking-form .date-input[type="date"] {
+  color-scheme: light;
+}
+
+/* ✅ FIXED: Tùy chỉnh màu sắc cho calendar popup */
+@supports (-webkit-appearance: none) {
+  .booking-form .date-input {
+    color-scheme: light;
+  }
+}
+
+/* ✅ FIXED: Style cho disabled dates trong calendar (ngày quá khứ) */
+.booking-form .date-input:invalid {
+  color: #999;
+}
+
+/* ✅ FIXED: CSS cho calendar popup - sử dụng shadow DOM styling */
+.booking-form .date-input::-webkit-calendar-picker-indicator:hover {
+  background-color: rgba(19, 47, 186, 0.1);
+  border-radius: 4px;
+}
+
+/* ✅ FIXED: Responsive cho date input */
+@media (max-width: 768px) {
+  .booking-form .date-input {
+    font-size: 0.9rem;
+    padding: 0.55rem 0.65rem;
+    padding-right: 2.3rem;
+  }
+  
+  .booking-form .date-input::-webkit-calendar-picker-indicator {
+    right: 0.65rem;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* ✅ FIXED: CSS đẹp hơn cho time select */
+.booking-form .time-select {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23132fba' viewBox='0 0 16 16'%3E%3Cpath d='M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z'/%3E%3Cpath d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 18px;
+  padding-right: 2.5rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
+.booking-form .time-select option {
+  padding: 0.75rem;
+  background-color: #fff;
+  color: #333;
+}
+
+.booking-form .time-select option:hover {
+  background-color: #f9fbff;
+}
+
+.booking-form small {
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.booking-form small i {
+  font-size: 0.7rem;
+  margin-right: 0.25rem;
 }
 
 /* Buttons – FULL WIDTH */
@@ -317,6 +497,7 @@
   text-align: justify;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -701,19 +882,22 @@
   transform: translateY(-2px);
 }
 
-.service-item input[type="checkbox"] {
+.service-item input[type="checkbox"],
+.service-item .form-check-input {
   margin-top: 6px;
   accent-color: #132fba;
   width: 18px;
   height: 18px;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .service-content {
   flex: 1;
 }
 
-.service-content h4 {
+.service-content h4,
+.service-content .fw-semibold {
   margin: 0;
   color: #001a41;
   font-size: 1rem;
@@ -730,11 +914,12 @@
 .service-right {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Giúp giá + nút nằm chính giữa */
-  justify-content: center;
+  align-items: flex-end;
+  justify-content: flex-start;
   gap: 0.5rem;
-  min-width: 130px;
-  text-align: center;
+  min-width: 140px;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 .service-price {

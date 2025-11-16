@@ -1,7 +1,8 @@
 <section>
     <div class="p-4">
         <a href="">
-            <img src="../../assets/images/title.png" alt="Panacea Logo" height="100" />
+            <img src="../../assets/images/TITLE.webp" alt="Logo Panacea - A medicine from the stars" 
+              title="Logo Panacea - A medicine from the stars - Không gian trị liệu và chữa lành tâm hồn" height="100" />
         </a>
     </div>
     <div class="container">
@@ -47,15 +48,16 @@
                             <span>Chưa có tài khoản? | </span>
                             <a href="/register">Đăng ký ngay!</a>
                         </div>
-                        <button type="submit" class="btn btn-lg rounded-4 d-block mx-auto px-4 mb-3">
-                            Đăng nhập
+                        <button type="submit" class="btn btn-lg rounded-4 d-block mx-auto px-4 mb-3" [disabled]="isLoading">
+                            <span *ngIf="!isLoading">Đăng nhập</span>
+                            <span *ngIf="isLoading">Đang xử lý...</span>
                         </button>
                     </form>
                     <div class="bottom text-center">
                         Bằng cách đăng nhập, bạn đồng ý với
-                        <a href="/term-condition">Điều khoản &amp; Điều kiện</a> của chúng
+                        <a routerLink="/policy/termsofuse">Điều khoản &amp; Điều kiện</a> của chúng
                         tôi và bạn đã đọc
-                        <a href="/policy">Chính Sách Quyền Riêng Tư</a> của chúng tôi.
+                        <a routerLink="/policy/privacy">Chính Sách Quyền Riêng Tư</a> của chúng tôi.
                     </div>
                 </div>
             </div>

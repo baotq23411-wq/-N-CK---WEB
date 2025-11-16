@@ -4,14 +4,16 @@ import {
   FormGroup,
   Validators,
   AbstractControl,
+  FormsModule,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { catchError, EMPTY } from 'rxjs';
 import { UserService } from '../services/user';
+import { SEOService } from '../services/seo.service';
 
 // Custom validator để so sánh mật khẩu
 export function MustMatch(controlName: string, matchingControlName: string) {
@@ -36,7 +38,7 @@ export function MustMatch(controlName: string, matchingControlName: string) {
 @Component({
   selector: 'app-register-page',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule],
   templateUrl: './register-page.html',
   styleUrls: ['./register-page.css'],
 })
@@ -47,10 +49,21 @@ export class RegisterPageComponent implements OnInit {
     private fb: FormBuilder,
     private http: HttpClient,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private seoService: SEOService
   ) { }
 
   ngOnInit() {
+    // SEO
+    this.seoService.updateSEO({
+      title: 'Đăng Ký Tài Khoản - Panacea',
+      description: 'Đăng ký tài khoản Panacea ngay hôm nay để nhận voucher chào mừng -10% và bắt đầu hành trình chữa lành tâm hồn.',
+      keywords: 'Đăng ký Panacea, tạo tài khoản Panacea, đăng ký thành viên Panacea',
+      robots: 'noindex, nofollow'
+    });
+    
+    window.scrollTo(0, 0);
+    
     this.registerForm = this.fb.group(
       {
         full_name: [
@@ -83,7 +96,7 @@ export class RegisterPageComponent implements OnInit {
   formatPhoneNumber() {
     let phoneControl = this.registerForm.get('phone_number');
     if (!phoneControl) return;
-    let phoneValue = phoneControl.value;
+    let phoneValue = phoneControl.value || '';
     phoneValue = phoneValue.replace(/[^0-9+]/g, '');
     if (phoneValue.startsWith('0') && phoneValue.length === 10) {
       phoneValue = '+84' + phoneValue.substring(1);
@@ -110,9 +123,12 @@ export class RegisterPageComponent implements OnInit {
       this.registerForm.markAllAsTouched();
       return;
     }
+    
+    // Đảm bảo form luôn có thể nhập
+    this.registerForm.enable();
+    
     const formData = this.registerForm.value;
-    const payload = {
-      id: 1,
+    const payload: Partial<any> = {
       full_name: formData.full_name,
       email: formData.email,
       phone_number: formData.phone_number,
@@ -123,6 +139,9 @@ export class RegisterPageComponent implements OnInit {
       .register(payload)
       .pipe(
         catchError((error) => {
+          // Đảm bảo form có thể nhập lại khi có lỗi
+          this.registerForm.enable();
+          
           let errorMessage = '';
           if (error.errors) {
             // Nếu có object errors từ backend
@@ -189,6 +208,7 @@ export class RegisterPageComponent implements OnInit {
       )
       .subscribe({
         next: (response: any) => {
+          this.registerForm.enable();
           Swal.fire({
             title: 'Đăng ký thành công!',
             text: 'Bạn sẽ được chuyển hướng để đăng nhập.',
@@ -199,6 +219,7 @@ export class RegisterPageComponent implements OnInit {
           });
         },
         error: () => {
+          this.registerForm.enable();
           // Không log lỗi ra console
         },
       });

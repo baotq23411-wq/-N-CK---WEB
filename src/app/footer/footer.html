@@ -1,0 +1,97 @@
+<footer class="footer">
+  <div class="container">
+    <div class="row footer-row">
+      <div class="col-md-4 footer-col text-center text-md-start">
+        <img src="assets/images/MAIN LOGO.webp" alt="Logo Panacea - A medicine from the stars"
+          title="Logo Panacea - Không gian trị liệu và chữa lành tâm hồn" class="brand-logo">
+
+        <div class="cert-logos">
+          <a href="" target="_blank" rel="noopener noreferrer" class="cert-logo">
+            <img src="assets/images/BCT.webp" alt="Logo Bộ Công Thương - Giấy chứng nhận đăng ký kinh doanh Panacea"
+              title="Logo Bộ Công Thương - Giấy chứng nhận đăng ký kinh doanh Panacea" class="cert-img">
+          </a>
+        </div>
+      </div>
+
+      <div class="col-md-4 footer-col text-center text-md-start">
+        <h5>Về Panacea</h5>
+        <ul class="list-unstyled mt-3">
+          <li><a routerLink="/about/about-us">Giới thiệu</a></li>
+          <li><a routerLink="/support/blog">Blog</a></li>
+          <li><a routerLink="/support/reviews">Đánh giá</a></li>
+          <li><a routerLink="/support/center">Trung tâm hỗ trợ</a></li>
+          <li><a routerLink="/about/contact">Liên hệ</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-4 footer-col text-center text-md-start">
+        <h5>Chính sách</h5>
+        <ul class="list-unstyled mt-3">
+          <li><a routerLink="/policy/operating">Chính sách hoạt động</a></li>
+          <li><a routerLink="/policy/termsofuse">Điều kiện &amp; Điều khoản</a></li>
+          <li><a routerLink="/policy/privacy">Chính sách quyền riêng tư</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row footer-row mt-3">
+      <div class="col-lg-6 footer-col">
+        <h5>Đối tác thanh toán</h5>
+        <div class="pay-grid">
+          <div class="pay"><img src="assets/images/MoMo_Logo.webp" alt="Logo MoMo - Ví điện tử MoMo"
+              title="Logo MoMo - Đối tác thanh toán ví điện tử MoMo"></div>
+          <div class="pay"><img src="assets/images/5ACB.webp" alt="Logo ACB - Ngân hàng Á Châu"
+              title="Logo ACB - Đối tác thanh toán Ngân hàng Á Châu"></div>
+          <div class="pay"><img src="assets/images/6HSBC.webp" alt="Logo HSBC - Ngân hàng HSBC"
+              title="Logo HSBC - Đối tác thanh toán Ngân hàng HSBC"></div>
+          <div class="pay"><img src="assets/images/7Vietcombank.webp"
+              alt="Logo Vietcombank - Ngân hàng Ngoại thương Việt Nam"
+              title="Logo Vietcombank - Đối tác thanh toán Ngân hàng Ngoại thương Việt Nam"></div>
+          <div class="pay"><img src="assets/images/8MBbank.webp" alt="Logo MB Bank - Ngân hàng Quân đội"
+              title="Logo MB Bank - Đối tác thanh toán Ngân hàng Quân đội"></div>
+          <div class="pay"><img src="assets/images/9Citibank.webp" alt="Logo Citibank - Ngân hàng Citibank"
+              title="Logo Citibank - Đối tác thanh toán Ngân hàng Citibank"></div>
+          <div class="pay"><img src="assets/images/10VietinBank.webp"
+              alt="Logo VietinBank - Ngân hàng Công thương Việt Nam"
+              title="Logo VietinBank - Đối tác thanh toán Ngân hàng Công thương Việt Nam"></div>
+          <div class="pay"><img src="assets/images/11TPbank.webp" alt="Logo TPBank - Ngân hàng Tiên Phong"
+              title="Logo TPBank - Đối tác thanh toán Ngân hàng Tiên Phong"></div>
+          <div class="pay"><img src="assets/images/12BIDV.webp"
+              alt="Logo BIDV - Ngân hàng Đầu tư và Phát triển Việt Nam"
+              title="Logo BIDV - Đối tác thanh toán Ngân hàng Đầu tư và Phát triển Việt Nam"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-3 footer-col">
+        <h5>Theo dõi chúng tôi</h5>
+        <ul class="social list-unstyled mt-3">
+          <li><a href="#"><i class="bi bi-facebook"></i> Facebook</a></li>
+          <li><a href="#"><i class="bi bi-instagram"></i> Instagram</a></li>
+          <li><a href="#"><i class="bi bi-tiktok"></i> TikTok</a></li>
+          <li><a href="#"><i class="bi bi-youtube"></i> YouTube</a></li>
+          <li><a href="#"><i class="bi bi-telegram"></i> Telegram</a></li>
+        </ul>
+      </div>
+
+      <div class="col-lg-3 footer-col">
+        <h5>Liên hệ</h5>
+        <ul class="list-unstyled mt-3 contact">
+          <li><i class="bi bi-telephone"></i> Hotline: +84 123 456 789</li>
+          <li><i class="bi bi-envelope"></i> Email: support@panacea.vn</li>
+          <li><i class="bi bi-geo-alt"></i> 60 Hai Bà Trưng, Bến Nghé, Quận 1, TP.HCM</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="bottom text-center">
+      <p class="company">Công ty TNHH Panacea Việt Nam — Tòa nhà An Phú, 117-119 Lý Chính Thắng, P.7, Q.3, TP.HCM</p>
+      <p class="copyright">Copyright &copy; {{year}} Panacea. All rights reserved.</p>
+    </div>
+  </div>
+
+  <button class="back-to-top" *ngIf="showBackTop" (click)="backToTop()" title="Lên đầu trang">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+</footer>
